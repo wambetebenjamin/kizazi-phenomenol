@@ -1,5 +1,8 @@
 # KIZAZI Phenomenal — Official Website
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwambetebenjamin%2Fkizazi-phenomenol)
+
+
 > A generation on fire for God. 🔥
 > Youth-ministry movement serving **Kenya · Uganda · Tanzania · Rwanda**.
 
@@ -84,3 +87,12 @@ Custom youth styles that sit on top: `css/kizazi.css`. Behaviour layer: `js/kiza
 * **TikTok** → @kizazi.phenomenal · **Instagram** → @kizazi_phenomenal · **Facebook** → kizaziphenomenal
 
 See `NOTES.md` for content assumptions that the team should confirm.
+
+## Deploy to Vercel (one click)
+
+1. Click the **Deploy with Vercel** button above (or open
+   `https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwambetebenjamin%2Fkizazi-phenomenol`).
+2. Sign in / connect your GitHub account when Vercel asks.
+3. Vercel reads `vercel.json` (static site, no build step) — just press **Deploy**.
+4. Production = `main` branch. Every future push to `main` redeploys automatically;
+   every other branch/PR gets its own preview URL.
