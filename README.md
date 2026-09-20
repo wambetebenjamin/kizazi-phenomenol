@@ -42,8 +42,8 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 
 ## Design system
 
-- **Palette** — electric violet `#7C3AED` · phenomenal gold `#FFC53D` ·
-  magenta `#FF2E6E` / coral `#FF7A45` gradients · deep indigo ink `#16092F`.
+- **Palette** — flame orange-red `#F4511E` · phenomenal gold `#FFC53D` ·
+  magenta `#FF2E6E` / coral `#FF7A45` sunset gradients · warm dark ink `#201108`.
   `css/bootstrap.min.css` is **recompiled from the template's `scss/` source**
   with these tokens (see “Rebuilding Bootstrap” below).
 - **Type** — Sora (display) · Plus Jakarta Sans (body) · Caveat (handwritten accents).
@@ -74,6 +74,13 @@ hotlinked — nothing is downloaded into the repo. Each tag looks like:
 4. `img/brand/photo-placeholder.svg` (local placeholder, last resort)
 
 The registry of all 42 IDs is in `tools/build_common.py` (`PHOTOS`).
+
+> **⚠️ The album is currently NOT publicly shared** (as of 2026-09-20), so every
+> photo silently falls back to the branded placeholder tile. To make the real
+> photos appear: in Drive, open the “KIZAZI 2026” album folder → **Share** →
+> “Anyone with the link” → **Viewer**, on the folder *and* each file. No code
+> changes needed — the hotlinks start working on their own. (Drive also rate
+> limits `thumbnail` URLs under heavy load; that's a known, harmless hiccup.)
 
 ## Rebuilding pages (content lives in Python)
 

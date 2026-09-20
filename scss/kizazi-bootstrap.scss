@@ -1,31 +1,34 @@
 // /******* KIZAZI Phenomenal — Bootstrap 5 recompiled with the KIZAZI palette *******/
-// /******* Electric violet + phenomenal gold, magenta/coral accents, indigo ink *******/
+// /******* Flame sunset + phenomenal gold, magenta/coral accents, warm dark ink *******/
 //
 // Compile from the repository root:
 //   cd tools && ./node_modules/.bin/sass \
 //     ../scss/kizazi-bootstrap.scss ../css/bootstrap.min.css \
 //     --style=compressed --no-source-map --load-path=../scss --quiet
 
+$purple:   #B23A12;   // unused default — kept in-palette (deep ember)
+$indigo:   #F4511E;   // unused default — kept in-palette (flame)
+
 // ---------------------------------------------------------------- palette ---
-$primary:   #7C3AED;   // electric violet
+$primary:   #F4511E;   // vivid flame orange-red
 $secondary: #FFC53D;   // phenomenal gold
 $success:   #1FA97A;
 $info:      #38BDF8;
 $warning:   #FF7A45;   // coral
 $danger:    #FF2E6E;   // magenta
-$light:     #F6F3FE;   // violet tint
-$dark:      #16092F;   // deep indigo ink
-$black:     #0C051E;
+$light:     #FFF8F0;   // warm cream tint
+$dark:      #201108;   // warm near-black ink
+$black:     #140A05;
 
-$gray-100: #F1EDFC;
-$gray-200: #E4DDF8;
-$gray-300: #CFC5EE;
-$gray-400: #A798D6;
-$gray-500: #7E6FB2;
-$gray-600: #5D5188;
-$gray-700: #453C68;
-$gray-800: #2E2749;
-$gray-900: #1D1836;
+$gray-100: #FAF5EF;
+$gray-200: #F2EAE0;
+$gray-300: #E3D4C4;
+$gray-400: #C7AE9B;
+$gray-500: #A18873;
+$gray-600: #7D6A59;
+$gray-700: #5E4B3B;
+$gray-800: #403022;
+$gray-900: #2B1D12;
 
 // ------------------------------------------------------------------ type ---
 $font-family-sans-serif: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -40,7 +43,7 @@ $font-weight-semibold: 600;
 $font-weight-bold: 700;
 $font-weight-bolder: 800;
 $body-bg: #FFFFFF;
-$body-color: #514A6B;
+$body-color: #5A4C40;
 $headings-color: $dark;
 $headings-font-weight: 700;
 $display-font-weight: 800;
@@ -55,12 +58,12 @@ $border-radius-sm: 10px;
 $border-radius-lg: 20px;
 $border-radius-xl: 26px;
 $border-radius-2xl: 34px;
-$border-color: #E9E2FA;
+$border-color: #F0E4D8;
 
 $link-color: $primary;
 $link-color-rgb: to-rgb($link-color);
 $link-decoration: none;
-$link-hover-color: #5B21B6;
+$link-hover-color: #D84315;
 $link-hover-color-rgb: to-rgb($link-hover-color);
 $link-hover-decoration: underline;
 
@@ -77,9 +80,9 @@ $btn-primary-color: #fff;
 $btn-primary-bg: $primary;
 $btn-primary-border-color: $primary;
 $btn-primary-hover-color: #fff;
-$btn-primary-hover-bg: #6A28D9;
-$btn-primary-hover-border-color: #5B21B6;
-$btn-primary-active-bg: #5B21B6;
+$btn-primary-hover-bg: #E64A19;
+$btn-primary-hover-border-color: #D84315;
+$btn-primary-active-bg: #BF360C;
 $btn-secondary-color: $dark;
 $btn-secondary-bg: $secondary;
 $btn-secondary-border-color: $secondary;
@@ -87,13 +90,13 @@ $btn-secondary-hover-color: $dark;
 $btn-secondary-hover-bg: #FFD26B;
 $btn-dark-color: #fff;
 $btn-dark-bg: $dark;
-$btn-dark-hover-bg: #2E1B5E;
+$btn-dark-hover-bg: #3A2010;
 
 $input-btn-padding-y: 0.625rem;
 $input-btn-padding-x: 1rem;
 $input-btn-font-size: 0.95rem;
 $input-btn-border-radius: $border-radius;
-$input-border-color: #DDD3F5;
+$input-border-color: #EBD9C6;
 $input-focus-border-color: $primary;
 $input-focus-box-shadow: 0 0 0 0.25rem rgba($primary, 0.2);
 $input-btn-focus-box-shadow: 0 0 0 0.25rem rgba($primary, 0.2);
