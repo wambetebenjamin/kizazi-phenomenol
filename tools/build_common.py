@@ -136,7 +136,7 @@ def head(title, desc):
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="%(desc)s" name="description">
     <meta content="KIZAZI Phenomenal, Christian youth ministry, East Africa, youth fellowship, discipleship, worship, Kenya, Uganda, Tanzania, Rwanda" name="keywords">
-    <meta content="#7C3AED" name="theme-color">
+    <meta content="#F4511E" name="theme-color">
     <meta property="og:site_name" content="KIZAZI Phenomenal">
     <meta property="og:title" content="%(title)s">
     <meta property="og:description" content="%(desc)s">

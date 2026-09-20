@@ -72,6 +72,11 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 
 ## Photos & privacy
 
+- **2026-09-20:** the Drive album turned out to be **not publicly shared**, so
+  every photo was 404-ing into the (now flame-coloured) placeholder tile — the
+  site looked empty/weird. **Fix: share the “KIZAZI 2026” folder in Drive as
+  “Anyone with the link → Viewer” (folder + each file).** Nothing to rebuild;
+  the existing `data-drive` hotlinks pick the photos up automatically.
 - All gallery photos are **hotlinked from the public Drive folder** — they show
   identifiable people. **Confirm you have consent to publish them publicly**
   before going live. To pull any photo, remove its ID from `PHOTOS` in
@@ -79,9 +84,13 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 
 ## Design decisions (not copy, but easy to change)
 
-- Palette: electric violet `#7C3AED` + phenomenal gold `#FFC53D`, magenta/coral
-  gradient accents, deep indigo ink `#16092F` — tokens live in
+- Palette: flame orange-red `#F4511E` + phenomenal gold `#FFC53D`, magenta/coral
+  sunset gradient accents, warm dark ink `#201108` — tokens live in
   `scss/kizazi-bootstrap.scss` (Bootstrap) and `css/kizazi.css` (skin).
+  (Switched from the original electric-violet palette on 2026-09-20 —
+  `tools/recolor.py` documents how the skin was re-rotated; Bootstrap was
+  recompiled from SCSS, so just edit the SCSS and re-run the documented
+  `sass` command for future palette tweaks.)
 - Type: Sora / Plus Jakarta Sans / Caveat via Google Fonts.
 - Logo: AI-generated flame-“K” at `img/brand/logo-mark.png` (also favicon +
   placeholder-free brand mark). Regenerate/replace freely.
