@@ -1,0 +1,9 @@
+# dependencies / build caches
+node_modules/
+tools/node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+
+# local-only scratch
+.extract/
