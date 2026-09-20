@@ -1,0 +1,127 @@
+// /******* KIZAZI Phenomenal — Bootstrap 5 recompiled with the KIZAZI palette *******/
+// /******* Electric violet + phenomenal gold, magenta/coral accents, indigo ink *******/
+//
+// Compile from the repository root:
+//   cd tools && ./node_modules/.bin/sass \
+//     ../scss/kizazi-bootstrap.scss ../css/bootstrap.min.css \
+//     --style=compressed --no-source-map --load-path=../scss --quiet
+
+// ---------------------------------------------------------------- palette ---
+$primary:   #7C3AED;   // electric violet
+$secondary: #FFC53D;   // phenomenal gold
+$success:   #1FA97A;
+$info:      #38BDF8;
+$warning:   #FF7A45;   // coral
+$danger:    #FF2E6E;   // magenta
+$light:     #F6F3FE;   // violet tint
+$dark:      #16092F;   // deep indigo ink
+$black:     #0C051E;
+
+$gray-100: #F1EDFC;
+$gray-200: #E4DDF8;
+$gray-300: #CFC5EE;
+$gray-400: #A798D6;
+$gray-500: #7E6FB2;
+$gray-600: #5D5188;
+$gray-700: #453C68;
+$gray-800: #2E2749;
+$gray-900: #1D1836;
+
+// ------------------------------------------------------------------ type ---
+$font-family-sans-serif: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family-base: $font-family-sans-serif;
+$headings-font-family: 'Sora', $font-family-sans-serif;
+$font-size-base: 0.95rem;
+$line-height-base: 1.65;
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-bolder: 800;
+$body-bg: #FFFFFF;
+$body-color: #514A6B;
+$headings-color: $dark;
+$headings-font-weight: 700;
+$display-font-weight: 800;
+$display-1-font-size: 5.2rem;
+$display-2-font-size: 4.2rem;
+$display-3-font-size: 3.4rem;
+$enable-responsive-font-sizes: true;
+
+// -------------------------------------------------------------- components ---
+$border-radius: 14px;
+$border-radius-sm: 10px;
+$border-radius-lg: 20px;
+$border-radius-xl: 26px;
+$border-radius-2xl: 34px;
+$border-color: #E9E2FA;
+
+$link-color: $primary;
+$link-color-rgb: to-rgb($link-color);
+$link-decoration: none;
+$link-hover-color: #5B21B6;
+$link-hover-color-rgb: to-rgb($link-hover-color);
+$link-hover-decoration: underline;
+
+$caret-color: $primary;
+
+$btn-font-family: 'Sora', $font-family-sans-serif;
+$btn-font-weight: 600;
+$btn-padding-y: 0.625rem;
+$btn-padding-x: 1.35rem;
+$btn-border-radius: $border-radius;
+$btn-focus-shadow-width: 0.25rem;
+$btn-focus-shadow: 0 0 0 $btn-focus-shadow-width rgba($primary, 0.35);
+$btn-primary-color: #fff;
+$btn-primary-bg: $primary;
+$btn-primary-border-color: $primary;
+$btn-primary-hover-color: #fff;
+$btn-primary-hover-bg: #6A28D9;
+$btn-primary-hover-border-color: #5B21B6;
+$btn-primary-active-bg: #5B21B6;
+$btn-secondary-color: $dark;
+$btn-secondary-bg: $secondary;
+$btn-secondary-border-color: $secondary;
+$btn-secondary-hover-color: $dark;
+$btn-secondary-hover-bg: #FFD26B;
+$btn-dark-color: #fff;
+$btn-dark-bg: $dark;
+$btn-dark-hover-bg: #2E1B5E;
+
+$input-btn-padding-y: 0.625rem;
+$input-btn-padding-x: 1rem;
+$input-btn-font-size: 0.95rem;
+$input-btn-border-radius: $border-radius;
+$input-border-color: #DDD3F5;
+$input-focus-border-color: $primary;
+$input-focus-box-shadow: 0 0 0 0.25rem rgba($primary, 0.2);
+$input-btn-focus-box-shadow: 0 0 0 0.25rem rgba($primary, 0.2);
+
+$modal-content-border-radius: $border-radius-lg;
+$modal-header-border-color: rgba($dark, 0.08);
+$modal-footer-border-color: rgba($dark, 0.08);
+
+$accordion-border-radius: $border-radius-lg;
+$accordion-btn-font-family: 'Sora', $font-family-sans-serif;
+
+$breadcrumb-divider: '/';
+$breadcrumb-active-color: rgba(255, 255, 255, 0.95);
+$breadcrumb-padding-y: 0.4rem;
+
+$badge-font-weight: 600;
+
+// ------------------------------------------------------------------ grid ---
+$grid-gutter-width: 1.5rem;
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1340px,
+);
+$enable-negative-margins: true;
+$enable-shadows: false;
+$enable-smooth-scroll: true;
+
+@import "bootstrap/scss/bootstrap";
