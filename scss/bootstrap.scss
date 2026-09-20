@@ -1,0 +1,33 @@
+/******* KIZAZI Phenomenal — Customized Bootstrap *******/
+/******* Palette: Electric Violet + Gold, with magenta/coral accents *******/
+
+$primary: #7C3AED;      /* electric violet  */
+$secondary: #FFC53D;    /* phenomenal gold  */
+$light: #F5F1FF;        /* violet tint      */
+$dark: #16092F;         /* deep indigo ink  */
+
+$font-family-base: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+$headings-font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
+
+$body-color: #5B5470;
+
+$headings-color: $dark;
+
+$headings-font-weight: 700;
+
+$display-font-weight: 800;
+
+$enable-responsive-font-sizes: true;
+
+$border-radius: 14px;
+
+$border-radius-sm: 10px;
+
+$border-radius-lg: 20px;
+
+$link-decoration: none;
+
+$enable-negative-margins: true;
+
+@import "bootstrap/scss/bootstrap";
