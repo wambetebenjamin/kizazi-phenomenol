@@ -1,393 +1,551 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Ministries — KIZAZI Phenomenal</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Eight ministries: Worship &amp; The Word, Discipleship Cells, Prayer &amp; Intercession, Friday Online Catch-Up, Outreach &amp; Missions, Creative &amp; Media Lab, Mentorship &amp; Career, Community &amp; Care." name="description">
-    <meta content="KIZAZI Phenomenal, Christian youth ministry, East Africa, youth fellowship, discipleship, worship, Kenya, Uganda, Tanzania, Rwanda" name="keywords">
-    <meta content="#F4511E" name="theme-color">
-    <meta property="og:site_name" content="KIZAZI Phenomenal">
-    <meta property="og:title" content="Ministries — KIZAZI Phenomenal">
-    <meta property="og:description" content="Eight ministries: Worship &amp; The Word, Discipleship Cells, Prayer &amp; Intercession, Friday Online Catch-Up, Outreach &amp; Missions, Creative &amp; Media Lab, Mentorship &amp; Career, Community &amp; Care.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="img/brand/logo-mark.png">
 
-    <link rel="icon" type="image/png" href="img/brand/logo-mark.png">
-    <link rel="apple-touch-icon" href="img/brand/logo-mark.png">
+    <head>
+        <meta charset="utf-8">
+        <title>Ministries — KIZAZI Phenomenal</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="The eight ministries of KIZAZI Phenomenal: worship &amp; the Word, discipleship cells, prayer, Friday catch-up, outreach, creative lab, mentorship and care." name="description">
+        <meta content="KIZAZI Phenomenal, Christian youth ministry, East Africa, youth fellowship, discipleship, worship, Kenya, Uganda, Tanzania, Rwanda" name="keywords">
+        <meta content="#FF4880" name="theme-color">
+        <meta property="og:site_name" content="KIZAZI Phenomenal">
+        <meta property="og:title" content="Ministries — KIZAZI Phenomenal">
+        <meta property="og:description" content="The eight ministries of KIZAZI Phenomenal: worship &amp; the Word, discipleship cells, prayer, Friday catch-up, outreach, creative lab, mentorship and care.">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="img/brand/logo-mark.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="img/brand/logo-mark.png">
+        <link rel="apple-touch-icon" href="img/brand/logo-mark.png">
 
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/kizazi.css" rel="stylesheet">
-</head>
-<body class="kz-page kz-page-ministries">
-        <div class="kz-topbar">
-            <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <div class="d-none d-lg-flex align-items-center gap-3">
-                    <span class="kz-topbar-pill"><i class="fas fa-globe-africa"></i> Serving East Africa &mdash; Kenya &bull; Uganda &bull; Tanzania &bull; Rwanda</span>
-                    <a class="kz-topbar-live" href="https://meet.google.com/mcr-fupc-buw" target="_blank" rel="noopener"><span class="kz-live-dot"></span> This Friday &middot; Online Catch-Up &middot; 8:00 PM EAT</a>
-                </div>
-                <div class="d-flex align-items-center gap-3">
-                    <span class="kz-topbar-note" title="A single link with everything"><i class="fas fa-link"></i> Linktree coming soon</span>
-                    <div class="d-flex align-items-center gap-2">
-                        <a class="kz-topbar-social" href="https://www.tiktok.com/@kizazi.phenomenal" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><i class="fab fa-tiktok"></i></a>
-<a class="kz-topbar-social" href="https://www.instagram.com/kizazi_phenomenal" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
-<a class="kz-topbar-social" href="https://www.facebook.com/kizaziphenomenal" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="lib/animate/animate.min.css" rel="stylesheet">
+        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="css/style.css" rel="stylesheet">
+
+        <!-- KIZAZI add-ons (Drive photos, gallery filter, video cards) -->
+        <link href="css/kizazi.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Spinner Start -->
+        <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+            <div class="spinner-grow text-primary" role="status"></div>
+        </div>
+        <!-- Spinner End -->
+        <!-- Navbar start -->
+        <div class="container-fluid border-bottom bg-light wow fadeIn" data-wow-delay="0.1s">
+            <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius: 0 40px">
+                <div class="d-flex justify-content-between">
+                    <div class="top-info ps-2">
+                        <small class="me-3"><i class="fas fa-globe-africa me-2 text-secondary"></i> <a href="about.html" class="text-white">Serving East Africa &mdash; Kenya &bull; Uganda &bull; Tanzania &bull; Rwanda</a></small>
+                        <small class="me-3"><i class="fas fa-video me-2 text-secondary"></i><a href="https://meet.google.com/mcr-fupc-buw" target="_blank" rel="noopener" class="text-white">This Friday &middot; Online Catch-Up &middot; 8:00 PM EAT</a></small>
                     </div>
-                    <a class="kz-topbar-cta" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener">Join Us</a>
+                    <div class="top-link pe-2">
+                                <a href="https://www.facebook.com/kizaziphenomenal" target="_blank" rel="noopener" class="btn btn-light btn-sm-square rounded-circle" aria-label="Facebook" title="Facebook"><i class="fab fa-facebook-f text-secondary"></i></a>
+                                <a href="https://www.tiktok.com/@kizazi.phenomenal" target="_blank" rel="noopener" class="btn btn-light btn-sm-square rounded-circle" aria-label="TikTok" title="TikTok"><i class="fab fa-tiktok text-secondary"></i></a>
+                                <a href="https://www.instagram.com/kizazi_phenomenal" target="_blank" rel="noopener" class="btn btn-light btn-sm-square rounded-circle" aria-label="Instagram" title="Instagram"><i class="fab fa-instagram text-secondary"></i></a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="container-fluid kz-navbar-wrap">
-            <div class="container">
-                <nav class="navbar navbar-expand-xl navbar-light kz-navbar py-0" id="mainNav">
-                    <a class="navbar-brand kz-brand d-flex align-items-center" href="index.html">
-                        <img src="img/brand/logo-mark.png" alt="KIZAZI Phenomenal flame-K logo" class="kz-brand-logo" width="46" height="46">
-                        <span class="kz-brand-text">KIZAZI <span class="kz-brand-phen">Phenomenal</span></span>
-                    </a>
-                    <button class="navbar-toggler kz-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-                            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="kz-toggler-bar"></span>
-                        <span class="kz-toggler-bar"></span>
-                        <span class="kz-toggler-bar"></span>
+            <div class="container px-0">
+                <nav class="navbar navbar-light navbar-expand-xl py-3">
+                    <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6">KIZAZI <span class="text-secondary">Phenomenal</span></h1></a>
+                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars text-primary"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
-                        <ul class="navbar-nav m-auto ms-4 mb-3 mb-xl-0">
-{'links': '<li class="nav-item"><a class="nav-link kz-nav-link" href="index.html">Home</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link" href="about.html">About</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link active" href="ministries.html">Ministries</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link" href="programs.html">Programs</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link" href="events.html">Events</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link" href="gallery.html">Gallery</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link" href="blog.html">Blog</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link" href="team.html">Team</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link" href="testimonial.html">Testimonial</a></li>\n<li class="nav-item"><a class="nav-link kz-nav-link" href="contact.html">Contact</a></li>', 'reg': 'https://forms.gle/vzRJrigBHCNormVA9'}
-                        </ul>
-                        <a class="btn kz-btn kz-btn-sweep kz-nav-cta text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Register Free</a>
+                        <div class="navbar-nav mx-auto">
+                            <a href="index.html" class="nav-item nav-link">Home</a>
+                            <a href="about.html" class="nav-item nav-link">About</a>
+                            <a href="ministries.html" class="nav-item nav-link active">Ministries</a>
+                            <a href="programs.html" class="nav-item nav-link">Programs</a>
+                            <a href="events.html" class="nav-item nav-link">Events</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                    <a href="gallery.html" class="dropdown-item">Gallery</a>
+                                    <a href="blog.html" class="dropdown-item">Blog</a>
+                                    <a href="team.html" class="dropdown-item">Team</a>
+                                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                </div>
+                            </div>
+                            <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        </div>
+                        <div class="d-flex me-4 align-items-center">
+                            <div class="d-flex flex-column pe-3 border-end border-primary">
+                                <span class="text-primary">New here?</span>
+                                <a href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><span class="text-secondary">Register free</span></a>
+                            </div>
+                        </div>
+                        <button class="btn-search btn btn-primary btn-md-square rounded-circle" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search the site"><i class="fas fa-search text-white"></i></button>
                     </div>
                 </nav>
             </div>
         </div>
-        <!-- Page Header Start -->
-        <header class="kz-page-header">
-            <div class="kz-page-header-dots"></div>
-            <div class="container py-5">
-                <div class="row align-items-center g-4">
-                    <div class="col-lg-8">
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb kz-breadcrumb mb-3">
-                                <li class="breadcrumb-item"><a href="index.html"><i class="fas fa-home me-1"></i>Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Ministries</li>
-                            </ol>
-                        </nav>
-                        <span class="kz-kicker kz-kicker-light">8 Doorways</span>
-                        <h1 class="kz-page-title">Ministries</h1>
-                        <p class="kz-page-sub">Eight doorways into the same fire — find the one God opened for you.</p>
-                    </div>
-                    <div class="col-lg-4 d-none d-lg-block text-center">
-                        <div class="kz-page-photo"><img data-drive="11q6L_hiO0Y9Ta_Fsfq4qp5mPjluvtAxd" data-drive-w="1600" class="img-fluid" alt="KIZAZI Phenomenal — Ministries" loading="lazy"></div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <!-- Page Header End -->
-        <section class="container-fluid kz-ministries py-5">
-            <div class="container py-4">
-                                <div class="text-center mx-auto kz-section-head kz-reveal" style="max-width: 640px;">
-                    <span class="kz-kicker">Ministries</span>
-                    <h2 class="kz-section-title">Every ministry is a <span class='kz-grad-text'>doorway</span></h2>
-                    <p class="kz-section-sub">None of them are optional, and all of them are open. Hover (or tap) a card for the real talk.</p>
-                </div>
+        <!-- Navbar End -->
 
-                <div class="row g-4">
-<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-worship-word">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas fa-music"></i></div>
-                                <h3 class="kz-flip-name">Worship &amp; The Word</h3>
-                                <p class="kz-flip-blurb">Songs that move and messages that stick.</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
+
+        <!-- Modal Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="searchModalLabel">Search by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="w-75 mx-auto">
+                            <div class="input-group d-flex">
+                                <input type="search" id="kz-search-input" class="form-control p-3" placeholder="Try &ldquo;friday&rdquo;, &ldquo;rooted&rdquo;, &ldquo;gallery&rdquo;&hellip;" aria-describedby="search-icon-1">
+                                <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
                             </div>
-                            <div class="kz-flip-back">
-                                <h4>Worship &amp; The Word</h4>
-                                <p>Worship that gets you on your feet, and the Word taught without fluff. This is the heartbeat of KIZAZI &mdash; everything else flows from time with God.</p>
-                                <ul class="kz-flip-expect"><li>Friday catch-ups with live worship &amp; teaching</li><li>Worship &amp; Word Nights through the term</li><li>Worshipper and teacher tracks if you want to lead</li></ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
+                            <div id="kz-search-results" class="kz-search-results mt-4"></div>
                         </div>
                     </div>
-                </div>
-<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-cells">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas fa-users"></i></div>
-                                <h3 class="kz-flip-name">Discipleship Cells</h3>
-                                <p class="kz-flip-blurb">Small groups where nobody fakes it.</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
-                            </div>
-                            <div class="kz-flip-back">
-                                <h4>Discipleship Cells</h4>
-                                <p>Real discipleship happens in small rooms. Our cells meet around the Word, ask hard questions and carry each other through exams, home and everything between.</p>
-                                <ul class="kz-flip-expect"><li>Weekly cell meetings (online + in person)</li><li>The 12-week Rooted journey</li><li>Accountability that actually shows up</li></ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-prayer">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas fa-hands-praying"></i></div>
-                                <h3 class="kz-flip-name">Prayer &amp; Intercession</h3>
-                                <p class="kz-flip-blurb">The room where heaven gets serious.</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
-                            </div>
-                            <div class="kz-flip-back">
-                                <h4>Prayer &amp; Intercession</h4>
-                                <p>We believe prayer changes the atmosphere of a generation. A constant watch intercedes for East Africa, for our campuses and for the family &mdash; before and between every gathering.</p>
-                                <ul class="kz-flip-expect"><li>Prayer before every event &mdash; join in</li><li>Rotating intercession teams</li><li>National &amp; campus prayer lists shared weekly</li></ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-friday">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas fa-video"></i></div>
-                                <h3 class="kz-flip-name">Friday Online Catch-Up</h3>
-                                <p class="kz-flip-blurb">Every Friday, 8:00 PM EAT. Same time, different fire.</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
-                            </div>
-                            <div class="kz-flip-back">
-                                <h4>Friday Online Catch-Up</h4>
-                                <p>Our weekly online gathering: worship, a Word bite, prayers and connection across Kenya, Uganda, Tanzania and Rwanda. One link, whole family.</p>
-                                <ul class="kz-flip-expect"><li>Live on Google Meet, 8:00 PM EAT</li><li>Worship, teaching and prayer every week</li><li>Open to everyone &mdash; no registration needed to join in</li></ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-outreach">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas fa-globe-africa"></i></div>
-                                <h3 class="kz-flip-name">Outreach &amp; Missions</h3>
-                                <p class="kz-flip-blurb">A generation that can&rsquo;t stay home.</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
-                            </div>
-                            <div class="kz-flip-back">
-                                <h4>Outreach &amp; Missions</h4>
-                                <p>Campus visits, school tours and Serve East Africa trips &mdash; we take the gospel and the gospel&rsquo;s hands-on love to campuses, communities and borders.</p>
-                                <ul class="kz-flip-expect"><li>Campus &amp; school tours each term</li><li>Serve East Africa cross-border trips</li><li>Outreach teams that plan and fundraise together</li></ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-creative">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas fa-pen-nib"></i></div>
-                                <h3 class="kz-flip-name">Creative &amp; Media Lab</h3>
-                                <p class="kz-flip-blurb">Where the KIZAZI story gets made.</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
-                            </div>
-                            <div class="kz-flip-back">
-                                <h4>Creative &amp; Media Lab</h4>
-                                <p>Design, video, socials, set and stage &mdash; our lab turns worship into something the generation can&rsquo;t see, feel and share. Every album shot you see was made here.</p>
-                                <ul class="kz-flip-expect"><li>Monthly creative workshops</li><li>Media crew for every event</li><li>Publishing across TikTok, Instagram &amp; Facebook</li></ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-mentorship">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas fa-graduation-cap"></i></div>
-                                <h3 class="kz-flip-name">Mentorship &amp; Career</h3>
-                                <p class="kz-flip-blurb">Someone older, on your side.</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
-                            </div>
-                            <div class="kz-flip-back">
-                                <h4>Mentorship &amp; Career</h4>
-                                <p>Students matched with mentors for school, work, vocation and purpose. Career clinics, CV nights, application sprints and honest conversations about the future.</p>
-                                <ul class="kz-flip-expect"><li>1-on-1 and small-group mentoring</li><li>Career clinics &amp; CV nights in term</li><li>Scholarship and application support</li></ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-care">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas fa-heart"></i></div>
-                                <h3 class="kz-flip-name">Community &amp; Care</h3>
-                                <p class="kz-flip-blurb">Family means nobody carries it alone.</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
-                            </div>
-                            <div class="kz-flip-back">
-                                <h4>Community &amp; Care</h4>
-                                <p>Birthdays, hospital visits, grief, homesickness &mdash; care is a ministry. Hospitality at every event, check-ins through the week, and a family that notices.</p>
-                                <ul class="kz-flip-expect"><li>Hospitality &amp; reception at events</li><li>Weekly check-ins in the cells</li><li>Care funds for families in crisis</li></ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 </div>
             </div>
-        </section>
-        <!-- CTA Start -->
-        <section class="kz-cta-band position-relative">
-            <div class="kz-zigzag kz-zigzag-cta"></div>
-            <div class="container py-5 py-lg-6 text-center text-white">
-                <span class="kz-hand kz-cta-hand">no small steps in this house &hellip;</span>
-                <h2 class="kz-cta-title">Ready to be <span class="kz-grad-text kz-grad-text-light">phenomenal</span>?</h2>
-                <p class="kz-cta-sub">&ldquo;Let no one despise you for your youth, but set the example for the believers in speech, in conduct, in love, in faith, in purity.&rdquo; &mdash; <em>1 Timothy 4:12</em></p>
-                <div class="d-flex justify-content-center flex-wrap gap-3">
-                    <a class="btn kz-btn kz-btn-sweep btn-lg text-white" href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener">Register &mdash; it&rsquo;s free</a>
-                    <a class="btn kz-btn kz-btn-ghost btn-lg text-white" href="https://meet.google.com/mcr-fupc-buw" target="_blank" rel="noopener">This Friday &middot; 8:00 PM EAT</a>
+        </div>
+        <!-- Modal Search End -->
+        <!-- Modal Video -->
+        <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="videoModalLabel">KIZAZI on film</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 16:9 aspect ratio -->
+                        <div class="ratio ratio-16x9">
+                            <iframe class="embed-responsive-item" src="" id="video" allowfullscreen allowscriptaccess="always"
+                                allow="autoplay"></iframe>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
-        <!-- CTA End -->
-        <footer class="kz-footer">
-            <div class="kz-footer-aurora"></div>
+        </div>
+
+        <!-- Page Header Start -->
+        <div class="container-fluid page-header py-5 wow fadeIn" data-wow-delay="0.1s" data-drive-bg="1qFNX35z-KnZgpw0dmnXRRQcVK70uE-wt" data-drive-bg-w="1600" style="--kz-photo: url('https://drive.google.com/thumbnail?id=1qFNX35z-KnZgpw0dmnXRRQcVK70uE-wt&sz=w1600');">
+            <div class="container text-center py-5">
+                <h1 class="display-2 text-white mb-4">Ministries</h1>
+                <p class="text-white-50 mx-auto mb-4" style="max-width: 640px;">Eight doorways into the family &mdash; pick the one that fits your gift.</p>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center mb-0">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item text-white" aria-current="page">Ministries</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Page Header End -->
+
+
+        <!-- Ministries Start -->
+        <div class="container-fluid service py-5">
             <div class="container py-5">
-                <div class="row g-4 g-lg-5">
-                    <div class="col-md-6 col-xl-3">
-                        <div class="kz-footer-item">
-                            <a class="kz-footer-brand d-flex align-items-center" href="index.html">
-                                <img src="img/brand/logo-mark.png" alt="KIZAZI Phenomenal" class="kz-brand-logo kz-brand-logo-lg">
-                                <span class="kz-brand-text text-white">KIZAZI <span class="kz-brand-phen">Phenomenal</span></span>
-                            </a>
-                            <p class="kz-footer-blurb">A generation on fire for God. A Christian youth movement across Kenya &bull; Uganda &bull; Tanzania &bull; Rwanda &mdash; worship that moves, discipleship that sticks, a family that carries you.</p>
-                            <p class="kz-footer-verse kz-hand">&ldquo;Let no one despise you for your youth, but set the example f&hellip;&rdquo; &mdash; 1 Timothy 4:12</p>
-                            <div class="kz-footer-newsletter">
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">What We Do</h4>
+                    <h1 class="mb-5 display-3">The Eight Ministries</h1>
+                </div>
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="text-center border-primary border bg-white service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas fa-music fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#worship-word" class="h4">Worship &amp; The Word</a>
+                                    <p class="my-3">Worship that gets you on your feet, and the Word taught without fluff. This is the heartbeat of KIZAZI &mdash; everything else flows from time with God.</p>
+                                    <a href="ministries.html#worship-word" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.3s">
+                        <div class="text-center border-primary border bg-white service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas fa-users fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#cells" class="h4">Discipleship Cells</a>
+                                    <p class="my-3">Real discipleship happens in small rooms. Our cells meet around the Word, ask hard questions and carry each other through exams, home and everything between.</p>
+                                    <a href="ministries.html#cells" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="text-center border-primary border bg-white service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas fa-hands-praying fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#prayer" class="h4">Prayer &amp; Intercession</a>
+                                    <p class="my-3">We believe prayer changes the atmosphere of a generation. A constant watch intercedes for East Africa, for our campuses and for the family &mdash; before and between every gathering.</p>
+                                    <a href="ministries.html#prayer" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.7s">
+                        <div class="text-center border-primary border bg-white service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas fa-video fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#friday" class="h4">Friday Online Catch-Up</a>
+                                    <p class="my-3">Our weekly online gathering: worship, a Word bite, prayers and connection across Kenya, Uganda, Tanzania and Rwanda. One link, whole family.</p>
+                                    <a href="ministries.html#friday" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="text-center border-primary border bg-white service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas fa-globe-africa fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#outreach" class="h4">Outreach &amp; Missions</a>
+                                    <p class="my-3">Campus visits, school tours and Serve East Africa trips &mdash; we take the gospel and the gospel&rsquo;s hands-on love to campuses, communities and borders.</p>
+                                    <a href="ministries.html#outreach" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.3s">
+                        <div class="text-center border-primary border bg-white service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas fa-pen-nib fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#creative" class="h4">Creative &amp; Media Lab</a>
+                                    <p class="my-3">Design, video, socials, set and stage &mdash; our lab turns worship into something the generation can see, feel and share. Every album shot you see was made here.</p>
+                                    <a href="ministries.html#creative" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="text-center border-primary border bg-white service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas fa-graduation-cap fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#mentorship" class="h4">Mentorship &amp; Career</a>
+                                    <p class="my-3">Students matched with mentors for school, work, vocation and purpose. Career clinics, CV nights, application sprints and honest conversations about the future.</p>
+                                    <a href="ministries.html#mentorship" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.7s">
+                        <div class="text-center border-primary border bg-white service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas fa-heart fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#care" class="h4">Community &amp; Care</a>
+                                    <p class="my-3">Birthdays, hospital visits, grief, homesickness &mdash; care is a ministry. Hospitality at every event, check-ins through the week, and a family that notices.</p>
+                                    <a href="ministries.html#care" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Ministries End -->
+
+
+        <!-- Expect Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Get Involved</h4>
+                    <h1 class="mb-5 display-3">What To Expect In Each Ministry</h1>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-9 wow fadeIn" data-wow-delay="0.2s">
+                        <div class="accordion" id="ministryAccordion">
+                            <div class="accordion-item" id="worship-word">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-worship-word" aria-expanded="false" aria-controls="acc-worship-word">
+                                        <i class="fas fa-music me-3 text-primary"></i>Worship &amp; The Word &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-worship-word" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">Worship that gets you on your feet, and the Word taught without fluff. This is the heartbeat of KIZAZI &mdash; everything else flows from time with God.</p>
+                                        <ul class="mb-0">
+                                            <li>Friday catch-ups with live worship &amp; teaching</li>
+                                            <li>Worship &amp; Word Nights through the term</li>
+                                            <li>Worshipper and teacher tracks if you want to lead</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item" id="cells">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-cells" aria-expanded="false" aria-controls="acc-cells">
+                                        <i class="fas fa-users me-3 text-primary"></i>Discipleship Cells &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-cells" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">Real discipleship happens in small rooms. Our cells meet around the Word, ask hard questions and carry each other through exams, home and everything between.</p>
+                                        <ul class="mb-0">
+                                            <li>Weekly cell meetings (online + in person)</li>
+                                            <li>The 12-week Rooted journey</li>
+                                            <li>Accountability that actually shows up</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item" id="prayer">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-prayer" aria-expanded="false" aria-controls="acc-prayer">
+                                        <i class="fas fa-hands-praying me-3 text-primary"></i>Prayer &amp; Intercession &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-prayer" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">We believe prayer changes the atmosphere of a generation. A constant watch intercedes for East Africa, for our campuses and for the family &mdash; before and between every gathering.</p>
+                                        <ul class="mb-0">
+                                            <li>Prayer before every event &mdash; join in</li>
+                                            <li>Rotating intercession teams</li>
+                                            <li>National &amp; campus prayer lists shared weekly</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item" id="friday">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-friday" aria-expanded="false" aria-controls="acc-friday">
+                                        <i class="fas fa-video me-3 text-primary"></i>Friday Online Catch-Up &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-friday" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">Our weekly online gathering: worship, a Word bite, prayers and connection across Kenya, Uganda, Tanzania and Rwanda. One link, whole family.</p>
+                                        <ul class="mb-0">
+                                            <li>Live on Google Meet, 8:00 PM EAT</li>
+                                            <li>Worship, teaching and prayer every week</li>
+                                            <li>Open to everyone &mdash; no registration needed to join in</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item" id="outreach">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-outreach" aria-expanded="false" aria-controls="acc-outreach">
+                                        <i class="fas fa-globe-africa me-3 text-primary"></i>Outreach &amp; Missions &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-outreach" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">Campus visits, school tours and Serve East Africa trips &mdash; we take the gospel and the gospel&rsquo;s hands-on love to campuses, communities and borders.</p>
+                                        <ul class="mb-0">
+                                            <li>Campus &amp; school tours each term</li>
+                                            <li>Serve East Africa cross-border trips</li>
+                                            <li>Outreach teams that plan and fundraise together</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item" id="creative">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-creative" aria-expanded="false" aria-controls="acc-creative">
+                                        <i class="fas fa-pen-nib me-3 text-primary"></i>Creative &amp; Media Lab &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-creative" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">Design, video, socials, set and stage &mdash; our lab turns worship into something the generation can see, feel and share. Every album shot you see was made here.</p>
+                                        <ul class="mb-0">
+                                            <li>Monthly creative workshops</li>
+                                            <li>Media crew for every event</li>
+                                            <li>Publishing across TikTok, Instagram &amp; Facebook</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item" id="mentorship">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-mentorship" aria-expanded="false" aria-controls="acc-mentorship">
+                                        <i class="fas fa-graduation-cap me-3 text-primary"></i>Mentorship &amp; Career &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-mentorship" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">Students matched with mentors for school, work, vocation and purpose. Career clinics, CV nights, application sprints and honest conversations about the future.</p>
+                                        <ul class="mb-0">
+                                            <li>1-on-1 and small-group mentoring</li>
+                                            <li>Career clinics &amp; CV nights in term</li>
+                                            <li>Scholarship and application support</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item" id="care">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-care" aria-expanded="false" aria-controls="acc-care">
+                                        <i class="fas fa-heart me-3 text-primary"></i>Community &amp; Care &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-care" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">Birthdays, hospital visits, grief, homesickness &mdash; care is a ministry. Hospitality at every event, check-ins through the week, and a family that notices.</p>
+                                        <ul class="mb-0">
+                                            <li>Hospitality &amp; reception at events</li>
+                                            <li>Weekly check-ins in the cells</li>
+                                            <li>Care funds for families in crisis</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Expect End -->
+        <!-- Footer Start -->
+        <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.1s" data-drive-bg="16r29HQUQrjocav3vAQa8T_Oun9K5lips" data-drive-bg-w="1200" style="--kz-photo: url('https://drive.google.com/thumbnail?id=16r29HQUQrjocav3vAQa8T_Oun9K5lips&sz=w1200');">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="footer-item">
+                            <h2 class="fw-bold mb-3"><span class="text-primary mb-0">KIZAZI</span> <span class="text-secondary">Phenomenal</span></h2>
+                            <p class="mb-4">A generation on fire for God. A Christian youth movement across Kenya &bull; Uganda &bull; Tanzania &bull; Rwanda &mdash; worship that moves, discipleship that sticks, a family that carries you.</p>
+                            <p class="text-dark fst-italic mb-4">&ldquo;Let no one despise you for your youth, but set the example for the bel&hellip;&rdquo; &mdash; 1 Timothy 4:12</p>
+                            <div class="border border-primary p-3 rounded bg-light">
                                 <h5 class="mb-3">Newsletter</h5>
-                                <form class="kz-newsletter" novalidate>
-                                    <input type="email" class="form-control kz-newsletter-input" placeholder="Your email" aria-label="Your email" required>
-                                    <button type="submit" class="kz-newsletter-btn kz-btn kz-btn-sweep text-white">Sign Up</button>
+                                <form class="kz-newsletter position-relative mx-auto border border-primary rounded" style="max-width: 400px;" novalidate>
+                                    <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="email" placeholder="Your email" aria-label="Your email" required>
+                                    <button type="submit" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2 text-white">SignUp</button>
                                 </form>
-                                <p class="kz-newsletter-note">Announcements only &mdash; no spam, ever.</p>
+                                <p class="kz-newsletter-note mb-0 mt-2 small text-muted">Announcements only &mdash; nothing is stored or shared.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
-                        <div class="kz-footer-item">
-                            <h4 class="kz-footer-title">This Week at KIZAZI</h4>
-                            <div class="kz-schedule">
-                                <div class="kz-schedule-row kz-schedule-live">
-                                    <span class="kz-schedule-day">Friday</span>
-                                    <span class="kz-schedule-what">Phenomenal Friday &mdash; Online Catch-Up, <strong>8:00 PM EAT</strong></span>
-                                    <a class="kz-schedule-link" href="https://meet.google.com/mcr-fupc-buw" target="_blank" rel="noopener">Join <i class="fas fa-external-link-alt"></i></a>
-                                </div>
-                                <div class="kz-schedule-row">
-                                    <span class="kz-schedule-day">Weekdays</span>
-                                    <span class="kz-schedule-what">Cells, prayer &amp; campus visits (schedule shared weekly)</span>
-                                </div>
-                                <div class="kz-schedule-row">
-                                    <span class="kz-schedule-day">Next Friday</span>
-                                    <span class="kz-schedule-what"><span data-next-friday-long>&hellip;</span></span>
-                                </div>
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="footer-item">
+                            <div class="d-flex flex-column p-4 ps-5 text-dark border border-primary"
+                            style="border-radius: 50% 20% / 10% 40%;">
+                                <p><strong>Friday:</strong> Online Catch-Up, 8:00 PM EAT</p>
+                                <p><strong>Next Friday:</strong> <span data-next-friday-long>&hellip;</span></p>
+                                <p><strong>Weekdays:</strong> cells, prayer &amp; campus visits</p>
+                                <p><strong>Join live:</strong> <a href="https://meet.google.com/mcr-fupc-buw" target="_blank" rel="noopener">Google Meet</a></p>
+                                <p class="mb-0"><strong>Register:</strong> <a href="https://forms.gle/vzRJrigBHCNormVA9" target="_blank" rel="noopener">free form</a></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
-                        <div class="kz-footer-item">
-                            <h4 class="kz-footer-title">Quick Links</h4>
-                            <ul class="kz-footer-links">
-                                <li><a href="index.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Home</a></li>
-                                <li><a href="about.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>About</a></li>
-                                <li><a href="ministries.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Ministries</a></li>
-                                <li><a href="programs.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Programs</a></li>
-                                <li><a href="events.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Events</a></li>
-                                <li><a href="gallery.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Gallery</a></li>
-                                <li><a href="blog.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Blog</a></li>
-                                <li><a href="team.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Team</a></li>
-                                <li><a href="testimonial.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Testimonial</a></li>
-                                <li><a href="contact.html"><i class="fas fa-arrow-right kz-footer-arrow"></i>Contact</a></li>
-                            </ul>
-                            <div class="d-flex align-items-center gap-2 mt-4">
-                                <a class="kz-footer-social" href="https://www.tiktok.com/@kizazi.phenomenal" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><i class="fab fa-tiktok"></i></a>
-<a class="kz-footer-social" href="https://www.instagram.com/kizazi_phenomenal" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
-<a class="kz-footer-social" href="https://www.facebook.com/kizaziphenomenal" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="footer-item">
+                            <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">EXPLORE</h4>
+                            <div class="d-flex flex-column align-items-start">
+                                <a href="index.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Home</a>
+                                <a href="about.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>About</a>
+                                <a href="ministries.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Ministries</a>
+                                <a href="programs.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Programs</a>
+                                <a href="events.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Events</a>
+                                <a href="gallery.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Gallery</a>
+                                <a href="blog.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Blog</a>
+                                <a href="team.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Team</a>
+                                <a href="testimonial.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Testimonial</a>
+                                <a href="contact.html" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>Contact</a>
+                                <div class="footer-icon d-flex mt-2">
+                                <a href="https://www.facebook.com/kizaziphenomenal" target="_blank" rel="noopener" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" aria-label="Facebook" title="Facebook"><i class="fab fa-facebook-f "></i></a>
+                                <a href="https://www.tiktok.com/@kizazi.phenomenal" target="_blank" rel="noopener" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" aria-label="TikTok" title="TikTok"><i class="fab fa-tiktok "></i></a>
+                                <a href="https://www.instagram.com/kizazi_phenomenal" target="_blank" rel="noopener" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" aria-label="Instagram" title="Instagram"><i class="fab fa-instagram "></i></a>
+                                </div>
+                                <p class="small text-muted mt-3 mb-0"><i class="fas fa-link me-1"></i> Linktree coming soon &mdash; one link for everything.</p>
                             </div>
-                            <p class="kz-footer-note mt-3"><i class="fas fa-link me-1"></i> Linktree coming soon &mdash; one link for everything.</p>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
-                        <div class="kz-footer-item">
-                            <h4 class="kz-footer-title">KIZAZI 2026 &mdash; in pics</h4>
-                            <div class="row g-2">
-<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    <img data-drive="1TyHtNtLIsNm7hiN9xLLR6EzNoUZ8Lakh" data-drive-w="1600" class="img-fluid rounded-circle" alt="KIZAZI 2026 photo" loading="lazy">
-                                </a>
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="footer-item">
+                            <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">KIZAZI 2026 IN PICS</h4>
+                            <div class="row g-3">
+                                <div class="col-4">
+                                    <div class="footer-galary-img rounded-circle border border-primary">
+                                        <a href="gallery.html" title="Open the gallery"><img data-drive="1TyHtNtLIsNm7hiN9xLLR6EzNoUZ8Lakh" data-drive-w="400" class="img-fluid rounded-circle p-2" alt="KIZAZI 2026 photo" loading="lazy"></a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="footer-galary-img rounded-circle border border-primary">
+                                        <a href="gallery.html" title="Open the gallery"><img data-drive="1MVKVbCyOOSxVvCEKzJeASc5SjxO-6fGp" data-drive-w="400" class="img-fluid rounded-circle p-2" alt="KIZAZI 2026 photo" loading="lazy"></a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="footer-galary-img rounded-circle border border-primary">
+                                        <a href="gallery.html" title="Open the gallery"><img data-drive="14tH-n17U4UtHupT7SGKQsyBq5yIIO-Wl" data-drive-w="400" class="img-fluid rounded-circle p-2" alt="KIZAZI 2026 photo" loading="lazy"></a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="footer-galary-img rounded-circle border border-primary">
+                                        <a href="gallery.html" title="Open the gallery"><img data-drive="1tOT1KZVRYt9IiCY-FTo1PdEs_PoKBc9C" data-drive-w="400" class="img-fluid rounded-circle p-2" alt="KIZAZI 2026 photo" loading="lazy"></a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="footer-galary-img rounded-circle border border-primary">
+                                        <a href="gallery.html" title="Open the gallery"><img data-drive="1XDDP7w7B9kKk6EuOuoZUevgqeRhbrUaR" data-drive-w="400" class="img-fluid rounded-circle p-2" alt="KIZAZI 2026 photo" loading="lazy"></a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="footer-galary-img rounded-circle border border-primary">
+                                        <a href="gallery.html" title="Open the gallery"><img data-drive="1URj0XMQeL1mSIMTPvoih6s1ZaocttXbf" data-drive-w="400" class="img-fluid rounded-circle p-2" alt="KIZAZI 2026 photo" loading="lazy"></a>
+                                    </div>
+                                </div>
                             </div>
-<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    <img data-drive="1MVKVbCyOOSxVvCEKzJeASc5SjxO-6fGp" data-drive-w="1600" class="img-fluid rounded-circle" alt="KIZAZI 2026 photo" loading="lazy">
-                                </a>
-                            </div>
-<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    <img data-drive="14tH-n17U4UtHupT7SGKQsyBq5yIIO-Wl" data-drive-w="1600" class="img-fluid rounded-circle" alt="KIZAZI 2026 photo" loading="lazy">
-                                </a>
-                            </div>
-<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    <img data-drive="1tOT1KZVRYt9IiCY-FTo1PdEs_PoKBc9C" data-drive-w="1600" class="img-fluid rounded-circle" alt="KIZAZI 2026 photo" loading="lazy">
-                                </a>
-                            </div>
-<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    <img data-drive="1XDDP7w7B9kKk6EuOuoZUevgqeRhbrUaR" data-drive-w="1600" class="img-fluid rounded-circle" alt="KIZAZI 2026 photo" loading="lazy">
-                                </a>
-                            </div>
-<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    <img data-drive="1URj0XMQeL1mSIMTPvoih6s1ZaocttXbf" data-drive-w="1600" class="img-fluid rounded-circle" alt="KIZAZI 2026 photo" loading="lazy">
-                                </a>
-                            </div>
-<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    <img data-drive="1wFCvoEH6UiTwp1gGOz92pzhrrUkKc2yA" data-drive-w="1600" class="img-fluid rounded-circle" alt="KIZAZI 2026 photo" loading="lazy">
-                                </a>
-                            </div>
-<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    <img data-drive="1t1GqRjKBRas5Qsi9oGqDSrkidRkGXlfN" data-drive-w="1600" class="img-fluid rounded-circle" alt="KIZAZI 2026 photo" loading="lazy">
-                                </a>
-                            </div>
-                            </div>
-                            <a class="kz-footer-more" href="gallery.html">Full gallery <i class="fas fa-arrow-right"></i></a>
+                            <a class="btn btn-primary btn-sm px-4 py-2 mt-3 text-white btn-border-radius" href="gallery.html">Full gallery</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="kz-copyright">
-                <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-                    <span class="kz-copyright-text">&copy; <span data-year>2026</span> KIZAZI Phenomenal. All rights reserved.</span>
-                    <span class="kz-copyright-credit">Template <a href="https://htmlcodex.com" target="_blank" rel="noopener">BabyCare</a> by <a href="https://htmlcodex.com" target="_blank" rel="noopener">HTML Codex</a> &middot; customised for KIZAZI</span>
+        </div>
+        <!-- Footer End -->
+
+
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright bg-dark py-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <span class="text-light"><a href="index.html" class="text-light"><i class="fas fa-copyright text-light me-2"></i>KIZAZI Phenomenal</a>, All right reserved.</span>
+                    </div>
+                    <div class="col-md-6 my-auto text-center text-md-end text-white">
+                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
+                    </div>
                 </div>
             </div>
-        </footer>
-        <a href="#" class="kz-back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></a>
+        </div>
+        <!-- Copyright End -->
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top" aria-label="Back to top"><i class="fa fa-arrow-up"></i></a>
+    <!-- JavaScript Libraries -->
     <script src="js/vendor/jquery.min.js"></script>
     <script src="js/vendor/bootstrap.bundle.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/lightbox/js/lightbox.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+
+    <!-- KIZAZI: Drive photos & videos, next-Friday dates, gallery filter, search -->
     <script src="js/kizazi.js"></script>
-</body>
+    </body>
+
 </html>

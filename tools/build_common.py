@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""KIZAZI Phenomenal — shared build data & site chrome.
+"""KIZAZI Phenomenal — shared build data & site chrome (BabyCare-template edition).
 
-Everything the site needs to stay consistent lives here:
-  * external links (registration, Meet, socials)
+The site is a faithful BabyCare (HTML Codex) build: same markup structure, same
+fonts (Fredoka + Montserrat), same palette (pink #FF4880 / blue #4D65F9 from the
+template's own css/bootstrap.min.css).  This module holds everything the pages
+share:
+
+  * external links (registration form, Friday Meet, socials)
   * the 42 "KIZAZI 2026" Google Drive photo IDs + <img data-drive=...> helpers
-  * shared chrome: <head>, topbar, navbar, page-header, footer, copyright, scripts
+  * the Drive video list (easy to fill — see VIDEOS below)
+  * shared chrome: head / spinner / topbar+navbar / search modal / page-header /
+    footer / copyright / back-to-top / scripts
   * content data: ministries, programs, events, blog, teams, testimonies
 
 `tools/build.py` imports this module and composes the per-page bodies.
@@ -13,6 +19,7 @@ Edit the data below, then run:  python3 tools/build.py
 """
 
 import html as _html
+import re as _re
 
 # ------------------------------------------------------------- external links
 REG_URL = "https://forms.gle/vzRJrigBHCNormVA9"
@@ -21,6 +28,10 @@ TIKTOK_URL = "https://www.tiktok.com/@kizazi.phenomenal"
 INSTAGRAM_URL = "https://www.instagram.com/kizazi_phenomenal"
 FACEBOOK_URL = "https://www.facebook.com/kizaziphenomenal"
 LINKTREE_NOTE = "Linktree coming soon"
+
+# Paste the shared Drive folder link here (optional). When set, the site shows
+# an "Open the Drive album" button next to the gallery / watch sections.
+DRIVE_ALBUM_URL = ""   # e.g. "https://drive.google.com/drive/folders/XXXXXXXX"
 
 SITE = {
     "name": "KIZAZI Phenomenal",
@@ -31,7 +42,7 @@ SITE = {
     "countries": "Kenya &bull; Uganda &bull; Tanzania &bull; Rwanda",
 }
 
-# Nav order = page order. (file, label, active key)
+# Nav: main items in this order; gallery/blog/team/testimonial live under "Pages".
 PAGES = [
     ("index.html", "Home", "home"),
     ("about.html", "About", "about"),
@@ -44,6 +55,7 @@ PAGES = [
     ("testimonial.html", "Testimonial", "testimonial"),
     ("contact.html", "Contact", "contact"),
 ]
+DROPDOWN_KEYS = ("gallery", "blog", "team", "testimonial")
 
 # ------------------------------------------------- "KIZAZI 2026" Drive photos
 # Public Google Drive file IDs (shared album). Resolved in the browser by
@@ -95,7 +107,7 @@ PHOTOS = [
 
 assert len(PHOTOS) == 42, "expected exactly 42 Drive photo IDs"
 
-# Gallery filter categories — assigned round-robin (see NOTES.md, assumption #6).
+# Gallery filter categories — assigned round-robin (see NOTES.md).
 GALLERY_CATS = [
     ("worship", "Worship"),
     ("word", "Word"),
@@ -105,7 +117,52 @@ GALLERY_CATS = [
     ("bts", "Behind the Scenes"),
 ]
 
-FOOTER_GRID = [28, 29, 30, 31, 32, 33, 34, 35]
+FOOTER_GRID = [28, 29, 30, 31, 32, 33]
+HERO_PHOTO = 0            # index into PHOTOS for the home hero background
+PAGE_HEADER_PHOTO = 1     # default inner-page header background
+ABOUT_PHOTO = 2           # the "video" panel behind the play button
+FOOTER_PHOTO = 3
+
+# ------------------------------------------------------------ Drive videos ---
+# Add your films here. Each entry is a tuple:
+#   (drive_id_or_share_url, "Title", "One-line caption", poster_photo_index, tag)
+# Both bare file IDs and pasted share links work, e.g.
+#   ("1AbCdEf...", "KIZAZI 2026 highlight reel", "Two days, one family.", 10, "Highlights")
+#   ("https://drive.google.com/file/d/1AbCdEf.../view", ... )
+# Videos are embedded with Google Drive's player (file must be shared publicly).
+VIDEOS = [
+    # ("FILE_ID", "KIZAZI 2026 — Highlight Film", "Two days that shook us.", 10, "Highlights"),
+]
+
+_DRIVE_ID_RE = _re.compile(r"[-\w]{20,}")
+
+
+def drive_id(value):
+    """Accept a bare Drive file ID or a pasted share/view link; return the ID."""
+    value = (value or "").strip()
+    if not value:
+        return ""
+    m = _re.search(r"/file/d/([-\w]+)", value) or _re.search(r"[?&]id=([-\w]+)", value)
+    if m:
+        return m.group(1)
+    if _DRIVE_ID_RE.fullmatch(value):
+        return value
+    m = _DRIVE_ID_RE.search(value)
+    return m.group(0) if m else value
+
+
+def video_embed(vid):
+    return "https://drive.google.com/file/d/%s/preview" % drive_id(vid)
+
+
+def videos():
+    """Normalised video list: dicts with id, embed, title, desc, poster, tag."""
+    out = []
+    for n, item in enumerate(VIDEOS):
+        src, title, desc, poster, tag = item
+        out.append(dict(id=drive_id(src), embed=video_embed(src), title=title,
+                        desc=desc, poster=poster, tag=tag, n=n + 1))
+    return out
 
 
 def durl(i, w=1600):
@@ -113,12 +170,16 @@ def durl(i, w=1600):
     return "https://drive.google.com/thumbnail?id=%s&sz=w%d" % (PHOTOS[i], w)
 
 
-def img(i, alt="", cls="", w=1600, eager=False, extra=""):
+def img(i, alt="", cls="", w=1600, extra=""):
     """<img> that js/kizazi.js hydrates from data-drive with fallbacks."""
-    loading = "" if eager else 'loading="lazy"'
-    return ('<img data-drive="%s" data-drive-w="%d" class="%s" alt="%s" %s%s>'
-            % (PHOTOS[i], w, cls, _html.escape(alt), loading,
-               (" " + extra) if extra else ""))
+    return ('<img data-drive="%s" data-drive-w="%d" class="%s" alt="%s" loading="lazy"%s>'
+            % (PHOTOS[i], w, cls, _html.escape(alt), (" " + extra) if extra else ""))
+
+
+def bg(i, w=1600):
+    """Inline style attr feeding a Drive photo to a CSS background."""
+    return ('data-drive-bg="%s" data-drive-bg-w="%d" '
+            'style="--kz-photo: url(\'%s\');"' % (PHOTOS[i], w, durl(i, w)))
 
 
 def gallery_cat(i):
@@ -130,139 +191,210 @@ def gallery_cat(i):
 def head(title, desc):
     return """<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>%(title)s</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="%(desc)s" name="description">
-    <meta content="KIZAZI Phenomenal, Christian youth ministry, East Africa, youth fellowship, discipleship, worship, Kenya, Uganda, Tanzania, Rwanda" name="keywords">
-    <meta content="#F4511E" name="theme-color">
-    <meta property="og:site_name" content="KIZAZI Phenomenal">
-    <meta property="og:title" content="%(title)s">
-    <meta property="og:description" content="%(desc)s">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="img/brand/logo-mark.png">
 
-    <link rel="icon" type="image/png" href="img/brand/logo-mark.png">
-    <link rel="apple-touch-icon" href="img/brand/logo-mark.png">
+    <head>
+        <meta charset="utf-8">
+        <title>%(title)s</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="%(desc)s" name="description">
+        <meta content="KIZAZI Phenomenal, Christian youth ministry, East Africa, youth fellowship, discipleship, worship, Kenya, Uganda, Tanzania, Rwanda" name="keywords">
+        <meta content="#FF4880" name="theme-color">
+        <meta property="og:site_name" content="KIZAZI Phenomenal">
+        <meta property="og:title" content="%(title)s">
+        <meta property="og:description" content="%(desc)s">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="img/brand/logo-mark.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="img/brand/logo-mark.png">
+        <link rel="apple-touch-icon" href="img/brand/logo-mark.png">
 
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/kizazi.css" rel="stylesheet">
-</head>
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="lib/animate/animate.min.css" rel="stylesheet">
+        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="css/style.css" rel="stylesheet">
+
+        <!-- KIZAZI add-ons (Drive photos, gallery filter, video cards) -->
+        <link href="css/kizazi.css" rel="stylesheet">
+    </head>
 """ % {"title": _html.escape(title), "desc": _html.escape(desc)}
 
 
-def body_open(active):
-    return '<body class="kz-page kz-page-%s">\n' % active
+def body_open():
+    return "    <body>\n"
 
 
-def social_icons(cls="kz-social"):
+def spinner():
+    return """        <!-- Spinner Start -->
+        <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+            <div class="spinner-grow text-primary" role="status"></div>
+        </div>
+        <!-- Spinner End -->
+"""
+
+
+def social_buttons(cls="btn btn-light btn-sm-square rounded-circle", icon_cls="text-secondary"):
     items = [
+        (FACEBOOK_URL, "fab fa-facebook-f", "Facebook"),
         (TIKTOK_URL, "fab fa-tiktok", "TikTok"),
         (INSTAGRAM_URL, "fab fa-instagram", "Instagram"),
-        (FACEBOOK_URL, "fab fa-facebook-f", "Facebook"),
     ]
     out = []
     for url, icon, label in items:
-        out.append('<a class="%s" href="%s" target="_blank" rel="noopener" aria-label="%s" title="%s"><i class="%s"></i></a>'
-                   % (cls, url, label, label, icon))
-    return "\n".join(out)
+        out.append('<a href="%s" target="_blank" rel="noopener" class="%s" aria-label="%s" title="%s"><i class="%s %s"></i></a>'
+                   % (url, cls, label, label, icon, icon_cls))
+    return "\n".join("                                " + o for o in out)
 
 
-def topbar():
-    return """        <div class="kz-topbar">
-            <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <div class="d-none d-lg-flex align-items-center gap-3">
-                    <span class="kz-topbar-pill"><i class="fas fa-globe-africa"></i> Serving East Africa &mdash; %(countries)s</span>
-                    <a class="kz-topbar-live" href="%(meet)s" target="_blank" rel="noopener"><span class="kz-live-dot"></span> This Friday &middot; Online Catch-Up &middot; 8:00 PM EAT</a>
-                </div>
-                <div class="d-flex align-items-center gap-3">
-                    <span class="kz-topbar-note" title="A single link with everything"><i class="fas fa-link"></i> %(linktree)s</span>
-                    <div class="d-flex align-items-center gap-2">
-                        %(socials)s
-                    </div>
-                    <a class="kz-topbar-cta" href="%(reg)s" target="_blank" rel="noopener">Join Us</a>
-                </div>
-            </div>
-        </div>
-""" % {"countries": SITE["countries"], "meet": MEET_URL, "reg": REG_URL,
-       "linktree": LINKTREE_NOTE,
-       "socials": social_icons(cls="kz-topbar-social")}
-
-
-def navbar(active):
+def topbar_navbar(active):
     links = []
     for file_, label, key in PAGES:
-        cls = "nav-link kz-nav-link active" if key == active else "nav-link kz-nav-link"
-        links.append('<li class="nav-item"><a class="%s" href="%s">%s</a></li>' % (cls, file_, label))
-    return """        <div class="container-fluid kz-navbar-wrap">
-            <div class="container">
-                <nav class="navbar navbar-expand-xl navbar-light kz-navbar py-0" id="mainNav">
-                    <a class="navbar-brand kz-brand d-flex align-items-center" href="index.html">
-                        <img src="img/brand/logo-mark.png" alt="KIZAZI Phenomenal flame-K logo" class="kz-brand-logo" width="46" height="46">
-                        <span class="kz-brand-text">KIZAZI <span class="kz-brand-phen">Phenomenal</span></span>
-                    </a>
-                    <button class="navbar-toggler kz-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-                            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="kz-toggler-bar"></span>
-                        <span class="kz-toggler-bar"></span>
-                        <span class="kz-toggler-bar"></span>
+        if key in DROPDOWN_KEYS or key == "contact":
+            continue
+        cls = " active" if key == active else ""
+        links.append('                            <a href="%s" class="nav-item nav-link%s">%s</a>'
+                     % (file_, cls, label))
+    if active in DROPDOWN_KEYS:
+        links.append('                            <div class="nav-item dropdown">\n'
+                     '                                <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>')
+    else:
+        links.append('                            <div class="nav-item dropdown">\n'
+                     '                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>')
+    links.append('                                <div class="dropdown-menu m-0 bg-secondary rounded-0">')
+    for file_, label, key in PAGES:
+        if key not in DROPDOWN_KEYS:
+            continue
+        links.append('                                    <a href="%s" class="dropdown-item">%s</a>' % (file_, label))
+    links.append('                                </div>\n                            </div>')
+    for file_, label, key in PAGES:
+        if key != "contact":
+            continue
+        cls = " active" if key == active else ""
+        links.append('                            <a href="%s" class="nav-item nav-link%s">%s</a>'
+                     % (file_, cls, label))
+
+    return """        <!-- Navbar start -->
+        <div class="container-fluid border-bottom bg-light wow fadeIn" data-wow-delay="0.1s">
+            <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius: 0 40px">
+                <div class="d-flex justify-content-between">
+                    <div class="top-info ps-2">
+                        <small class="me-3"><i class="fas fa-globe-africa me-2 text-secondary"></i> <a href="about.html" class="text-white">Serving East Africa &mdash; %(countries)s</a></small>
+                        <small class="me-3"><i class="fas fa-video me-2 text-secondary"></i><a href="%(meet)s" target="_blank" rel="noopener" class="text-white">This Friday &middot; Online Catch-Up &middot; 8:00 PM EAT</a></small>
+                    </div>
+                    <div class="top-link pe-2">
+%(socials)s
+                    </div>
+                </div>
+            </div>
+            <div class="container px-0">
+                <nav class="navbar navbar-light navbar-expand-xl py-3">
+                    <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6">KIZAZI <span class="text-secondary">Phenomenal</span></h1></a>
+                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars text-primary"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
-                        <ul class="navbar-nav m-auto ms-4 mb-3 mb-xl-0">
-%s
-                        </ul>
-                        <a class="btn kz-btn kz-btn-sweep kz-nav-cta text-white" href="%(reg)s" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Register Free</a>
+                        <div class="navbar-nav mx-auto">
+%(links)s
+                        </div>
+                        <div class="d-flex me-4 align-items-center">
+                            <div class="d-flex flex-column pe-3 border-end border-primary">
+                                <span class="text-primary">New here?</span>
+                                <a href="%(reg)s" target="_blank" rel="noopener"><span class="text-secondary">Register free</span></a>
+                            </div>
+                        </div>
+                        <button class="btn-search btn btn-primary btn-md-square rounded-circle" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search the site"><i class="fas fa-search text-white"></i></button>
                     </div>
                 </nav>
             </div>
         </div>
-""" % {"links": "\n".join(links), "reg": REG_URL}
+        <!-- Navbar End -->
 
 
-def page_header(title, sub, photo_i, kicker=""):
-    return """        <!-- Page Header Start -->
-        <header class="kz-page-header">
-            <div class="kz-page-header-dots"></div>
-            <div class="container py-5">
-                <div class="row align-items-center g-4">
-                    <div class="col-lg-8">
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb kz-breadcrumb mb-3">
-                                <li class="breadcrumb-item"><a href="index.html"><i class="fas fa-home me-1"></i>Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">%(title)s</li>
-                            </ol>
-                        </nav>
-                        <span class="kz-kicker kz-kicker-light">%(kicker)s</span>
-                        <h1 class="kz-page-title">%(title)s</h1>
-                        <p class="kz-page-sub">%(sub)s</p>
+        <!-- Modal Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="searchModalLabel">Search by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="col-lg-4 d-none d-lg-block text-center">
-                        <div class="kz-page-photo">%(photo)s</div>
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="w-75 mx-auto">
+                            <div class="input-group d-flex">
+                                <input type="search" id="kz-search-input" class="form-control p-3" placeholder="Try &ldquo;friday&rdquo;, &ldquo;rooted&rdquo;, &ldquo;gallery&rdquo;&hellip;" aria-describedby="search-icon-1">
+                                <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                            </div>
+                            <div id="kz-search-results" class="kz-search-results mt-4"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
+        <!-- Modal Search End -->
+""" % {"countries": SITE["countries"], "meet": MEET_URL, "reg": REG_URL,
+       "socials": social_buttons(), "links": "\n".join(links)}
+
+
+def video_modal():
+    return """        <!-- Modal Video -->
+        <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="videoModalLabel">KIZAZI on film</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 16:9 aspect ratio -->
+                        <div class="ratio ratio-16x9">
+                            <iframe class="embed-responsive-item" src="" id="video" allowfullscreen allowscriptaccess="always"
+                                allow="autoplay"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+"""
+
+
+def page_header(title, sub, photo_i=None):
+    i = PAGE_HEADER_PHOTO if photo_i is None else photo_i
+    return """        <!-- Page Header Start -->
+        <div class="container-fluid page-header py-5 wow fadeIn" data-wow-delay="0.1s" %(bg)s>
+            <div class="container text-center py-5">
+                <h1 class="display-2 text-white mb-4">%(title)s</h1>
+                <p class="text-white-50 mx-auto mb-4" style="max-width: 640px;">%(sub)s</p>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center mb-0">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item text-white" aria-current="page">%(title)s</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
         <!-- Page Header End -->
-""" % {"title": _html.escape(title), "sub": sub, "kicker": kicker,
-       "photo": img(photo_i, "KIZAZI Phenomenal — %s" % title, cls="img-fluid")}
+""" % {"title": _html.escape(title), "sub": sub, "bg": bg(i)}
 
 
 def section_head(kicker, title, sub=""):
-    sub_html = "<p class=\"kz-section-sub\">%s</p>" % sub if sub else ""
-    return """                <div class="text-center mx-auto kz-section-head kz-reveal" style="max-width: 640px;">
-                    <span class="kz-kicker">%s</span>
-                    <h2 class="kz-section-title">%s</h2>
-                    %s
+    sub_html = ("<p class=\"text-body mt-3 mb-0\">%s</p>" % sub) if sub else ""
+    return """                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">%s</h4>
+                    <h1 class="mb-5 display-3">%s</h1>%s
                 </div>
 """ % (kicker, title, sub_html)
 
@@ -270,107 +402,118 @@ def section_head(kicker, title, sub=""):
 def footer():
     grid = []
     for i in FOOTER_GRID:
-        grid.append("""<div class="col-3">
-                                <a class="kz-footer-photo" href="gallery.html" title="View in gallery">
-                                    %s
-                                </a>
-                            </div>""" % img(i, "KIZAZI 2026 photo", cls="img-fluid rounded-circle"))
-    links = "\n".join(
-        '                                <li><a href="%s"><i class="fas fa-arrow-right kz-footer-arrow"></i>%s</a></li>'
-        % (file_, label)
-        for file_, label, _ in PAGES
-    )
-    return """        <footer class="kz-footer">
-            <div class="kz-footer-aurora"></div>
+        grid.append("""                                <div class="col-4">
+                                    <div class="footer-galary-img rounded-circle border border-primary">
+                                        <a href="gallery.html" title="Open the gallery">%s</a>
+                                    </div>
+                                </div>""" % img(i, "KIZAZI 2026 photo", cls="img-fluid rounded-circle p-2", w=400))
+    return """        <!-- Footer Start -->
+        <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.1s" %(bg)s>
             <div class="container py-5">
-                <div class="row g-4 g-lg-5">
-                    <div class="col-md-6 col-xl-3">
-                        <div class="kz-footer-item">
-                            <a class="kz-footer-brand d-flex align-items-center" href="index.html">
-                                <img src="img/brand/logo-mark.png" alt="KIZAZI Phenomenal" class="kz-brand-logo kz-brand-logo-lg">
-                                <span class="kz-brand-text text-white">KIZAZI <span class="kz-brand-phen">Phenomenal</span></span>
-                            </a>
-                            <p class="kz-footer-blurb">%(tagline)s A Christian youth movement across %(countries)s &mdash; worship that moves, discipleship that sticks, a family that carries you.</p>
-                            <p class="kz-footer-verse kz-hand">&ldquo;%(verse_short)s&rdquo; &mdash; %(verse_ref)s</p>
-                            <div class="kz-footer-newsletter">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="footer-item">
+                            <h2 class="fw-bold mb-3"><span class="text-primary mb-0">KIZAZI</span> <span class="text-secondary">Phenomenal</span></h2>
+                            <p class="mb-4">%(tagline)s A Christian youth movement across %(countries)s &mdash; worship that moves, discipleship that sticks, a family that carries you.</p>
+                            <p class="text-dark fst-italic mb-4">&ldquo;%(verse_short)s&hellip;&rdquo; &mdash; %(verse_ref)s</p>
+                            <div class="border border-primary p-3 rounded bg-light">
                                 <h5 class="mb-3">Newsletter</h5>
-                                <form class="kz-newsletter" novalidate>
-                                    <input type="email" class="form-control kz-newsletter-input" placeholder="Your email" aria-label="Your email" required>
-                                    <button type="submit" class="kz-newsletter-btn kz-btn kz-btn-sweep text-white">Sign Up</button>
+                                <form class="kz-newsletter position-relative mx-auto border border-primary rounded" style="max-width: 400px;" novalidate>
+                                    <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="email" placeholder="Your email" aria-label="Your email" required>
+                                    <button type="submit" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2 text-white">SignUp</button>
                                 </form>
-                                <p class="kz-newsletter-note">Announcements only &mdash; no spam, ever.</p>
+                                <p class="kz-newsletter-note mb-0 mt-2 small text-muted">Announcements only &mdash; nothing is stored or shared.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
-                        <div class="kz-footer-item">
-                            <h4 class="kz-footer-title">This Week at KIZAZI</h4>
-                            <div class="kz-schedule">
-                                <div class="kz-schedule-row kz-schedule-live">
-                                    <span class="kz-schedule-day">Friday</span>
-                                    <span class="kz-schedule-what">Phenomenal Friday &mdash; Online Catch-Up, <strong>8:00 PM EAT</strong></span>
-                                    <a class="kz-schedule-link" href="%(meet)s" target="_blank" rel="noopener">Join <i class="fas fa-external-link-alt"></i></a>
-                                </div>
-                                <div class="kz-schedule-row">
-                                    <span class="kz-schedule-day">Weekdays</span>
-                                    <span class="kz-schedule-what">Cells, prayer &amp; campus visits (schedule shared weekly)</span>
-                                </div>
-                                <div class="kz-schedule-row">
-                                    <span class="kz-schedule-day">Next Friday</span>
-                                    <span class="kz-schedule-what"><span data-next-friday-long>&hellip;</span></span>
-                                </div>
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="footer-item">
+                            <div class="d-flex flex-column p-4 ps-5 text-dark border border-primary"
+                            style="border-radius: 50%% 20%% / 10%% 40%%;">
+                                <p><strong>Friday:</strong> Online Catch-Up, 8:00 PM EAT</p>
+                                <p><strong>Next Friday:</strong> <span data-next-friday-long>&hellip;</span></p>
+                                <p><strong>Weekdays:</strong> cells, prayer &amp; campus visits</p>
+                                <p><strong>Join live:</strong> <a href="%(meet)s" target="_blank" rel="noopener">Google Meet</a></p>
+                                <p class="mb-0"><strong>Register:</strong> <a href="%(reg)s" target="_blank" rel="noopener">free form</a></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
-                        <div class="kz-footer-item">
-                            <h4 class="kz-footer-title">Quick Links</h4>
-                            <ul class="kz-footer-links">
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="footer-item">
+                            <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">EXPLORE</h4>
+                            <div class="d-flex flex-column align-items-start">
 %(links)s
-                            </ul>
-                            <div class="d-flex align-items-center gap-2 mt-4">
-                                %(socials)s
+                                <div class="footer-icon d-flex mt-2">
+%(socials)s
+                                </div>
+                                <p class="small text-muted mt-3 mb-0"><i class="fas fa-link me-1"></i> %(linktree)s &mdash; one link for everything.</p>
                             </div>
-                            <p class="kz-footer-note mt-3"><i class="fas fa-link me-1"></i> %(linktree)s &mdash; one link for everything.</p>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
-                        <div class="kz-footer-item">
-                            <h4 class="kz-footer-title">KIZAZI 2026 &mdash; in pics</h4>
-                            <div class="row g-2">
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="footer-item">
+                            <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">KIZAZI 2026 IN PICS</h4>
+                            <div class="row g-3">
 %(grid)s
                             </div>
-                            <a class="kz-footer-more" href="gallery.html">Full gallery <i class="fas fa-arrow-right"></i></a>
+                            <a class="btn btn-primary btn-sm px-4 py-2 mt-3 text-white btn-border-radius" href="gallery.html">Full gallery</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="kz-copyright">
-                <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-                    <span class="kz-copyright-text">&copy; <span data-year>2026</span> KIZAZI Phenomenal. All rights reserved.</span>
-                    <span class="kz-copyright-credit">Template <a href="https://htmlcodex.com" target="_blank" rel="noopener">BabyCare</a> by <a href="https://htmlcodex.com" target="_blank" rel="noopener">HTML Codex</a> &middot; customised for KIZAZI</span>
+        </div>
+        <!-- Footer End -->
+
+
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright bg-dark py-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <span class="text-light"><a href="index.html" class="text-light"><i class="fas fa-copyright text-light me-2"></i>KIZAZI Phenomenal</a>, All right reserved.</span>
+                    </div>
+                    <div class="col-md-6 my-auto text-center text-md-end text-white">
+                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
+                    </div>
                 </div>
             </div>
-        </footer>
-""" % {"tagline": SITE["tagline"], "countries": SITE["countries"],
-       "verse_short": SITE["verse"][:60] + "&hellip;", "verse_ref": SITE["verse_ref"],
-       "meet": MEET_URL, "linktree": LINKTREE_NOTE,
-       "socials": social_icons(cls="kz-footer-social"),
-       "links": links, "grid": "\n".join(grid)}
+        </div>
+        <!-- Copyright End -->
+""" % {"bg": bg(FOOTER_PHOTO, 1200), "tagline": SITE["tagline"],
+       "countries": SITE["countries"], "verse_short": SITE["verse"][:70],
+       "verse_ref": SITE["verse_ref"], "meet": MEET_URL, "reg": REG_URL,
+       "linktree": LINKTREE_NOTE,
+       "links": "\n".join(
+           '                                <a href="%s" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>%s</a>'
+           % (f_, l_) for f_, l_, _ in PAGES),
+       "socials": social_buttons(cls="btn btn-primary btn-sm-square me-3 rounded-circle text-white", icon_cls=""),
+       "grid": "\n".join(grid)}
 
 
 def back_to_top():
-    return """        <a href="#" class="kz-back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></a>
+    return """        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top" aria-label="Back to top"><i class="fa fa-arrow-up"></i></a>
 """
 
 
 def scripts():
-    return """    <script src="js/vendor/jquery.min.js"></script>
+    return """    <!-- JavaScript Libraries -->
+    <script src="js/vendor/jquery.min.js"></script>
     <script src="js/vendor/bootstrap.bundle.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/lightbox/js/lightbox.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+
+    <!-- KIZAZI: Drive photos & videos, next-Friday dates, gallery filter, search -->
     <script src="js/kizazi.js"></script>
-</body>
+    </body>
+
 </html>
 """
 
@@ -406,7 +549,7 @@ MINISTRIES = [
     ("creative", "fa-pen-nib", "Creative &amp; Media Lab",
      "Where the KIZAZI story gets made.",
      "Design, video, socials, set and stage &mdash; our lab turns worship into something "
-     "the generation can&rsquo;t see, feel and share. Every album shot you see was made here.",
+     "the generation can see, feel and share. Every album shot you see was made here.",
      ["Monthly creative workshops", "Media crew for every event", "Publishing across TikTok, Instagram &amp; Facebook"]),
     ("mentorship", "fa-graduation-cap", "Mentorship &amp; Career",
      "Someone older, on your side.",
@@ -420,53 +563,58 @@ MINISTRIES = [
      ["Hospitality &amp; reception at events", "Weekly check-ins in the cells", "Care funds for families in crisis"]),
 ]
 
-# 6 programs — (name, rate badge, photo_i, desc, leader, leader initials, when, where)
+# 6 programs — (name, rate badge, photo_i, desc, leader, leader initials, when, where, sits/lessons/hours-style meta)
 PROGRAMS = [
     ("Rooted", "Free &middot; 12 weeks", 4,
      "A 12-week discipleship journey through the basics that don&rsquo;t get skipped &mdash; "
      "who God is, how to hear from Him, how to pray, how to live on purpose.",
-     "Discipleship Cells team", "DC", "12 weeks &middot; new intake each term", "Online + in person"),
+     "Discipleship Cells", "DC", "New intake each term", "Online + in person",
+     ("30 seats", "12 weeks", "3 sessions / wk")),
     ("Phenomenal Fridays", "Weekly", 5,
      "The heartbeat: worship, a Word bite, prayer and connection &mdash; live every "
      "Friday at 8:00 PM EAT on Google Meet, across East Africa.",
-     "Worship &amp; The Word team", "WW", "Fridays &middot; 8:00 PM EAT", "Google Meet"),
+     "Worship &amp; The Word", "WW", "Every Friday", "Google Meet",
+     ("Open to all", "8:00 PM EAT", "60 minutes")),
     ("KIZAZI Creative Lab", "Term intake", 6,
      "Worship, design, video and media workshops for the makers &mdash; learn to build "
      "what the movement puts in front of the generation.",
-     "Creative &amp; Media Lab", "CM", "Monthly sessions", "Studio + online"),
+     "Creative &amp; Media Lab", "CM", "Monthly sessions", "Studio + online",
+     ("20 seats", "6 modules", "1 project / mo")),
     ("Mentorship Circle", "Applications open", 7,
      "Get matched with a mentor for school, career and purpose. Small circles, "
      "regular check-ins, real accountability.",
-     "Mentorship &amp; Career", "MC", "Ongoing", "1-on-1 + small group"),
+     "Mentorship &amp; Career", "MC", "Ongoing", "1-on-1 + small group",
+     ("1-on-1", "Bi-weekly", "All year")),
     ("Campus Ambassadors", "Recruiting now", 8,
      "Plant and lead KIZAZI on your campus &mdash; toolkits, training and a network of "
      "ambassadors across East African universities.",
-     "Outreach &amp; Missions", "OM", "During term", "Your campus"),
+     "Outreach &amp; Missions", "OM", "During term", "Your campus",
+     ("4 nations", "1 toolkit", "Termly meet")),
     ("Serve East Africa", "Next trip TBA", 9,
      "Annual cross-border outreach trips across Kenya, Uganda, Tanzania and Rwanda. "
      "Train, raise, go, report.",
-     "Community &amp; Care", "CC", "Annual trips", "Kenya &middot; Uganda &middot; Tanzania &middot; Rwanda"),
+     "Community &amp; Care", "CC", "Annual trips", "KE &middot; UG &middot; TZ &middot; RW",
+     ("1 team", "1 border", "1 mission")),
 ]
 
 # 4 events — dict(title, tag, photo_i, desc, when, time, place, cta_label, cta_url, date_mode)
-# date_mode: "friday" (auto next Friday) | "static" (when text is final)
 EVENTS = [
     dict(title="Phenomenal Friday &mdash; Online Catch-Up", tag="Weekly", photo=10,
          desc="Worship, a Word bite, prayer and connection &mdash; live from across East Africa.",
          when="friday", time="8:00 PM EAT", place="Google Meet",
-         cta_label="Join Live", cta_url=MEET_URL, cta_icon="fa-video"),
+         cta_label="Join Live", cta_url=MEET_URL),
     dict(title="KIZAZI Conference 2027", tag="2027 Flagship", photo=11,
          desc="The next flagship. Two days of worship, word and fire &mdash; details as they drop.",
-         when="August 2027 &middot; dates soon", time="Full-day", place="East Africa",
-         cta_label="Get Notified", cta_url=REG_URL, cta_icon="fa-bell"),
+         when="Aug 2027", time="Full-day", place="East Africa",
+         cta_label="Get Notified", cta_url=REG_URL),
     dict(title="Worship &amp; Word Night", tag="Monthly", photo=12,
          desc="One night a month we gather in person &mdash; deeper worship, uncut Word.",
-         when="Monthly &middot; announced on socials", time="Evening", place="In person + live stream",
-         cta_label="Follow for the Date", cta_url=INSTAGRAM_URL, cta_icon="fa-calendar-alt"),
+         when="Monthly", time="Evening", place="In person + stream",
+         cta_label="Follow for the Date", cta_url=INSTAGRAM_URL),
     dict(title="Campus &amp; School Tour", tag="Termly", photo=13,
          desc="We bring the catch-up to campuses and schools across the region. Invite us to yours.",
-         when="Every term &middot; visits announced weekly", time="Flexible", place="Your campus",
-         cta_label="Host Us", cta_url=REG_URL, cta_icon="fa-school"),
+         when="Each term", time="Flexible", place="Your campus",
+         cta_label="Host Us", cta_url=REG_URL),
 ]
 
 # Blog — (title, date, team, team initials, photo_i, tag, body paragraphs)
@@ -503,16 +651,16 @@ BLOG = [
       "it grows by never missing."]),
 ]
 
-# Serving teams (ROLES, not named people) — (initials, name, desc, ministry)
+# Serving teams (ROLES, not named people) — (initials, name, desc, ministry, photo_i)
 TEAMS = [
-    ("WS", "Worship &amp; Sound", "Leads the band, the keys and the sound board.", "Worship &amp; The Word"),
-    ("WW", "Word &amp; Teaching Team", "Preps and delivers Word nights and Friday messages.", "Worship &amp; The Word"),
-    ("PW", "Prayer Watch", "Intercedes before every gathering and for the nation.", "Prayer &amp; Intercession"),
-    ("DM", "Discipleship Mentors", "Walks with small groups through the Rooted journey.", "Discipleship Cells"),
-    ("CM", "Media &amp; Creative Crew", "Captures, designs and publishes the KIZAZI story.", "Creative &amp; Media Lab"),
-    ("OM", "Outreach &amp; Missions Team", "Runs campus visits, school tours and Serve East Africa trips.", "Outreach &amp; Missions"),
-    ("SH", "Service &amp; Hospitality", "Reception, refreshments, welcome &mdash; the family&rsquo;s front door.", "Community &amp; Care"),
-    ("MC", "Mentorship &amp; Career Crew", "Matches students with mentors for school, work and purpose.", "Mentorship &amp; Career"),
+    ("WS", "Worship &amp; Sound", "Leads the band, the keys and the sound board.", "Worship &amp; The Word", 17),
+    ("WW", "Word &amp; Teaching Team", "Preps and delivers Word nights and Friday messages.", "Worship &amp; The Word", 18),
+    ("PW", "Prayer Watch", "Intercedes before every gathering and for the nation.", "Prayer &amp; Intercession", 19),
+    ("DM", "Discipleship Mentors", "Walks with small groups through the Rooted journey.", "Discipleship Cells", 20),
+    ("CM", "Media &amp; Creative Crew", "Captures, designs and publishes the KIZAZI story.", "Creative &amp; Media Lab", 21),
+    ("OM", "Outreach &amp; Missions Team", "Runs campus visits, school tours and Serve East Africa trips.", "Outreach &amp; Missions", 22),
+    ("SH", "Service &amp; Hospitality", "Reception, refreshments, welcome &mdash; the family&rsquo;s front door.", "Community &amp; Care", 23),
+    ("MC", "Mentorship &amp; Career Crew", "Matches students with mentors for school, work and purpose.", "Mentorship &amp; Career", 24),
 ]
 
 # Testimonies — initial-only, illustrative (see NOTES.md). (initials, label, quote)
