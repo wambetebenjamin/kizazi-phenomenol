@@ -36,7 +36,7 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 | `events.html` | Next Friday (auto-dated), Conference 2027, Worship & Word Night, Campus Tour + KIZAZI 2026 photo mosaic |
 | `gallery.html` | All 42 KIZAZI 2026 photos — filterable + lightbox — plus the **Videos** room |
 | `blog.html` | Devotionals, recaps & practicals (cards + full posts) |
-| `team.html` | Serving teams/roles + how to serve |
+| `team.html` | Featured Patron panel, admin team portraits, serving teams/roles + how to serve |
 | `testimonial.html` | Voices from the family (initials only) + share-your-story |
 | `contact.html` | Four ways in (form / Meet / socials / Linktree note), weekly schedule, FAQ — no invented email/phone/address |
 | `404.html` | Template not-found page |
@@ -51,43 +51,111 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 - **Layout & components** — topbar + navbar with Pages dropdown, full-screen
   search modal, `hero-header` / `page-header` heroes with breadcrumbs, service /
   program / events / blog / team cards, Owl testimonial carousel, 4-column footer
-  with the circular photo grid, copyright bar with the HTML Codex credit,
+  with the circular photo grid, copyright bar (right slot:
+  "A generation on fire for God. — 1 Timothy 4:12"),
   back-to-top button, WOW scroll animations, Lightbox, pulsing play button.
 - **KIZAZI add-ons** — `css/kizazi.css` (~150 lines, no new palette): teaches the
-  template about hotlinked Drive photos/backgrounds, video cards, initials
+  template about vendored gallery photos/backgrounds (placeholder SVG as
+  CSS last-resort), video cards, initials
   avatars, the gallery filter and quick-search results.
 - **Behaviour** — `js/main.js` (the template's script: spinner, WOW, back-to-top,
-  carousel, video modal) + `js/kizazi.js` (Drive photo resolution, next-Friday
-  dates, gallery filter, quick search, newsletter note).
+  carousel, video modal) + `js/kizazi.js` (next-Friday
+  dates, gallery filter, quick search, newsletter note — plus a JS last-resort
+  placeholder for a broken photo).
 
 ## Photos
 
-All 42 event photos live in the public **Google Drive "KIZAZI 2026" album** and are
-hotlinked — nothing is downloaded into the repo. Each tag looks like:
+All 42 "KIZAZI 2026" event photos are **vendored in the repo** at
+`img/gallery/01.jpg … 42.jpg` (same order as the `PHOTOS` list in
+`tools/build_common.py`) and served locally — no hotlinking, no Drive
+dependency at runtime. Each tag is plain:
 
 ```html
-<img data-drive="FILE_ID" data-drive-w="1600" class="img-fluid" alt="…">
+<img src="img/gallery/07.jpg" class="img-fluid" alt="…" loading="lazy">
 ```
 
-`js/kizazi.js` resolves each one through a fallback chain:
+Section backgrounds (page headers, the play-button panel, footer) use the same
+files through the inline `--kz-photo` CSS variable.
+`img/brand/photo-placeholder.svg` remains only as the CSS/JS last-resort if a
+file is ever missing.
 
-1. `https://drive.google.com/thumbnail?id=ID&sz=w1600`
-2. `https://lh3.googleusercontent.com/d/ID=w1600`
-3. `https://drive.google.com/uc?export=view&id=ID`
-4. `img/brand/photo-placeholder.svg` (local placeholder, last resort)
+### Home hero (the transition photos)
 
-Section backgrounds (hero, page headers, the play-button panel, footer) use the
-same chain via `data-drive-bg` + a `--kz-photo` CSS variable.
+The top of `index.html` crossfades through the four photos vendored in
+`img/hero/` (`01.jpg` to `04.jpg`) behind the hero copy: one `.kz-hero-slide`
+layer per file, staggered 8 s each so the four-photo cycle is 32 s (section 7 of
+`css/kizazi.css`). The first file is also the still `--kz-photo` base layer, so
+no-JS and `prefers-reduced-motion` visitors still get a real photo. To swap a
+photo, replace the file keeping its name and re-run the build. To change the
+number of photos, edit `HERO_SLIDES` in `tools/build_common.py` and update the
+cycle + keyframe percentages in `css/kizazi.css` to match.
 
-> **⚠️ The album must be shared as "Anyone with the link → Viewer"** (folder *and*
-> each file) or every photo silently falls back to the branded placeholder.
-> The registry of all 42 IDs is in `tools/build_common.py` (`PHOTOS`).
+### People (portraits)
+
+`img/team/` holds the consented portraits of the named people: the admin team
+and the Patron, **Reverend Dr. Joslyn Isigi**. They are driven by the `PEOPLE`
+and `PATRON` entries in `tools/build_common.py`:
+
+- `team.html` shows the Patron as a featured panel right under the page header,
+  then the admins as template `team-item` cards (role reads simply "Admin"; no
+  invented titles), then the serving-team role cards.
+- `about.html` shows the compact Patron panel in the mission area.
+
+To add or replace a person: drop `img/team/<slug>.jpg` (portrait crop, roughly
+4:5, at least 700 px wide), add or point the entry in `PEOPLE` / `PATRON`, then
+re-run `python3 tools/build.py`. Entries whose JPEG is missing are skipped
+entirely, so the build never emits a broken portrait. Consent to publish is
+logged in [NOTES.md](NOTES.md).
+
+### Refreshing the photos
+
+The Drive file IDs stay registered in `PHOTOS` (`tools/build_common.py`).
+To re-download them (or after editing `PHOTOS`), run on a machine with
+internet access to Google Drive:
+
+```bash
+python3 tools/fetch_gallery_photos.py   # writes img/gallery/01.jpg … 42.jpg
+git add img/gallery && git commit -m "Refresh KIZAZI 2026 photos"
+```
+
+The script probes the first ID and **refuses to run on HTTP 403/404** — share
+the "KIZAZI 2026" folder as *"Anyone with the link → Viewer"* first. It falls
+back across Drive hosts (`drive.google.com/thumbnail` →
+`lh3.googleusercontent.com` → `drive.google.com/uc`) and verifies every file
+is a real JPEG > 10 KB before writing it.
+
+> No direct Google access (restricted sandbox / CI)? Two helpers:
+> run `python3 tools/fetch_gallery_server.py` and open the served
+> `/__fetch.html` page in a normal browser — it fetches the photos through
+> the browser and writes them into `img/gallery/`. Or copy
+> `tools/fetch-gallery-photos.workflow.yml` to `.github/workflows/` (needs a
+> token with `workflows` write) and let GitHub Actions download and commit them.
+
+## Copy conventions
+
+- **No em-dashes or en-dashes in visible copy.** They are rewritten with plain
+  punctuation (comma, colon, full stop) and date ranges read "14 to 15 August".
+  Word hyphens stay (`catch-up`, `follow-up`).
+  Proof: `grep -n "&mdash;\|&ndash;\|—\|–" tools/*.py` prints nothing, and the
+  generated `*.html` pages are clean too. (The untouched third-party template
+  files under `css/`, `js/vendor/` and `lib/` are not part of the copy.)
+- **Family description** (exact copy; the last two words are italic):
+  *We are on a mission to grow stronger, connect deeper, and shine brighter as
+  Ministers' Kids*. It lives in `FAMILY_DESC` / `FAMILY_DESC_HTML`
+  (`tools/build_common.py`) and appears in the home hero, the home about block,
+  the about page story and mission area, the Patron panel and the footer.
+- Verse stays **1 Timothy 4:12**: in full on the about page, short in the footer
+  and in the copyright bar ("A generation on fire for God. 1 Timothy 4:12").
 
 ## Videos (Drive)
 
 Videos are embedded with Google Drive's own player (`/file/d/ID/preview`) in the
 template's video modal, the **"KIZAZI On Film"** section on the home page and the
 **Videos** room in the gallery. To publish films:
+
+> **⚠️ Videos are still hotlinked from Google Drive — each video file must be
+> shared as "Anyone with the link → Viewer"** or the embed will not load.
+> (The vendored photos in `img/gallery/` do **not** need any sharing.)
 
 1. Share each video file in Drive as *Anyone with the link → Viewer*.
 2. Add one line per film to `VIDEOS` in `tools/build_common.py`:
@@ -118,9 +186,14 @@ identical on all 11 pages:
 python3 tools/build.py        # regenerates all 11 pages at the repo root
 ```
 
-- `tools/build_common.py` — links, the 42 photo IDs, `VIDEOS`, ministries/programs/
-  events/blog/teams/testimonies, and the shared chrome.
+- `tools/build_common.py` — links, the 42 photo IDs (refresh registry), `VIDEOS`, the hero
+  `HERO_SLIDES`, the `FAMILY_DESC` copy, the `PEOPLE`/`PATRON` portraits,
+  ministries/programs/events/blog/teams/testimonies, and the shared chrome.
 - `tools/build.py` — the per-page bodies, composed from the template's components.
+- `tools/fetch_gallery_photos.py` — re-downloads `img/gallery/` from Drive.
+- `tools/fetch_gallery_server.py` — browser-assisted fetcher (writes `img/gallery/`
+  via `/__fetch.html`) for machines without direct Google access;
+  `tools/fetch-gallery-photos.workflow.yml` is the CI variant.
 
 Every content assumption is logged in [NOTES.md](NOTES.md) — please review it.
 
@@ -157,7 +230,9 @@ python3 tools/check_html.py   # tag-balance validation for all 11 pages
 ### Credits & licence
 
 - Structure, fonts & palette: **BabyCare** daycare template by
-  [HTML Codex](https://htmlcodex.com) (CC BY 4.0 — credit retained in the footer,
-  per the template licence in `LICENSE.txt`).
-- Photography & films: the public "KIZAZI 2026" Google Drive album (hotlinked).
+  [HTML Codex](https://htmlcodex.com) (CC BY 4.0 — `LICENSE.txt` stays in the
+  repo). The template credit line is **not** shown in the site footer — see the
+  credit-removal note in [NOTES.md](NOTES.md).
+- Photography & films: the "KIZAZI 2026" album — photos vendored in
+  `img/gallery/`, films embedded from Drive.
 - Copy: drafted for review — see [NOTES.md](NOTES.md).

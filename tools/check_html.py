@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""KIZAZI Phenomenal — HTML sanity checker.
+"""KIZAZI Phenomenal, HTML sanity checker.
 
 Verifies every page at the repo root:
   * starts with <!DOCTYPE html>
@@ -89,7 +89,7 @@ def main():
         else:
             print("ok   %s" % name)
     print()
-    print("all %d pages valid" % len(files) if ok else "problems found — see above")
+    print("all %d pages valid" % len(files) if ok else "problems found, see above")
     return 0 if ok else 1
 
 

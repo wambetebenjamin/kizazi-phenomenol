@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""KIZAZI Phenomenal — shared build data & site chrome (BabyCare-template edition).
+"""KIZAZI Phenomenal, shared build data & site chrome (BabyCare-template edition).
 
 The site is a faithful BabyCare (HTML Codex) build: same markup structure, same
 fonts (Fredoka + Montserrat), same palette (pink #FF4880 / blue #4D65F9 from the
@@ -8,8 +8,10 @@ template's own css/bootstrap.min.css).  This module holds everything the pages
 share:
 
   * external links (registration form, Friday Meet, socials)
-  * the 42 "KIZAZI 2026" Google Drive photo IDs + <img data-drive=...> helpers
-  * the Drive video list (easy to fill — see VIDEOS below)
+  * the 42 "KIZAZI 2026" photos, vendored in img/gallery/01.jpg … 42.jpg
+    (Drive file IDs kept in PHOTOS as the refresh registry: see
+    tools/fetch_gallery_photos.py)
+  * the Drive video list (easy to fill, see VIDEOS below)
   * shared chrome: head / spinner / topbar+navbar / search modal / page-header /
     footer / copyright / back-to-top / scripts
   * content data: ministries, programs, events, blog, teams, testimonies
@@ -19,7 +21,10 @@ Edit the data below, then run:  python3 tools/build.py
 """
 
 import html as _html
+import os as _os
 import re as _re
+
+_ROOT = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 
 # ------------------------------------------------------------- external links
 REG_URL = "https://forms.gle/vzRJrigBHCNormVA9"
@@ -57,9 +62,11 @@ PAGES = [
 ]
 DROPDOWN_KEYS = ("gallery", "blog", "team", "testimonial")
 
-# ------------------------------------------------- "KIZAZI 2026" Drive photos
-# Public Google Drive file IDs (shared album). Resolved in the browser by
-# js/kizazi.js:  drive thumbnail -> lh3 -> uc?export=view -> local placeholder.
+# ------------------------------------------- "KIZAZI 2026" photos (vendored)
+# The photos are vendored in img/gallery/01.jpg … 42.jpg (01.jpg == PHOTOS[0]).
+# The Google Drive file IDs below are the refresh registry: re-download with
+#   python3 tools/fetch_gallery_photos.py
+# after editing this list.
 PHOTOS = [
     "1w2oIGh9BBn2tXBDsNy8CvpZQywT6Qceh",   # 0
     "13BJwgGhr6XDHC9h13ByCXUag3ViLt4pK",   # 1
@@ -107,7 +114,7 @@ PHOTOS = [
 
 assert len(PHOTOS) == 42, "expected exactly 42 Drive photo IDs"
 
-# Gallery filter categories — assigned round-robin (see NOTES.md).
+# Gallery filter categories, assigned round-robin (see NOTES.md).
 GALLERY_CATS = [
     ("worship", "Worship"),
     ("word", "Word"),
@@ -118,7 +125,7 @@ GALLERY_CATS = [
 ]
 
 FOOTER_GRID = [28, 29, 30, 31, 32, 33]
-HERO_PHOTO = 0            # index into PHOTOS for the home hero background
+HERO_PHOTO = 0            # index into PHOTOS (hero fallback; see HERO_SLIDES)
 PAGE_HEADER_PHOTO = 1     # default inner-page header background
 ABOUT_PHOTO = 2           # the "video" panel behind the play button
 FOOTER_PHOTO = 3
@@ -131,7 +138,7 @@ FOOTER_PHOTO = 3
 #   ("https://drive.google.com/file/d/1AbCdEf.../view", ... )
 # Videos are embedded with Google Drive's player (file must be shared publicly).
 VIDEOS = [
-    # ("FILE_ID", "KIZAZI 2026 — Highlight Film", "Two days that shook us.", 10, "Highlights"),
+    # ("FILE_ID", "KIZAZI 2026: Highlight Film", "Two days that shook us.", 10, "Highlights"),
 ]
 
 _DRIVE_ID_RE = _re.compile(r"[-\w]{20,}")
@@ -165,26 +172,92 @@ def videos():
     return out
 
 
+def photo_file(i):
+    """Vendored file for PHOTOS[i]: img/gallery/01.jpg up to 42.jpg (w1600 quality)."""
+    return "img/gallery/%02d.jpg" % (i + 1)
+
+
 def durl(i, w=1600):
-    """Primary hotlinkable Drive URL (also used as the lightbox target)."""
-    return "https://drive.google.com/thumbnail?id=%s&sz=w%d" % (PHOTOS[i], w)
+    """Local full-quality photo (lightbox target). `w` kept for call compatibility."""
+    return photo_file(i)
 
 
 def img(i, alt="", cls="", w=1600, extra=""):
-    """<img> that js/kizazi.js hydrates from data-drive with fallbacks."""
-    return ('<img data-drive="%s" data-drive-w="%d" class="%s" alt="%s" loading="lazy"%s>'
-            % (PHOTOS[i], w, cls, _html.escape(alt), (" " + extra) if extra else ""))
+    """<img> pointing at the vendored file in img/gallery/ (alt + lazy kept)."""
+    return ('<img src="%s" class="%s" alt="%s" loading="lazy"%s>'
+            % (photo_file(i), cls, _html.escape(alt), (" " + extra) if extra else ""))
 
 
 def bg(i, w=1600):
-    """Inline style attr feeding a Drive photo to a CSS background."""
-    return ('data-drive-bg="%s" data-drive-bg-w="%d" '
-            'style="--kz-photo: url(\'%s\');"' % (PHOTOS[i], w, durl(i, w)))
+    """Inline style attr feeding a local photo to a CSS background via --kz-photo
+    (consumed as `background-image: …, var(--kz-photo)` in css/kizazi.css)."""
+    return "style=\"--kz-photo: url('%s');\"" % photo_file(i)
+
+
+def bg_file(path):
+    """Same as bg() but for a photo outside the PHOTOS registry (e.g. img/hero/)."""
+    return "style=\"--kz-photo: url('%s');\"" % path
 
 
 def gallery_cat(i):
     key, label = GALLERY_CATS[i % len(GALLERY_CATS)]
     return key, label
+
+
+# ------------------------------------------------ home hero "transition" pics --
+# The four photos uploaded on 2026-09-21 for "the top of the first page".
+# index.html crossfades between them behind the hero copy; HERO_SLIDE_BG is the
+# still frame used when animations are off (prefers-reduced-motion) and the
+# fallback painted through --kz-photo.
+HERO_SLIDES = [
+    "img/hero/01.jpg",   # the family together, outdoors
+    "img/hero/02.jpg",   # standing room, hands joined
+    "img/hero/03.jpg",   # praying over one another
+    "img/hero/04.jpg",   # the embrace
+]
+HERO_SLIDE_BG = HERO_SLIDES[0]
+
+# ------------------------------------------------------ family description ---
+# Exact copy supplied 2026-09-21. The asterisk in the brief marks emphasis, so
+# "Ministers' Kids" is italic in FAMILY_DESC_HTML while FAMILY_DESC stays the
+# plain-text form (what the bare text of a page reads).
+FAMILY_DESC = ("We are on a mission to grow stronger, connect deeper, and shine "
+               "brighter as Ministers' Kids")
+FAMILY_DESC_HTML = ("We are on a mission to grow stronger, connect deeper, and shine "
+                    "brighter as <em>Ministers' Kids</em>")
+FAMILY_WHO = "We are Ministers' Kids."
+
+# ---------------------------------------------------------- portraits/people ---
+# Named people: the admin team and the Patron. Portraits are vendored in
+# img/team/<slug>.jpg and consent to publish is logged in NOTES.md. Roles stay
+# "Admin" or "Patron" only (no invented titles). `photo` wins over any gallery
+# index so an entry can be added the moment its JPEG lands in img/team/.
+PEOPLE = [
+    # dict(name="Full Name", role="Admin", photo="img/team/full-name.jpg",
+    #      line="One short line about what they carry.", team="Ministry name"),
+]
+PATRON = dict(
+    name="Reverend Dr. Joslyn Isigi",
+    role="Patron",
+    photo="img/team/reverend-dr-joslyn-isigi.jpg",
+    line="",
+)
+
+
+def people():
+    """Portrait entries that actually exist on disk (safe to render)."""
+    out = []
+    for p in PEOPLE:
+        if p.get("photo") and _os.path.exists(_os.path.join(_ROOT, p["photo"])):
+            out.append(p)
+    return out
+
+
+def patron():
+    """The Patron entry, or None while the portrait is not in img/team/."""
+    if PATRON.get("photo") and _os.path.exists(_os.path.join(_ROOT, PATRON["photo"])):
+        return PATRON
+    return None
 
 
 # ------------------------------------------------------------------- chrome ---
@@ -228,7 +301,7 @@ def head(title, desc):
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
 
-        <!-- KIZAZI add-ons (Drive photos, gallery filter, video cards) -->
+        <!-- KIZAZI add-ons (gallery photos, video cards, filter & search) -->
         <link href="css/kizazi.css" rel="stylesheet">
     </head>
 """ % {"title": _html.escape(title), "desc": _html.escape(desc)}
@@ -292,7 +365,7 @@ def topbar_navbar(active):
             <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius: 0 40px">
                 <div class="d-flex justify-content-between">
                     <div class="top-info ps-2">
-                        <small class="me-3"><i class="fas fa-globe-africa me-2 text-secondary"></i> <a href="about.html" class="text-white">Serving East Africa &mdash; %(countries)s</a></small>
+                        <small class="me-3"><i class="fas fa-globe-africa me-2 text-secondary"></i> <a href="about.html" class="text-white">Serving East Africa: %(countries)s</a></small>
                         <small class="me-3"><i class="fas fa-video me-2 text-secondary"></i><a href="%(meet)s" target="_blank" rel="noopener" class="text-white">This Friday &middot; Online Catch-Up &middot; 8:00 PM EAT</a></small>
                     </div>
                     <div class="top-link pe-2">
@@ -414,15 +487,15 @@ def footer():
                     <div class="col-md-6 col-lg-4 col-xl-3">
                         <div class="footer-item">
                             <h2 class="fw-bold mb-3"><span class="text-primary mb-0">KIZAZI</span> <span class="text-secondary">Phenomenal</span></h2>
-                            <p class="mb-4">%(tagline)s A Christian youth movement across %(countries)s &mdash; worship that moves, discipleship that sticks, a family that carries you.</p>
-                            <p class="text-dark fst-italic mb-4">&ldquo;%(verse_short)s&hellip;&rdquo; &mdash; %(verse_ref)s</p>
+                            <p class="mb-4">%(tagline)s A Christian youth movement across %(countries)s: worship that moves, discipleship that sticks, a family that carries you. We are on a mission to grow stronger, connect deeper, and shine brighter as <em>Ministers' Kids</em>.</p>
+                            <p class="text-dark fst-italic mb-4">&ldquo;%(verse_short)s&hellip;&rdquo; &middot; %(verse_ref)s</p>
                             <div class="border border-primary p-3 rounded bg-light">
                                 <h5 class="mb-3">Newsletter</h5>
                                 <form class="kz-newsletter position-relative mx-auto border border-primary rounded" style="max-width: 400px;" novalidate>
                                     <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="email" placeholder="Your email" aria-label="Your email" required>
                                     <button type="submit" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2 text-white">SignUp</button>
                                 </form>
-                                <p class="kz-newsletter-note mb-0 mt-2 small text-muted">Announcements only &mdash; nothing is stored or shared.</p>
+                                <p class="kz-newsletter-note mb-0 mt-2 small text-muted">Announcements only. Nothing is stored or shared.</p>
                             </div>
                         </div>
                     </div>
@@ -446,7 +519,7 @@ def footer():
                                 <div class="footer-icon d-flex mt-2">
 %(socials)s
                                 </div>
-                                <p class="small text-muted mt-3 mb-0"><i class="fas fa-link me-1"></i> %(linktree)s &mdash; one link for everything.</p>
+                                <p class="small text-muted mt-3 mb-0"><i class="fas fa-link me-1"></i> %(linktree)s: one link for everything.</p>
                             </div>
                         </div>
                     </div>
@@ -473,8 +546,7 @@ def footer():
                         <span class="text-light"><a href="index.html" class="text-light"><i class="fas fa-copyright text-light me-2"></i>KIZAZI Phenomenal</a>, All right reserved.</span>
                     </div>
                     <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
+                        %(tagline)s %(verse_ref)s
                     </div>
                 </div>
             </div>
@@ -510,7 +582,7 @@ def scripts():
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <!-- KIZAZI: Drive photos & videos, next-Friday dates, gallery filter, search -->
+    <!-- KIZAZI: next-Friday dates, gallery filter, search, newsletter note -->
     <script src="js/kizazi.js"></script>
     </body>
 
@@ -519,12 +591,12 @@ def scripts():
 
 
 # -------------------------------------------------------------- content data ---
-# 8 ministries — (slug, icon, name, blurb, detail, [what to expect])
+# 8 ministries: (slug, icon, name, blurb, detail, [what to expect])
 MINISTRIES = [
     ("worship-word", "fa-music", "Worship &amp; The Word",
      "Songs that move and messages that stick.",
      "Worship that gets you on your feet, and the Word taught without fluff. "
-     "This is the heartbeat of KIZAZI &mdash; everything else flows from time with God.",
+     "This is the heartbeat of KIZAZI: everything else flows from time with God.",
      ["Friday catch-ups with live worship &amp; teaching", "Worship &amp; Word Nights through the term", "Worshipper and teacher tracks if you want to lead"]),
     ("cells", "fa-users", "Discipleship Cells",
      "Small groups where nobody fakes it.",
@@ -534,21 +606,21 @@ MINISTRIES = [
     ("prayer", "fa-hands-praying", "Prayer &amp; Intercession",
      "The room where heaven gets serious.",
      "We believe prayer changes the atmosphere of a generation. A constant watch "
-     "intercedes for East Africa, for our campuses and for the family &mdash; before and between every gathering.",
-     ["Prayer before every event &mdash; join in", "Rotating intercession teams", "National &amp; campus prayer lists shared weekly"]),
+     "intercedes for East Africa, for our campuses and for the family, before and between every gathering.",
+     ["Prayer before every event, join in", "Rotating intercession teams", "National &amp; campus prayer lists shared weekly"]),
     ("friday", "fa-video", "Friday Online Catch-Up",
      "Every Friday, 8:00 PM EAT. Same time, different fire.",
      "Our weekly online gathering: worship, a Word bite, prayers and connection "
      "across Kenya, Uganda, Tanzania and Rwanda. One link, whole family.",
-     ["Live on Google Meet, 8:00 PM EAT", "Worship, teaching and prayer every week", "Open to everyone &mdash; no registration needed to join in"]),
+     ["Live on Google Meet, 8:00 PM EAT", "Worship, teaching and prayer every week", "Open to everyone, no registration needed to join in"]),
     ("outreach", "fa-globe-africa", "Outreach &amp; Missions",
      "A generation that can&rsquo;t stay home.",
-     "Campus visits, school tours and Serve East Africa trips &mdash; we take the "
+     "Campus visits, school tours and Serve East Africa trips: we take the "
      "gospel and the gospel&rsquo;s hands-on love to campuses, communities and borders.",
      ["Campus &amp; school tours each term", "Serve East Africa cross-border trips", "Outreach teams that plan and fundraise together"]),
     ("creative", "fa-pen-nib", "Creative &amp; Media Lab",
      "Where the KIZAZI story gets made.",
-     "Design, video, socials, set and stage &mdash; our lab turns worship into something "
+     "Design, video, socials, set and stage: our lab turns worship into something "
      "the generation can see, feel and share. Every album shot you see was made here.",
      ["Monthly creative workshops", "Media crew for every event", "Publishing across TikTok, Instagram &amp; Facebook"]),
     ("mentorship", "fa-graduation-cap", "Mentorship &amp; Career",
@@ -558,25 +630,25 @@ MINISTRIES = [
      ["1-on-1 and small-group mentoring", "Career clinics &amp; CV nights in term", "Scholarship and application support"]),
     ("care", "fa-heart", "Community &amp; Care",
      "Family means nobody carries it alone.",
-     "Birthdays, hospital visits, grief, homesickness &mdash; care is a ministry. "
+     "Birthdays, hospital visits, grief, homesickness: care is a ministry. "
      "Hospitality at every event, check-ins through the week, and a family that notices.",
      ["Hospitality &amp; reception at events", "Weekly check-ins in the cells", "Care funds for families in crisis"]),
 ]
 
-# 6 programs — (name, rate badge, photo_i, desc, leader, leader initials, when, where, sits/lessons/hours-style meta)
+# 6 programs: (name, rate badge, photo_i, desc, leader, leader initials, when, where, sits/lessons/hours-style meta)
 PROGRAMS = [
     ("Rooted", "Free &middot; 12 weeks", 4,
-     "A 12-week discipleship journey through the basics that don&rsquo;t get skipped &mdash; "
+     "A 12-week discipleship journey through the basics that don&rsquo;t get skipped: "
      "who God is, how to hear from Him, how to pray, how to live on purpose.",
      "Discipleship Cells", "DC", "New intake each term", "Online + in person",
      ("30 seats", "12 weeks", "3 sessions / wk")),
     ("Phenomenal Fridays", "Weekly", 5,
-     "The heartbeat: worship, a Word bite, prayer and connection &mdash; live every "
+     "The heartbeat: worship, a Word bite, prayer and connection, live every "
      "Friday at 8:00 PM EAT on Google Meet, across East Africa.",
      "Worship &amp; The Word", "WW", "Every Friday", "Google Meet",
      ("Open to all", "8:00 PM EAT", "60 minutes")),
     ("KIZAZI Creative Lab", "Term intake", 6,
-     "Worship, design, video and media workshops for the makers &mdash; learn to build "
+     "Worship, design, video and media workshops for the makers: learn to build "
      "what the movement puts in front of the generation.",
      "Creative &amp; Media Lab", "CM", "Monthly sessions", "Studio + online",
      ("20 seats", "6 modules", "1 project / mo")),
@@ -586,7 +658,7 @@ PROGRAMS = [
      "Mentorship &amp; Career", "MC", "Ongoing", "1-on-1 + small group",
      ("1-on-1", "Bi-weekly", "All year")),
     ("Campus Ambassadors", "Recruiting now", 8,
-     "Plant and lead KIZAZI on your campus &mdash; toolkits, training and a network of "
+     "Plant and lead KIZAZI on your campus: toolkits, training and a network of "
      "ambassadors across East African universities.",
      "Outreach &amp; Missions", "OM", "During term", "Your campus",
      ("4 nations", "1 toolkit", "Termly meet")),
@@ -597,18 +669,18 @@ PROGRAMS = [
      ("1 team", "1 border", "1 mission")),
 ]
 
-# 4 events — dict(title, tag, photo_i, desc, when, time, place, cta_label, cta_url, date_mode)
+# 4 events: dict(title, tag, photo_i, desc, when, time, place, cta_label, cta_url, date_mode)
 EVENTS = [
-    dict(title="Phenomenal Friday &mdash; Online Catch-Up", tag="Weekly", photo=10,
-         desc="Worship, a Word bite, prayer and connection &mdash; live from across East Africa.",
+    dict(title="Phenomenal Friday: Online Catch-Up", tag="Weekly", photo=10,
+         desc="Worship, a Word bite, prayer and connection, live from across East Africa.",
          when="friday", time="8:00 PM EAT", place="Google Meet",
          cta_label="Join Live", cta_url=MEET_URL),
     dict(title="KIZAZI Conference 2027", tag="2027 Flagship", photo=11,
-         desc="The next flagship. Two days of worship, word and fire &mdash; details as they drop.",
+         desc="The next flagship. Two days of worship, word and fire. Details as they drop.",
          when="Aug 2027", time="Full-day", place="East Africa",
          cta_label="Get Notified", cta_url=REG_URL),
     dict(title="Worship &amp; Word Night", tag="Monthly", photo=12,
-         desc="One night a month we gather in person &mdash; deeper worship, uncut Word.",
+         desc="One night a month we gather in person: deeper worship, uncut Word.",
          when="Monthly", time="Evening", place="In person + stream",
          cta_label="Follow for the Date", cta_url=INSTAGRAM_URL),
     dict(title="Campus &amp; School Tour", tag="Termly", photo=13,
@@ -617,41 +689,41 @@ EVENTS = [
          cta_label="Host Us", cta_url=REG_URL),
 ]
 
-# Blog — (title, date, team, team initials, photo_i, tag, body paragraphs)
+# Blog: (title, date, team, team initials, photo_i, tag, body paragraphs)
 BLOG = [
     ("What it means to be a &ldquo;phenomenal&rdquo; generation",
      "12 Aug 2026", "Media &amp; Creative Crew", "CM", 14, "Devotional",
-     ["&ldquo;Let no one despise you for your youth&rdquo; &mdash; that&rsquo;s not a permission slip, "
+     ["&ldquo;Let no one despise you for your youth&rdquo;. That&rsquo;s not a permission slip, "
       "it&rsquo;s a commission. Paul isn&rsquo;t telling Timothy he&rsquo;s too young; he&rsquo;s telling him the world "
       "will be looking for a reason to dismiss him, and the best answer is a life.",
       "A phenomenal generation isn&rsquo;t louder or flashier than the one before it. It&rsquo;s a "
-      "generation that sets the example &mdash; in speech, in conduct, in love, in faith, in purity. "
+      "generation that sets the example: in speech, in conduct, in love, in faith, in purity. "
       "The example, not the argument, is what gets people asking questions.",
-      "So this week, don&rsquo;t defend your faith &mdash; display it. Let your cell, your campus and your "
+      "So this week, don&rsquo;t defend your faith, display it. Let your cell, your campus and your "
       "timeline make the claim. The generation on fire is the generation that shows up first."]),
     ("KIZAZI 2026: two days that shook us",
      "18 Aug 2026", "Conference Crew", "CC", 15, "Recap",
-     ["14&ndash;15 August. Two days. One generation refusing to sit down. "
-      "We don&rsquo;t have a highlight film ready yet, but we have the photos &mdash; and if you "
+     ["14 to 15 August. Two days. One generation refusing to sit down. "
+      "We don&rsquo;t have a highlight film ready yet, but we have the photos. If you "
       "weren&rsquo;t there, the gallery is the closest thing to the feeling.",
       "There was worship that went past sound-check, prayers that went past the hour, "
       "and a Word that landed harder than any sermon should. Students crossed borders "
       "to be in the room, and the room was still not big enough.",
       "If you missed it: the next flagship is already being built. Keep your eyes on "
-      "our socials &mdash; Conference 2027 dates are coming, and this time, be in it."]),
+      "our socials. Conference 2027 dates are coming, and this time, be in it."]),
     ("Staying rooted between the Fridays: 5 habits",
      "5 Sep 2026", "Discipleship Cells", "DC", 16, "Practical",
      ["Fridays are the heartbeat, but faith lives in the four days between. Here are the "
-      "five habits we keep preaching in the cells &mdash; because consistency is the culture.",
+      "five habits we keep preaching in the cells, because consistency is the culture.",
       "1) Five verses before five minutes of scrolling. 2) One prayer you can actually "
       "finish saying out loud. 3) One person in your cell you check on before the weekend. "
       "4) One honest question you&rsquo;re not afraid to bring next Friday. 5) One act of care "
-      "no one asked for &mdash; sent, done, unposted.",
-      "None of these are big. That&rsquo;s the point. Rooted doesn&rsquo;t grow by leaps &mdash; "
+      "no one asked for: sent, done, unposted.",
+      "None of these are big. That&rsquo;s the point. Rooted doesn&rsquo;t grow by leaps; "
       "it grows by never missing."]),
 ]
 
-# Serving teams (ROLES, not named people) — (initials, name, desc, ministry, photo_i)
+# Serving teams (ROLES, not named people): (initials, name, desc, ministry, photo_i)
 TEAMS = [
     ("WS", "Worship &amp; Sound", "Leads the band, the keys and the sound board.", "Worship &amp; The Word", 17),
     ("WW", "Word &amp; Teaching Team", "Preps and delivers Word nights and Friday messages.", "Worship &amp; The Word", 18),
@@ -659,20 +731,20 @@ TEAMS = [
     ("DM", "Discipleship Mentors", "Walks with small groups through the Rooted journey.", "Discipleship Cells", 20),
     ("CM", "Media &amp; Creative Crew", "Captures, designs and publishes the KIZAZI story.", "Creative &amp; Media Lab", 21),
     ("OM", "Outreach &amp; Missions Team", "Runs campus visits, school tours and Serve East Africa trips.", "Outreach &amp; Missions", 22),
-    ("SH", "Service &amp; Hospitality", "Reception, refreshments, welcome &mdash; the family&rsquo;s front door.", "Community &amp; Care", 23),
+    ("SH", "Service &amp; Hospitality", "Reception, refreshments, welcome: the family&rsquo;s front door.", "Community &amp; Care", 23),
     ("MC", "Mentorship &amp; Career Crew", "Matches students with mentors for school, work and purpose.", "Mentorship &amp; Career", 24),
 ]
 
-# Testimonies — initial-only, illustrative (see NOTES.md). (initials, label, quote)
+# Testimonies: initial-only, illustrative (see NOTES.md). (initials, label, quote)
 TESTIMONIALS = [
     ("K.", "Joined online, Kampala",
-     "I opened the Friday link as a joke &mdash; I was half an hour from anywhere. "
+     "I opened the Friday link as a joke. I was half an hour from anywhere. "
      "A year later I&rsquo;ve stopped joking. That cell is the first reason I passed my first year."),
     ("A.", "Campus Ambassador",
      "My campus didn&rsquo;t have a Christian club, let alone a fire. Now I get to say: "
      "you&rsquo;re not crazy, there&rsquo;s a generation, and it meets on Fridays."),
     ("M.", "Rooted graduate",
-     "Twelve weeks of &lsquo;what do you actually believe?&rsquo; &mdash; and I finally stopped faking "
+     "Twelve weeks of &lsquo;what do you actually believe?&rsquo;, and I finally stopped faking "
      "my faith and started learning it. Nobody in my family has prayed with me like my cell has."),
     ("T.", "First-year student",
      "I moved 2,000 km for university and was done for. Someone from Community &amp; Care "

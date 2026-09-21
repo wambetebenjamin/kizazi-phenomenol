@@ -1,14 +1,16 @@
 /* =========================================================================
-   KIZAZI Phenomenal — add-ons on top of the BabyCare template skin.
+   KIZAZI Phenomenal: add-ons on top of the BabyCare template skin.
    No new palette: every colour derives from the template's Bootstrap
-   variables (pink #FF4880 / blue #4D65F9).  This file only teaches the
-   template about (1) hotlinked Google-Drive photos, (2) video cards,
-   (3) initials avatars, (4) the gallery filter and (5) quick search.
+   variables (pink #FF4880 / blue #4D65F9).  This file only teaches
+   the template about (1) vendored gallery photos in img/gallery/ (with the
+   placeholder SVG as CSS last-resort), (2) photo backgrounds via --kz-photo,
+   (3) video cards, (4) initials avatars, (5) the gallery filter and
+   (6) quick search.
    ========================================================================= */
 
-/* ---------------------------------------------------- 1. Drive photos --- */
-img[data-drive] {
-    background: var(--bs-light);
+/* ------------------------------------------- 1. Vendored gallery photos --- */
+img.kz-cover {
+    background: var(--bs-light) url('img/brand/photo-placeholder.svg') center / cover no-repeat;
 }
 
 .kz-cover {
@@ -33,23 +35,23 @@ img[data-drive] {
     border-color: var(--bs-primary);
 }
 
-/* --------------------------------- 2. Drive photos as CSS backgrounds --- */
+/* ------------------------------- 2. Vendored photos as CSS backgrounds --- */
 .hero-header,
 .page-header {
     background-color: var(--bs-dark);
     background-image: linear-gradient(rgba(57, 61, 114, .78), rgba(57, 61, 114, .45)),
-        var(--kz-photo, none);
+        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
 .video {
     background-color: var(--bs-dark);
     background-image: linear-gradient(rgba(57, 61, 114, .18), rgba(57, 61, 114, .42)),
-        var(--kz-photo, none);
+        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
 .footer {
     background-image: linear-gradient(rgba(255, 255, 255, .93), rgba(255, 255, 255, .985)),
-        var(--kz-photo, none);
+        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
 .video.kz-video-thumb {
@@ -108,6 +110,96 @@ img[data-drive] {
 .kz-search-results .kz-search-empty {
     color: var(--bs-body-color);
     font-style: italic;
+}
+
+/* ---------------------------- 7. Home hero: the transition photos --------- */
+/* One .kz-hero-slide per file in HERO_SLIDES (tools/build_common.py), each
+   staggered 8s by the inline animation-delay build.py emits, so the 4-photo
+   cycle below is 32s.  Exactly one photo is at full opacity at any moment and
+   the crossfades overlap.  With fewer/more photos, change the cycle and the
+   keyframe percentages to match (N photos x 8s, visible slot = 100 / N %). */
+.hero-header.kz-hero,
+.kz-hero-slideshow {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--bs-dark);
+}
+
+.kz-hero-slides {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.kz-hero-slide {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* faces sit in the upper half of these wide event photos, so bias the
+       cover crop upwards when the hero is taller than the frame */
+    background-position: center 35%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0;
+    will-change: opacity;
+    animation: kz-hero-fade 32s linear infinite;
+}
+
+/* Keep the hero copy readable over every photo (same wash the single-photo
+   hero used, now painted on top of the rotating layers). */
+.kz-hero-slides::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: linear-gradient(rgba(57, 61, 114, .78), rgba(57, 61, 114, .45));
+}
+
+.kz-hero-slideshow > .container {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes kz-hero-fade {
+    0% { opacity: 0; }
+    3% { opacity: 1; }
+    25% { opacity: 1; }
+    28% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+/* No animation (reduced motion, or no CSS animation support): pin the first
+   transition photo, which is also the --kz-photo base layer. */
+@media (prefers-reduced-motion: reduce) {
+    .kz-hero-slide { animation: none; }
+    .kz-hero-slide:first-child { opacity: 1; }
+}
+
+/* ------------------- 8. Family description & portraits (people) ------------ */
+.kz-family-desc {
+    border-left: 4px solid var(--bs-primary);
+    background: var(--bs-light);
+    padding: .9rem 1.1rem;
+    border-radius: 0 10px 10px 0;
+    font-weight: 600;
+}
+
+.kz-family-desc em {
+    color: var(--bs-secondary);
+    font-style: italic;
+}
+
+.kz-portrait {
+    aspect-ratio: 4 / 5;
+    height: auto;
 }
 
 /* -------------------------------------------------------- 6. Misc --- */
