@@ -1,12 +1,22 @@
 /* =========================================================================
    KIZAZI Phenomenal: add-ons on top of the BabyCare template skin.
    No new palette: every colour derives from the template's Bootstrap
-   variables (pink #FF4880 / blue #4D65F9).  This file only teaches
-   the template about (1) vendored gallery photos in img/gallery/ (with the
-   placeholder SVG as CSS last-resort), (2) photo backgrounds via --kz-photo,
-   (3) video cards, (4) initials avatars, (5) the gallery filter and
-   (6) quick search.
+   variables (pink #FF4880 / blue #4D65F9).  This file teaches the template
+   about (1) vendored gallery photos in img/gallery/ (with the placeholder
+   SVG as CSS last-resort), (2) photo backgrounds via --kz-photo, (3) video
+   cards, (4) initials avatars, (5) the gallery filter, (6) quick search,
+   (7) the home hero crossfade, (8) the family description & portraits and
+   (9) the energy layer (one gradient token, marquee, sticker kickers,
+   card motion, counting stats, scroll progress, play pulse).
    ========================================================================= */
+
+/* The ONE gradient token of the energy layer: pink -> light pink -> blue,
+   straight from the template's palette (no new colours). It paints the
+   buttons, the sticker kickers, the stat numerals, the marquee rules, the
+   copyright rule and the scroll progress bar. */
+:root {
+    --kz-grad: linear-gradient(120deg, var(--bs-primary) 0%, var(--bs-light) 50%, var(--bs-secondary) 100%);
+}
 
 /* ------------------------------------------- 1. Vendored gallery photos --- */
 img.kz-cover {
@@ -216,6 +226,8 @@ img.kz-cover {
 
 .kz-moment:hover {
     border-color: var(--bs-primary);
+    transform: translateY(-6px) rotate(-.5deg);
+    box-shadow: 0 14px 24px rgba(57, 61, 114, .15);
 }
 
 .kz-moment:hover img {
@@ -231,6 +243,221 @@ img.kz-cover {
 
 .footer-item a.text-body:hover { color: var(--bs-secondary) !important; }
 
+/* =========================================================================
+   9. The energy layer: one gradient token, honest motion.
+   Everything below animates with transform/opacity only (no layout shift)
+   and switches off in the prefers-reduced-motion block at the end of this
+   file. Colours come from --kz-grad and the template's own variables only.
+   ========================================================================= */
+
+/* ------------------------------ 9.1 Buttons: the gradient, worn like a --
+   The template's own hover inversion (blue background, pink text) keeps
+   working: its `background` shorthand resets the gradient on hover. */
+.btn-primary,
+.btn-secondary {
+    background-color: var(--bs-primary);
+    background-image: var(--kz-grad);
+    border-color: transparent;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(57, 61, 114, .28);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-primary:focus,
+.btn-secondary:focus {
+    filter: brightness(.93);
+}
+
+/* --------------------------------- 9.2 Sticker kickers (h4 pills) --------
+   The template's h4.title-border-radius becomes a slightly tilted white
+   sticker pill carrying a gradient rule underneath. The pink underline the
+   bootstrap border classes drew is neutralised (transparent) so the token
+   owns the accent. */
+h4.title-border-radius {
+    position: relative;
+    background-color: #fff;
+    border-bottom: 2px solid transparent !important;
+    padding: .35rem 1.1rem !important;
+    transform: rotate(-1.5deg);
+}
+
+h4.title-border-radius::after {
+    content: "";
+    position: absolute;
+    left: 14%;
+    right: 14%;
+    bottom: 4px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--kz-grad);
+}
+
+/* ------------------------------------------------- 9.3 Marquee ticker -----
+   Strip under the navbar on every page. The phrase set (TICKER in
+   tools/build_common.py) is repeated exactly twice in the DOM, so the -50%
+   translate below loops seamlessly. transform only: no layout shift. */
+.kz-ticker {
+    position: relative;
+    overflow: hidden;
+    background: var(--bs-light);
+    padding: .5rem 0;
+}
+
+.kz-ticker::before,
+.kz-ticker::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--kz-grad);
+    z-index: 1;
+}
+
+.kz-ticker::before { top: 0; }
+
+.kz-ticker::after { bottom: 0; }
+
+.kz-ticker-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: kz-ticker-scroll 32s linear infinite;
+}
+
+.kz-ticker:hover .kz-ticker-track {
+    animation-play-state: paused;
+}
+
+.kz-ticker-item {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: .95rem;
+    color: var(--bs-dark);
+    white-space: nowrap;
+    padding: 0 1.1rem;
+}
+
+.kz-ticker-star {
+    font-size: .8rem;
+    background: var(--kz-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+@keyframes kz-ticker-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* ------------------------------------- 9.4 Lifting/tilting cards ---------
+   transform + shadow only (no layout). The template's inner hover effects
+   (icon inversion, image zoom, event overlay) keep working on top. */
+.service-item,
+.program-item,
+.events-item,
+.blog-item,
+.team-item,
+.kz-gallery-item > a {
+    transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.service-item:hover,
+.program-item:hover,
+.events-item:hover,
+.blog-item:hover,
+.team-item:hover,
+.kz-gallery-item > a:hover {
+    transform: translateY(-8px) rotate(-.5deg);
+    box-shadow: 0 16px 30px rgba(57, 61, 114, .15);
+}
+
+/* ------------------------------- 9.5 Pulsing play button (gradient ring) -
+   The template's own pulse-border animation drives the ring; this only
+   re-inks it in the gradient token. */
+.video .btn-play:before {
+    background: var(--kz-grad);
+}
+
+/* ----------------------------------------- 9.6 Counting stat numerals ----
+   About-page stats: the numerals wear the gradient. The final value stays
+   in the markup (js/kizazi.js counts data-kz-count targets up when they
+   scroll into view; no-JS and reduced-motion visitors read it as-is). */
+.kz-stat-num {
+    background: var(--kz-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ------------------------------------------------ 9.7 Scroll progress ----
+   A fixed gradient rule at the very top of the viewport. js/kizazi.js
+   drives it with transform: scaleX() only, so it never shifts layout. */
+.kz-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 1060;
+    pointer-events: none;
+}
+
+.kz-progress-bar {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--kz-grad);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+}
+
+/* --------------------------------------------- 9.8 Copyright rule --------
+   The gradient line capping the copyright bar. */
+.copyright {
+    position: relative;
+}
+
+.copyright::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--kz-grad);
+}
+
+/* ============================ Reduced motion: every animation off ======== */
 @media (prefers-reduced-motion: reduce) {
     .wow { animation: none !important; visibility: visible !important; }
+
+    /* Energy layer, switched off (js/kizazi.js checks the same media
+       query and skips the count-up; the progress bar stays, since it
+       tracks the user's own scrolling instead of running on its own). */
+    .kz-ticker-track { animation: none !important; }
+    .service-item,
+    .program-item,
+    .events-item,
+    .blog-item,
+    .team-item,
+    .kz-moment,
+    .kz-gallery-item > a {
+        transition: none !important;
+    }
+    .service-item:hover,
+    .program-item:hover,
+    .events-item:hover,
+    .blog-item:hover,
+    .team-item:hover,
+    .kz-moment:hover,
+    .kz-gallery-item > a:hover {
+        transform: none !important;
+        box-shadow: none;
+    }
+    .video .btn-play:before { animation: none !important; }
 }

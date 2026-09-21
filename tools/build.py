@@ -18,8 +18,8 @@ from build_common import (
     HERO_SLIDES, INSTAGRAM_URL, LINKTREE_NOTE, MEET_URL, MINISTRIES, PAGES,
     PATRON, PEOPLE, PHOTOS, PROGRAMS, REG_URL, SITE, TEAMS, TESTIMONIALS,
     TIKTOK_URL, FACEBOOK_URL, back_to_top, bg, bg_file, body_open, durl, footer, head,
-    img, page_header, patron, people, scripts, section_head, social_buttons,
-    spinner, topbar_navbar, video_embed, video_modal, videos,
+    img, page_header, patron, people, scroll_progress, scripts, section_head,
+    social_buttons, spinner, topbar_navbar, video_embed, video_modal, videos,
 )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -415,7 +415,7 @@ def testimonials_carousel():
 
 
 def page(title, desc, active, body, with_video_modal=True):
-    parts = [head(title, desc), body_open(), spinner(), topbar_navbar(active)]
+    parts = [head(title, desc), body_open(), scroll_progress(), spinner(), topbar_navbar(active)]
     if with_video_modal:
         parts.append(video_modal())
     parts.append(body)
@@ -572,16 +572,19 @@ def build_index():
 
 
 def build_about():
-    stats = [("4", "Nations served"), ("500+", "Young people reached"),
-             ("8", "Ministries"), ("52", "Fridays a year")]
+    # (value, suffix, label). The numeral carries data-kz-count so js/kizazi.js
+    # counts it up when it scrolls into view; the final text ("500+") stays in
+    # the markup, so no-JS and reduced-motion visitors read the real number.
+    stats = [(4, "", "Nations served"), (500, "+", "Young people reached"),
+             (8, "", "Ministries"), (52, "", "Fridays a year")]
     stat_html = "".join(
         """                    <div class="col-6 col-lg-3 wow fadeIn" data-wow-delay="0.%ds">
                         <div class="text-center border border-primary bg-white p-4 rounded h-100">
-                            <h1 class="display-4 text-primary mb-0">%s</h1>
+                            <h1 class="display-4 kz-stat-num mb-0" data-kz-count="%s" data-kz-suffix="%s">%s%s</h1>
                             <p class="text-body mb-0">%s</p>
                         </div>
                     </div>
-""" % (1 + n * 2, v, l_) for n, (v, l_) in enumerate(stats))
+""" % (1 + n * 2, v, suf, v, suf, l_) for n, (v, suf, l_) in enumerate(stats))
     values = [
         ("fa-fire", "On fire", "Worship and prayer first: everything else is overflow."),
         ("fa-book-open", "In the Word", "Scripture taught plainly, questioned honestly, lived loudly."),

@@ -54,14 +54,24 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
   with the circular photo grid, copyright bar (right slot:
   "A generation on fire for God. — 1 Timothy 4:12"),
   back-to-top button, WOW scroll animations, Lightbox, pulsing play button.
-- **KIZAZI add-ons** — `css/kizazi.css` (~150 lines, no new palette): teaches the
+- **KIZAZI add-ons** — `css/kizazi.css` (no new palette): teaches the
   template about vendored gallery photos/backgrounds (placeholder SVG as
-  CSS last-resort), video cards, initials
-  avatars, the gallery filter and quick-search results.
+  CSS last-resort), video cards, initials avatars, the gallery filter,
+  quick-search results, the home hero crossfade and the energy layer below.
+- **Energy layer** (section 9 of `css/kizazi.css` + behaviours 6-7 of
+  `js/kizazi.js`) — one gradient token, `--kz-grad` (pink → light pink → blue,
+  the template's own colours, **no gold / no orange**), worn by the buttons,
+  the sticker kicker pills, the about-page stat numerals, the marquee rules,
+  the copyright rule and the scroll progress bar. Plus the marquee ticker
+  under the navbar (phrases in `TICKER`, `tools/build_common.py`),
+  lifting/tilting cards, counting stats (`data-kz-count`) and the pulsing
+  play-button ring. Motion stays honest: transform/opacity only, no layout
+  shift, and every animation is off under `prefers-reduced-motion` (the block
+  at the end of `css/kizazi.css`).
 - **Behaviour** — `js/main.js` (the template's script: spinner, WOW, back-to-top,
-  carousel, video modal) + `js/kizazi.js` (next-Friday
-  dates, gallery filter, quick search, newsletter note — plus a JS last-resort
-  placeholder for a broken photo).
+  carousel, video modal) + `js/kizazi.js` (next-Friday dates, gallery filter,
+  quick search, newsletter note, scroll progress bar, counting stats — plus
+  a JS last-resort placeholder for a broken photo).
 
 ## Photos
 
@@ -109,27 +119,49 @@ logged in [NOTES.md](NOTES.md).
 
 ### Refreshing the photos
 
-The Drive file IDs stay registered in `PHOTOS` (`tools/build_common.py`).
-To re-download them (or after editing `PHOTOS`), run on a machine with
-internet access to Google Drive:
+The Drive file IDs stay registered in `PHOTOS` (`tools/build_common.py`) and
+the committed bytes in `img/gallery/manifest.json` (Drive ID, SHA-256 and
+byte size per photo, in `PHOTOS` order). Commit the JPEGs **and** the
+manifest together.
 
 ```bash
-python3 tools/fetch_gallery_photos.py   # writes img/gallery/01.jpg … 42.jpg
-git add img/gallery && git commit -m "Refresh KIZAZI 2026 photos"
+python3 tools/fetch_gallery_photos.py            # manifest-aware refresh:
+                                                 # skips photos whose bytes
+                                                 # already match the manifest
+python3 tools/fetch_gallery_photos.py --force \
+    --changed-out /tmp/changed.txt               # re-download all 42 and
+                                                 # list the ones that changed
+python3 tools/fetch_gallery_photos.py --verify   # offline: 42 real JPEGs
+                                                 # > 10 KB, hashes match the
+                                                 # manifest, order matches PHOTOS
+python3 tools/fetch_gallery_photos.py --manifest-only   # rebuild the manifest
+                                                 # from files already on disk
+                                                 # (browser-assisted route)
 ```
 
-The script probes the first ID and **refuses to run on HTTP 403/404** — share
-the "KIZAZI 2026" folder as *"Anyone with the link → Viewer"* first. It falls
-back across Drive hosts (`drive.google.com/thumbnail` →
-`lh3.googleusercontent.com` → `drive.google.com/uc`) and verifies every file
-is a real JPEG > 10 KB before writing it.
+A re-run on an unchanged album is a no-op: zero re-downloads, zero diff,
+nothing to commit. The script probes the first ID and **refuses to run on
+HTTP 403/404** — share the "KIZAZI 2026" folder as *"Anyone with the link
+→ Viewer"* first. It falls back across Drive hosts
+(`drive.google.com/thumbnail` → `lh3.googleusercontent.com` →
+`drive.google.com/uc`) and verifies every file is a real JPEG > 10 KB before
+writing it.
 
-> No direct Google access (restricted sandbox / CI)? Two helpers:
-> run `python3 tools/fetch_gallery_server.py` and open the served
-> `/__fetch.html` page in a normal browser — it fetches the photos through
-> the browser and writes them into `img/gallery/`. Or copy
-> `tools/fetch-gallery-photos.workflow.yml` to `.github/workflows/` (needs a
-> token with `workflows` write) and let GitHub Actions download and commit them.
+**Automated:** `.github/workflows/fetch-gallery-photos.yml` (source template
+`tools/fetch-gallery-photos.workflow.yml`) runs the same script on a weekly
+schedule (Mondays 06:30 UTC) and on demand (`workflow_dispatch`), verifies,
+and commits `img/gallery/` **only when something changed** (the commit
+message lists the changed photo names from `--changed-out`). No secrets are
+needed: the album is public via link sharing and the job declares
+`contents: write` on the default `GITHUB_TOKEN`.
+
+> No direct Google access (restricted sandbox / CI)? Run
+> `python3 tools/fetch_gallery_server.py 8123 --fetch-root` and open the
+> served page (the preview of port 8123) in a normal browser, then click
+> "Fetch all 42 photos": your browser downloads each photo and POSTs it
+> back, writing `img/gallery/01.jpg … 42.jpg`. When it is done, run
+> `python3 tools/fetch_gallery_photos.py --manifest-only` and then
+> `python3 tools/fetch_gallery_photos.py --verify`.
 
 ## Copy conventions
 
@@ -190,10 +222,13 @@ python3 tools/build.py        # regenerates all 11 pages at the repo root
   `HERO_SLIDES`, the `FAMILY_DESC` copy, the `PEOPLE`/`PATRON` portraits,
   ministries/programs/events/blog/teams/testimonies, and the shared chrome.
 - `tools/build.py` — the per-page bodies, composed from the template's components.
-- `tools/fetch_gallery_photos.py` — re-downloads `img/gallery/` from Drive.
-- `tools/fetch_gallery_server.py` — browser-assisted fetcher (writes `img/gallery/`
-  via `/__fetch.html`) for machines without direct Google access;
-  `tools/fetch-gallery-photos.workflow.yml` is the CI variant.
+- `tools/fetch_gallery_photos.py` — refreshes `img/gallery/` + the manifest
+  from Drive (manifest-aware, `--force`, `--changed-out`, `--manifest-only`,
+  `--verify`).
+- `tools/fetch_gallery_server.py` — browser-assisted fetcher (serves the
+  fetch page at `/` with `--fetch-root`) for machines without a route to
+  Google; `tools/fetch-gallery-photos.workflow.yml` is the CI variant, live
+  at `.github/workflows/fetch-gallery-photos.yml` (weekly + on demand).
 
 Every content assumption is logged in [NOTES.md](NOTES.md) — please review it.
 
