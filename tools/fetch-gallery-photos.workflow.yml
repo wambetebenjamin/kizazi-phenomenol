@@ -1,19 +1,31 @@
+# SOURCE TEMPLATE for the CI job. GitHub only runs workflows from
+# .github/workflows/, so keep the copy at
+# .github/workflows/fetch-gallery-photos.yml byte-identical to this file
+# (pushing that path needs a token with `workflows` write).
+
 name: Fetch gallery photos
 
-# CI TEMPLATE — GitHub only runs workflows from .github/workflows/, and the
-# Arena agent's GitHub App token is not allowed to create files there. To
-# activate: copy this file to .github/workflows/fetch-gallery-photos.yml and
-# push (any token with `workflows` write can do that — e.g. a personal one).
+# Keeps the 42 "KIZAZI 2026" photos vendored in img/gallery/ (01.jpg to 42.jpg)
+# in sync with the Google Drive album, on a weekly schedule and on demand.
 #
-# What it does: downloads the 42 "KIZAZI 2026" photos from Google Drive into
-# img/gallery/ (01.jpg … 42.jpg) and commits them to the branch.  The script
-# probes one photo ID first and fails loudly if the album is not shared as
-# "Anyone with the link → Viewer".
+# What it does: tools/fetch_gallery_photos.py --force re-downloads all 42
+# photos (w1600, real JPEG > 10 KB, Drive-ID order) and compares them against
+# img/gallery/manifest.json (SHA-256 per photo, committed with the JPEGs).
+# An unchanged album therefore produces a zero-diff run and NO commit. The
+# script probes one photo ID first and fails loudly if the album is not
+# shared as "Anyone with the link -> Viewer".
+#
+# Secrets/permissions: no secrets are needed (the album is public via link
+# sharing). The job only needs the default GITHUB_TOKEN with `contents: write`
+# (declared below) to commit and push img/gallery/ back to this branch.
+# If main has branch protection, allow GitHub Actions to push directly
+# (Settings, Branches, "main", Allowed actors: GitHub Actions).
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "30 6 * * 1"   # Mondays 06:30 UTC
   push:
-    branches:
-      - "arena/01a0c25c-kizazi-phenomenol"
+    branches: [main]
     paths:
       - ".github/workflows/fetch-gallery-photos.yml"
       - "tools/fetch_gallery_photos.py"
@@ -28,17 +40,22 @@ jobs:
       - name: Check out the branch
         uses: actions/checkout@v4
 
-      - name: Download 42 photos (probe gate + fallbacks + verification)
-        run: python3 tools/fetch_gallery_photos.py
+      - name: Download 42 photos (probe gate + fallbacks, manifest-aware)
+        run: python3 tools/fetch_gallery_photos.py --force --changed-out /tmp/kizazi-changed.txt
 
-      - name: Commit img/gallery
+      - name: Verify (42 real JPEGs, hashes match the manifest)
+        run: python3 tools/fetch_gallery_photos.py --verify
+
+      - name: Commit img/gallery only when something changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add img/gallery
           if git diff --cached --quiet; then
-            echo "img/gallery already up to date."
-          else
-            git commit -m "Vendor KIZAZI 2026 photos in img/gallery/ (01.jpg-42.jpg)"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            echo "img/gallery already up to date. Nothing to commit."
+            exit 0
           fi
+          CHANGED="$(paste -sd ', ' /tmp/kizazi-changed.txt)"
+          [ -n "$CHANGED" ] || CHANGED="album updated"
+          git commit -m "Refresh KIZAZI 2026 photos in img/gallery/ ($CHANGED)"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
