@@ -1,14 +1,16 @@
 /* =========================================================================
    KIZAZI Phenomenal — add-ons on top of the BabyCare template skin.
    No new palette: every colour derives from the template's Bootstrap
-   variables (pink #FF4880 / blue #4D65F9).  This file only teaches the
-   template about (1) hotlinked Google-Drive photos, (2) video cards,
-   (3) initials avatars, (4) the gallery filter and (5) quick search.
+   variables (pink #FF4880 / blue #4D65F9).  This file only teaches
+   the template about (1) vendored gallery photos in img/gallery/ (with the
+   placeholder SVG as CSS last-resort), (2) photo backgrounds via --kz-photo,
+   (3) video cards, (4) initials avatars, (5) the gallery filter and
+   (6) quick search.
    ========================================================================= */
 
-/* ---------------------------------------------------- 1. Drive photos --- */
-img[data-drive] {
-    background: var(--bs-light);
+/* ------------------------------------------- 1. Vendored gallery photos --- */
+img.kz-cover {
+    background: var(--bs-light) url('img/brand/photo-placeholder.svg') center / cover no-repeat;
 }
 
 .kz-cover {
@@ -33,23 +35,23 @@ img[data-drive] {
     border-color: var(--bs-primary);
 }
 
-/* --------------------------------- 2. Drive photos as CSS backgrounds --- */
+/* ------------------------------- 2. Vendored photos as CSS backgrounds --- */
 .hero-header,
 .page-header {
     background-color: var(--bs-dark);
     background-image: linear-gradient(rgba(57, 61, 114, .78), rgba(57, 61, 114, .45)),
-        var(--kz-photo, none);
+        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
 .video {
     background-color: var(--bs-dark);
     background-image: linear-gradient(rgba(57, 61, 114, .18), rgba(57, 61, 114, .42)),
-        var(--kz-photo, none);
+        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
 .footer {
     background-image: linear-gradient(rgba(255, 255, 255, .93), rgba(255, 255, 255, .985)),
-        var(--kz-photo, none);
+        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
 .video.kz-video-thumb {

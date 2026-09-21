@@ -8,7 +8,9 @@ template's own css/bootstrap.min.css).  This module holds everything the pages
 share:
 
   * external links (registration form, Friday Meet, socials)
-  * the 42 "KIZAZI 2026" Google Drive photo IDs + <img data-drive=...> helpers
+  * the 42 "KIZAZI 2026" photos, vendored in img/gallery/01.jpg … 42.jpg
+    (Drive file IDs kept in PHOTOS as the refresh registry — see
+    tools/fetch_gallery_photos.py)
   * the Drive video list (easy to fill — see VIDEOS below)
   * shared chrome: head / spinner / topbar+navbar / search modal / page-header /
     footer / copyright / back-to-top / scripts
@@ -57,9 +59,11 @@ PAGES = [
 ]
 DROPDOWN_KEYS = ("gallery", "blog", "team", "testimonial")
 
-# ------------------------------------------------- "KIZAZI 2026" Drive photos
-# Public Google Drive file IDs (shared album). Resolved in the browser by
-# js/kizazi.js:  drive thumbnail -> lh3 -> uc?export=view -> local placeholder.
+# ------------------------------------------- "KIZAZI 2026" photos (vendored)
+# The photos are vendored in img/gallery/01.jpg … 42.jpg (01.jpg == PHOTOS[0]).
+# The Google Drive file IDs below are the refresh registry: re-download with
+#   python3 tools/fetch_gallery_photos.py
+# after editing this list.
 PHOTOS = [
     "1w2oIGh9BBn2tXBDsNy8CvpZQywT6Qceh",   # 0
     "13BJwgGhr6XDHC9h13ByCXUag3ViLt4pK",   # 1
@@ -165,21 +169,26 @@ def videos():
     return out
 
 
+def photo_file(i):
+    """Vendored file for PHOTOS[i] — img/gallery/01.jpg … 42.jpg (w1600 quality)."""
+    return "img/gallery/%02d.jpg" % (i + 1)
+
+
 def durl(i, w=1600):
-    """Primary hotlinkable Drive URL (also used as the lightbox target)."""
-    return "https://drive.google.com/thumbnail?id=%s&sz=w%d" % (PHOTOS[i], w)
+    """Local full-quality photo (lightbox target). `w` kept for call compatibility."""
+    return photo_file(i)
 
 
 def img(i, alt="", cls="", w=1600, extra=""):
-    """<img> that js/kizazi.js hydrates from data-drive with fallbacks."""
-    return ('<img data-drive="%s" data-drive-w="%d" class="%s" alt="%s" loading="lazy"%s>'
-            % (PHOTOS[i], w, cls, _html.escape(alt), (" " + extra) if extra else ""))
+    """<img> pointing at the vendored file in img/gallery/ (alt + lazy kept)."""
+    return ('<img src="%s" class="%s" alt="%s" loading="lazy"%s>'
+            % (photo_file(i), cls, _html.escape(alt), (" " + extra) if extra else ""))
 
 
 def bg(i, w=1600):
-    """Inline style attr feeding a Drive photo to a CSS background."""
-    return ('data-drive-bg="%s" data-drive-bg-w="%d" '
-            'style="--kz-photo: url(\'%s\');"' % (PHOTOS[i], w, durl(i, w)))
+    """Inline style attr feeding a local photo to a CSS background via --kz-photo
+    (consumed as `background-image: …, var(--kz-photo)` in css/kizazi.css)."""
+    return "style=\"--kz-photo: url('%s');\"" % photo_file(i)
 
 
 def gallery_cat(i):
@@ -228,7 +237,7 @@ def head(title, desc):
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
 
-        <!-- KIZAZI add-ons (Drive photos, gallery filter, video cards) -->
+        <!-- KIZAZI add-ons (gallery photos, video cards, filter & search) -->
         <link href="css/kizazi.css" rel="stylesheet">
     </head>
 """ % {"title": _html.escape(title), "desc": _html.escape(desc)}
@@ -473,8 +482,7 @@ def footer():
                         <span class="text-light"><a href="index.html" class="text-light"><i class="fas fa-copyright text-light me-2"></i>KIZAZI Phenomenal</a>, All right reserved.</span>
                     </div>
                     <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
+                        %(tagline)s &mdash; %(verse_ref)s
                     </div>
                 </div>
             </div>
@@ -510,7 +518,7 @@ def scripts():
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <!-- KIZAZI: Drive photos & videos, next-Friday dates, gallery filter, search -->
+    <!-- KIZAZI: next-Friday dates, gallery filter, search, newsletter note -->
     <script src="js/kizazi.js"></script>
     </body>
 

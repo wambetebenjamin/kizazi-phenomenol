@@ -15,8 +15,9 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - Socials — TikTok `@kizazi.phenomenal`, Instagram `kizazi_phenomenal`,
   Facebook `kizaziphenomenal` — wired in topbar, footer, team cards, contact, blog.
 - **"Linktree coming soon"** — shown in the footer and on the contact page.
-- Photos — the 42 public Drive file IDs of the **"KIZAZI 2026"** album, hotlinked
-  with fallbacks (see README). KIZAZI 2026 = **14–15 Aug 2026**, treated as the
+- Photos — the 42 file IDs of the **"KIZAZI 2026"** album, **vendored locally** as
+  `img/gallery/01.jpg … 42.jpg` (registry in `PHOTOS`; refresh with
+  `tools/fetch_gallery_photos.py` — see README). KIZAZI 2026 = **14–15 Aug 2026**, treated as the
   past flagship event and the gallery album.
 - Verse used throughout: **1 Timothy 4:12**.
 - No email, phone or physical address is invented anywhere — the contact page
@@ -24,8 +25,8 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - **Design (2026-09-20, per your instruction):** the site now uses the BabyCare
   zip's own structure, fonts (**Fredoka + Montserrat**) and palette
   (**pink `#FF4880` / blue `#4D65F9`**) — the previous flame/gold skin is gone.
-  **No gold theme anywhere** (verified: zero `#FFC53D` / flame-orange tokens in
-  any shipped asset).
+  **No gold / flame-orange theme anywhere** (verified: zero gold or orange
+  colour tokens in any shipped asset).
 
 ## ⚠️ Assumptions to confirm / replace
 
@@ -77,15 +78,17 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 
 ## Photos & privacy
 
-- **2026-09-20:** the Drive album turned out to be **not publicly shared**, so
-  every photo was falling back to the branded placeholder tile. **Fix: share the
-  "KIZAZI 2026" folder in Drive as "Anyone with the link → Viewer" (folder + each
-  file, and each video file).** Nothing to rebuild; the existing `data-drive`
-  hotlinks pick the photos up automatically.
-- All gallery photos are **hotlinked from the public Drive folder** — they show
-  identifiable people. **Confirm you have consent to publish them publicly**
-  before going live. To pull any photo, remove its ID from `PHOTOS` in
-  `tools/build_common.py` and rebuild (or block its URL at the host level).
+- **2026-09-21:** the 42 "KIZAZI 2026" photos are now **vendored in the repo** at
+  `img/gallery/01.jpg … 42.jpg` (downloaded at w1600, same order as `PHOTOS`).
+  Every page serves them locally; the Drive hotlink / JS fallback chain is gone.
+  To refresh them (or after editing `PHOTOS`), run
+  `python3 tools/fetch_gallery_photos.py` on a machine with internet access to
+  Google Drive and commit the JPEGs. The script refuses to run if the album is
+  not shared as "Anyone with the link → Viewer" — that sharing requirement now
+  applies to **videos only** (they are still Drive embeds).
+- All gallery photos show identifiable people. **Confirm you have consent to
+  publish them publicly** before going live. To pull any photo, delete its file
+  in `img/gallery/` and remove its ID from `PHOTOS` in `tools/build_common.py`.
 
 ## Design decisions (not copy, but easy to change)
 
@@ -96,15 +99,21 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - `css/bootstrap.min.css` and `css/style.css` are the **untouched files from
   BabyCare-1.0.0.zip**; `scss/bootstrap.scss` + `scss/bootstrap/` are the zip's
   sources if you ever recompile.
-- `css/kizazi.css` is a small add-on layer (Drive photos & backgrounds, video
+- `css/kizazi.css` is a small add-on layer (photo backgrounds via `--kz-photo`
+  with the placeholder SVG as CSS last-resort, video
   cards, initials avatars, gallery filter, search results) that only uses the
   template's CSS variables — no new palette.
 - `js/main.js` is the template's script (with one tweak: Drive embeds are used
-  as-is instead of getting YouTube autoplay params). `js/kizazi.js` adds Drive
-  photo/background resolution, next-Friday dates, gallery filter, quick search
-  and the newsletter note.
+  as-is instead of getting YouTube autoplay params). `js/kizazi.js` adds
+  next-Friday dates, gallery filter, quick search
+  and the newsletter note (plus a JS last-resort placeholder for a broken
+  photo) — the old Drive photo/background resolution chain was deleted when the
+  photos were vendored.
 - Logo: AI-generated flame-"K" badge in the template palette (pink→blue, no gold)
   at `img/brand/logo-mark.png` (favicon + og:image). The navbar/footer brand is
   the template's two-tone text wordmark. Regenerate/replace freely.
-- Template credit to **HTML Codex** is retained in the footer, per the BabyCare
-  template licence (`LICENSE.txt`).
+- **HTML Codex credit-removal note (2026-09-21):** the template credit line
+  ("Designed By HTML Codex / Distributed By ThemeWagon", plus its "keep the
+  credit" comment) is **deliberately removed from the copyright bar** — the
+  right-hand slot now reads "A generation on fire for God. — 1 Timothy 4:12".
+  Do **not** re-add any template credit line. `LICENSE.txt` stays in the repo.
