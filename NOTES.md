@@ -23,10 +23,11 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - No email, phone or physical address is invented anywhere — the contact page
   routes to the form, the Meet link and the socials.
 - **Design (2026-09-20, per your instruction):** the site now uses the BabyCare
-  zip's own structure, fonts (**Fredoka + Montserrat**) and palette
-  (**pink `#FF4880` / blue `#4D65F9`**) — the previous flame/gold skin is gone.
-  **No gold / flame-orange theme anywhere** (verified: zero gold or orange
-  colour tokens in any shipped asset).
+  zip's own structure and fonts (**Fredoka + Montserrat**). The palette was
+  rebranded on 2026-09-21: the owner rejected the template pink, so it is now
+  **royal purple `#6D28D9` / blue `#4D65F9`** (the earlier flame/gold skin was
+  already gone). **No pink, no gold / flame-orange theme anywhere** (verified:
+  zero such colour tokens in any shipped asset).
 
 ## ⚠️ Assumptions to confirm / replace
 
@@ -145,14 +146,15 @@ from here on. It lives in **section 9 of `css/kizazi.css`** and in
 `js/kizazi.js` (behaviours 6 and 7), additive on the BabyCare skin: nothing
 template-visible was removed.
 
-- **Palette and fonts are fixed**: pink `#FF4880` / blue `#4D65F9`, Fredoka
-  + Montserrat. **No gold, no `#FFC53D`, no flame-orange anywhere.** New
-  accents only through the one gradient token below.
+- **Palette and fonts are fixed** (royal purple rebrand, 2026-09-21): violet
+  `#6D28D9` / blue `#4D65F9`, Fredoka + Montserrat. **No pink, no gold, no
+  `#FFC53D`, no flame-orange anywhere.** New accents only through the one
+  gradient token below.
 - **One gradient token** — `--kz-grad:
-  linear-gradient(120deg, #FF4880, #FFECF2 50%, #4D65F9)` (pink → light pink
-  → blue, all from the template's own CSS variables). It is the only new
-  accent, and it paints: the buttons (`.btn-primary` / `.btn-secondary`,
-  with the template's blue/pink hover inversion kept on top), the sticker
+  linear-gradient(120deg, #6D28D9, #F3E8FF 50%, #4D65F9)` (violet → light
+  violet → blue, all from the template's own CSS variables). It is the only
+  new accent, and it paints: the buttons (`.btn-primary` / `.btn-secondary`,
+  with the template's blue/violet hover inversion kept on top), the sticker
   kicker pills, the about-page stat numerals (`.kz-stat-num`), the marquee
   rules, the copyright rule and the scroll progress bar.
 - **Marquee ticker** under the navbar on every page: the phrases live in
@@ -161,7 +163,8 @@ template-visible was removed.
   `aria-hidden` (decorative reinforcement of copy that lives on the pages).
 - **Sticker kickers**: the template's `h4.title-border-radius` section
   kickers are now white, slightly tilted (rotate -1.5deg) pills carrying a
-  gradient rule underneath (the old 2px pink underline is neutralised).
+  gradient rule underneath (the template's old 2px primary-colour underline is
+  neutralised).
 - **Lifting/tilting cards**: `.service-item`, `.program-item`,
   `.events-item`, `.blog-item`, `.team-item`, the gallery tiles and the hero
   moments lift and tilt on hover. Transform + shadow only; the template's
@@ -200,17 +203,19 @@ template-visible was removed.
   `*.html` page is clean. The only dashes left in the repo are inside the
   untouched third-party template files (`css/bootstrap.min.css`,
   `css/style.css`, `js/vendor/*`, `lib/*`), which are not site copy. The
-  font/palette rules are unchanged: Fredoka + Montserrat, pink `#FF4880` /
-  blue `#4D65F9`, and no gold or flame-orange anywhere.
+  font rules are unchanged: Fredoka + Montserrat. The palette is the royal
+  purple rebrand (2026-09-21): violet `#6D28D9` / blue `#4D65F9`, and no pink,
+  gold or flame-orange anywhere.
 
 ## Design decisions (not copy, but easy to change)
 
 - **Structure/fonts/palette = the zip's.** Pages are generated from the template's
   own components (topbar+navbar+dropdown, search modal, hero/page-header, service,
   program, events, blog, team cards, Owl testimonial carousel, 4-column footer,
-  copyright, back-to-top). Fredoka + Montserrat; pink `#FF4880` / blue `#4D65F9`.
-- `css/bootstrap.min.css` and `css/style.css` are the **untouched files from
-  BabyCare-1.0.0.zip**; `scss/bootstrap.scss` + `scss/bootstrap/` are the zip's
+  copyright, back-to-top). Fredoka + Montserrat; violet `#6D28D9` / blue `#4D65F9`.
+- `css/bootstrap.min.css` and `css/style.css` come from **BabyCare-1.0.0.zip**,
+  with the pink hexes swapped in place for the royal purple rebrand
+  (2026-09-21); `scss/bootstrap.scss` + `scss/bootstrap/` are the zip's
   sources if you ever recompile.
 - `css/kizazi.css` is a small add-on layer (photo backgrounds via `--kz-photo`
   with the placeholder SVG as CSS last-resort, video
@@ -222,7 +227,7 @@ template-visible was removed.
   and the newsletter note (plus a JS last-resort placeholder for a broken
   photo) — the old Drive photo/background resolution chain was deleted when the
   photos were vendored.
-- Logo: AI-generated flame-"K" badge in the template palette (pink→blue, no gold)
+- Logo: AI-generated flame-"K" badge in the royal purple palette (violet→blue, no gold)
   at `img/brand/logo-mark.png` (favicon + og:image). The navbar/footer brand is
   the template's two-tone text wordmark. Regenerate/replace freely.
 - **HTML Codex credit-removal note (2026-09-21):** the template credit line

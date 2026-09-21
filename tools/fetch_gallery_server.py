@@ -65,25 +65,25 @@ PAGE = """<!DOCTYPE html>
 <style>
   body { font-family: system-ui, sans-serif; background: #393D72; color: #fff;
          max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-  h1 { color: #FF4880; font-weight: 700; }
+  h1 { color: #6D28D9; font-weight: 700; }
   h2 { font-size: 1.05rem; margin-top: 2rem; }
   p, li { color: #dfe2f5; line-height: 1.5; }
-  code { color: #FFECF2; }
-  button { background: #FF4880; color: #fff; border: 0; border-radius: 24px;
+  code { color: #F3E8FF; }
+  button { background: #6D28D9; color: #fff; border: 0; border-radius: 24px;
            padding: .8rem 2rem; font-size: 1.05rem; cursor: pointer; }
   button:disabled { background: #4D65F9; cursor: wait; }
-  button.ghost { background: transparent; border: 1px solid #FF4880;
+  button.ghost { background: transparent; border: 1px solid #6D28D9;
                  padding: .5rem 1.2rem; font-size: .9rem; }
   #grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 1rem; }
   #grid div { background: rgba(255,255,255,.08); border-radius: 8px; padding: 6px;
               font-size: .75rem; text-align: center; }
   #grid img { width: 100%%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px;
               display: block; margin-bottom: 4px; }
-  .ok { color: #7CFFB2; } .bad { color: #FF4880; } .wait { color: #9aa0d4; }
+  .ok { color: #7CFFB2; } .bad { color: #6D28D9; } .wait { color: #9aa0d4; }
   #summary { margin-top: 1rem; font-weight: 600; }
-  #drop { margin-top: 1rem; border: 2px dashed #FF4880; border-radius: 12px;
+  #drop { margin-top: 1rem; border: 2px dashed #6D28D9; border-radius: 12px;
           padding: 1.5rem; text-align: center; color: #dfe2f5; }
-  #drop.hot { background: rgba(255,72,128,.18); }
+  #drop.hot { background: rgba(109,40,217,.18); }
   input[type=number] { width: 4.5rem; padding: .3rem; border-radius: 6px; border: 0; }
 </style>
 </head>
