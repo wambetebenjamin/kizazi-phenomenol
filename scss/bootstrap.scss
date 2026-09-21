@@ -1,30 +1,29 @@
-/******* KIZAZI Phenomenal — Customized Bootstrap *******/
-/******* Palette: Flame Sunset + Gold, with magenta/coral accents *******/
+/******* Customized Bootstrap ********/
 
-$primary: #F4511E;      /* flame orange-red */
-$secondary: #FFC53D;    /* phenomenal gold  */
-$light: #FFF8F0;        /* warm cream tint  */
-$dark: #201108;         /* warm dark ink    */
+$primary: #FF4880;
+$secondary: #4D65F9;
+$light: #FFECF2;
+$dark: #393D72;
 
-$font-family-base: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+$font-family-base: 'Montserrat', sans-serif;
 
-$headings-font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
+$headings-font-family: 'Fredoka', sans-serif;
 
-$body-color: #5A4C40;
+$body-color: #70747F;
 
 $headings-color: $dark;
 
-$headings-font-weight: 700;
+$headings-font-weight: 600;
 
-$display-font-weight: 800;
+$display-font-weight: 700;
 
 $enable-responsive-font-sizes: true;
 
-$border-radius: 14px;
+$border-radius: 10px;
 
-$border-radius-sm: 10px;
+$border-radius-sm: $border-radius;
 
-$border-radius-lg: 20px;
+$border-radius-lg: $border-radius;
 
 $link-decoration: none;
 

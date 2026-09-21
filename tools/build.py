@@ -1,1080 +1,1104 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""KIZAZI Phenomenal — page builder.
+"""KIZAZI Phenomenal — page builder (BabyCare-template edition).
 
-Composes the 11 static pages from the shared chrome in build_common.py and
-the per-page bodies below, writing every file to the repository root.
+Composes the 11 pages from the BabyCare template's own markup structure
+(hero-header / about+video / service / program / events / blog / team /
+testimonial carousel / 4-column footer) with KIZAZI content and the hotlinked
+"KIZAZI 2026" Drive photos.
 
-Run from the repository root:
-
-    python3 tools/build.py
-
-After editing content in build_common.py / this file, re-run and refresh.
+Usage:  python3 tools/build.py
 """
 
 import os
 
 from build_common import (
-    REG_URL, MEET_URL, TIKTOK_URL, INSTAGRAM_URL, FACEBOOK_URL, LINKTREE_NOTE,
-    SITE, GALLERY_CATS, PHOTOS, durl, img, gallery_cat,
-    MINISTRIES, PROGRAMS, EVENTS, BLOG, TEAMS, TESTIMONIALS,
-    head, body_open, topbar, navbar, page_header, section_head,
-    footer, back_to_top, scripts,
+    ABOUT_PHOTO, BLOG, DRIVE_ALBUM_URL, EVENTS, FOOTER_PHOTO, GALLERY_CATS,
+    HERO_PHOTO, INSTAGRAM_URL, LINKTREE_NOTE, MEET_URL, MINISTRIES, PAGES,
+    PHOTOS, PROGRAMS, REG_URL, SITE, TEAMS, TESTIMONIALS, TIKTOK_URL,
+    FACEBOOK_URL, back_to_top, bg, body_open, durl, footer, head, img,
+    page_header, scripts, section_head, social_buttons, spinner, topbar_navbar,
+    video_embed, video_modal, videos,
 )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Badge lines (big, small) for the static events; index 0 (Fridays) is auto-dated.
-EVENT_BADGES = [None, ("2027", "soon"), ("Monthly", "night"), ("Termly", "tour")]
+WOW = ('class="wow fadeIn" data-wow-delay="%s"',)
+
+
+def wow(delay="0.1s"):
+    return 'class="wow fadeIn" data-wow-delay="%s"' % delay
+
+
+def album_button(cls="btn btn-secondary px-4 py-2 text-white btn-border-radius"):
+    if not DRIVE_ALBUM_URL:
+        return ""
+    return ('<a class="%s" href="%s" target="_blank" rel="noopener">'
+            '<i class="fab fa-google-drive me-2"></i>Open the Drive album</a>'
+            % (cls, DRIVE_ALBUM_URL))
 
 
 # --------------------------------------------------------------- components ---
-def btn(href, label, kind="sweep", icon="", target=True, extra=""):
-    t = ' target="_blank" rel="noopener"' if target else ""
-    ic = '<i class="fas %s me-2"></i>' % icon if icon else ""
-    return '<a class="btn kz-btn kz-btn-%s %s" href="%s"%s>%s%s</a>' % (
-        kind, extra, href, t, ic, label)
-
-
-
-def alt_of(title):
-    """Plain-text version of a display title (for alt attributes)."""
-    return (title.replace("&mdash;", "\u2014").replace("&ndash;", "\u2013")
-               .replace("&middot;", "\u00b7").replace("&ldquo;", "\u201c")
-               .replace("&rdquo;", "\u201d").replace("&rsquo;", "\u2019")
-               .replace("&lsquo;", "\u2018").replace("&amp;", "&"))
-
-def marquee():
-    items = [
-        "PHENOMENAL FRIDAYS", "8:00 PM EAT", "A GENERATION ON FIRE",
-        "KIZAZI 2026 · 14&ndash;15 AUG", "KENYA · UGANDA · TANZANIA · RWANDA",
-        "1 TIMOTHY 4:12",
-    ]
-    block = "".join(
-        '<span class="kz-marquee-item">%s</span><span class="kz-marquee-star">&#10022;</span>'
-        % it for it in items)
-    return """        <div class="kz-marquee" aria-hidden="true">
-            <div class="kz-marquee-track">%(b)s%(b)s</div>
-        </div>
-""" % {"b": block}
-
-
-def hero_header():
-    return """        <!-- Hero Start -->
-        <section class="kz-hero container-fluid position-relative overflow-hidden" id="top">
-            <div class="kz-hero-dots"></div>
-            <div class="kz-aurora kz-aurora-1"></div>
-            <div class="kz-aurora kz-aurora-2"></div>
-            <div class="kz-aurora kz-aurora-3"></div>
-            <div class="container py-5">
-                <div class="row align-items-center g-5">
-                    <div class="col-lg-6 text-white">
-                        <span class="kz-kicker kz-kicker-light"><i class="fas fa-fire"></i> %(tagline)s</span>
-                        <h1 class="kz-hero-title">KIZAZI <span class="kz-grad-text">Phenomenal</span></h1>
-                        <p class="kz-hero-verse kz-hand">&ldquo;%(verse)s&rdquo; <span class="kz-verse-ref">&mdash; %(ref)s</span></p>
-                        <p class="kz-hero-sub">A bold, joyful Christian youth movement across %(countries)s &mdash; worship that moves, discipleship that sticks, and a family that carries you.</p>
-                        <div class="d-flex flex-wrap gap-3 kz-hero-ctas">
-                            <a class="btn kz-btn kz-btn-sweep btn-lg" href="%(reg)s" target="_blank" rel="noopener">Join the Movement <i class="fas fa-bolt ms-2"></i></a>
-                            <a class="btn kz-btn kz-btn-ghost btn-lg text-white" href="%(meet)s" target="_blank" rel="noopener"><i class="fas fa-video me-2"></i>Friday Catch-Up &middot; 8 PM EAT</a>
-                        </div>
-                        <div class="kz-hero-stats">
-                            <div class="kz-hero-stat"><strong><span class="kz-counter" data-count="4"></span></strong><span>nations served</span></div>
-                            <div class="kz-hero-stat"><strong><span class="kz-counter" data-count="500" data-suffix="+"></span></strong><span>young people reached</span></div>
-                            <div class="kz-hero-stat"><strong><span class="kz-counter" data-count="8"></span></strong><span>ministries</span></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="kz-hero-photo position-relative">
-                            %(photo)s
-                            <div class="kz-hero-card kz-hero-card-date">
-                                <span class="kz-card-label">Next Friday catch-up</span>
-                                <strong data-next-friday-long>&hellip;</strong>
-                                <span class="kz-card-time"><i class="fas fa-clock"></i> 8:00 PM EAT &middot; Google Meet</span>
-                            </div>
-                            <div class="kz-hero-card kz-hero-card-badge">
-                                <i class="fas fa-fire-flame-curved"></i>
-                                <span>KIZAZI 2026<small>14&ndash;15 Aug &mdash; two days on fire</small></span>
+def service_card(m, delay, detail=False, anchor=True):
+    slug, icon, name, blurb, long_, bullets = m
+    text = long_ if detail else blurb
+    anchor_attr = ' id="%s"' % slug if anchor else ''
+    return """                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="%(delay)s">
+                        <div class="text-center border-primary border bg-white service-item"%(anchor)s>
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas %(icon)s fa-6x text-primary"></i></div>
+                                    <a href="ministries.html#%(slug)s" class="h4">%(name)s</a>
+                                    <p class="my-3">%(text)s</p>
+                                    <a href="ministries.html#%(slug)s" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Read More</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="kz-zigzag kz-zigzag-hero"></div>
-        </section>
-        <!-- Hero End -->
-""" % {"tagline": SITE["tagline"], "verse": SITE["verse"], "ref": SITE["verse_ref"],
-       "countries": SITE["countries"], "reg": REG_URL, "meet": MEET_URL,
-       "photo": img(0, "KIZAZI 2026 — two days on fire", cls="img-fluid rounded-4 w-100", eager=True)}
+""" % dict(delay=delay, slug=slug, icon=icon, name=name, text=text, anchor=anchor_attr)
 
 
-def about_section():
-    return """        <!-- About Start -->
-        <section class="kz-about container-fluid py-5" id="about">
-            <div class="container py-4">
-                <div class="row align-items-center g-5">
-                    <div class="col-lg-6 kz-reveal">
-                        <div class="kz-about-collage position-relative">
-                            <div class="kz-about-main position-relative">
-                                %(main)s
-                                <button type="button" class="kz-play" data-bs-toggle="modal" data-bs-target="#kz-media-modal"
-                                        aria-label="Play KIZAZI 2026 highlights">
-                                    <span class="kz-play-icon"></span>
-                                </button>
+def program_card(p, delay):
+    name, rate, photo_i, desc, leader, initials, when, where, meta = p
+    slug = name.lower().replace(" ", "-").replace("&", "and")
+    return """                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="%(delay)s" id="%(slug)s">
+                        <div class="program-item rounded">
+                            <div class="program-img position-relative">
+                                <div class="overflow-hidden img-border-radius">
+                                    %(img)s
+                                </div>
+                                <div class="px-4 py-2 bg-primary text-white program-rate">%(rate)s</div>
                             </div>
-                            <div class="kz-about-small">%(small)s</div>
-                            <span class="kz-about-stamp kz-hand">every. single. friday.</span>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 kz-reveal">
-                        <span class="kz-kicker">Our Story</span>
-                        <h2 class="kz-section-title">Who is <span class="kz-grad-text">KIZAZI</span>?</h2>
-                        <p>&ldquo;Kizazi&rdquo; means <em>generation</em>. We are KIZAZI Phenomenal &mdash; a Christian
-                        youth movement serving %(countries)s, built on one verse: <strong>%(verse_ref)s</strong>.</p>
-                        <p>We are students, first-years, fresh graduates and young professionals who decided
-                        this generation will not be skipped &mdash; by the devil, by the world, or by the church.
-                        We worship loudly, study the Word seriously, and carry one another for real.</p>
-                        <ul class="kz-check-list">
-                            <li><i class="fas fa-check"></i> Worship that gets you on your feet</li>
-                            <li><i class="fas fa-check"></i> Discipleship that gets you rooted</li>
-                            <li><i class="fas fa-check"></i> A family that carries you home</li>
-                        </ul>
-                        <div class="d-flex flex-wrap gap-3 mt-4">
-                            <a class="btn kz-btn kz-btn-dark" href="about.html">Our Story</a>
-                            <a class="btn kz-btn kz-btn-ghost-dark" href="ministries.html">Explore Ministries</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- About End -->
-
-        <!-- Media Modal (play button) -->
-        <div class="modal fade" id="kz-media-modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content kz-media-modal border-0">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title text-white">KIZAZI 2026 &mdash; highlights film <span class="kz-hand kz-hand-gold">(coming soon)</span></h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-0">
-                        <div class="position-relative">
-                            %(modal_photo)s
-                            <div class="kz-media-overlay">
-                                <span class="kz-hand kz-media-hand">until the film drops &mdash;</span>
-                                <strong>be there live, every Friday.</strong>
+                            <div class="program-text bg-white px-4 pb-3">
+                                <div class="program-text-inner">
+                                    <a href="programs.html#%(slug)s" class="h4">%(name)s</a>
+                                    <p class="mt-3 mb-0">%(desc)s</p>
+                                </div>
+                            </div>
+                            <div class="program-teacher d-flex align-items-center border-top border-primary bg-white px-4 py-3">
+                                <div class="kz-initials rounded-circle border border-primary bg-white d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">%(initials)s</div>
+                                <div class="ms-3">
+                                    <h6 class="mb-0 text-primary">%(leader)s</h6>
+                                    <small>%(when)s</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-2 bg-primary rounded-bottom">
+                                <small class="text-white"><i class="fas fa-users me-1"></i> %(m0)s</small>
+                                <small class="text-white"><i class="fas fa-book me-1"></i> %(m1)s</small>
+                                <small class="text-white"><i class="fas fa-clock me-1"></i> %(m2)s</small>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer border-0 bg-transparent">
-                        <a href="%(meet)s" target="_blank" rel="noopener" class="btn kz-btn kz-btn-sweep text-white me-2">Join Friday Catch-Up</a>
-                        <a href="gallery.html" class="btn kz-btn kz-btn-ghost text-white">Browse the gallery</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Media Modal End -->
-""" % {"main": img(1, "KIZAZI 2026 — worship night", cls="img-fluid rounded-4 w-100", eager=True),
-       "small": img(2, "KIZAZI 2026 — the fam", cls="img-fluid rounded-4 w-100"),
-       "modal_photo": img(3, "KIZAZI 2026 highlights", cls="img-fluid w-100 kz-media-photo", eager=True),
-       "countries": SITE["countries"], "verse_ref": SITE["verse_ref"], "meet": MEET_URL}
+""" % dict(delay=delay, rate=rate, name=name, desc=desc, leader=leader,
+           initials=initials, when=when, slug=name.lower().replace(" ", "-").replace("&", "and"),
+           m0=meta[0], m1=meta[1], m2=meta[2],
+           img=img(photo_i, name + " — KIZAZI 2026", cls="img-fluid w-100 kz-cover", w=900))
 
 
-def services_section():
-    cards = []
-    for slug, icon, name, blurb, _detail, _expect in MINISTRIES:
-        cards.append("""<div class="col-md-6 col-xl-3 kz-reveal">
-                        <a class="kz-service-card" href="ministries.html#w-%(slug)s">
-                            <div class="kz-service-icon"><i class="fas %(icon)s"></i></div>
-                            <h4 class="kz-service-name">%(name)s</h4>
-                            <p class="kz-service-blurb">%(blurb)s</p>
-                            <span class="kz-service-more">Step in <i class="fas fa-arrow-right"></i></span>
-                        </a>
-                    </div>""" % {"slug": slug, "icon": icon, "name": name, "blurb": blurb})
-    return """        <!-- Ministries / Services Start -->
-        <section class="kz-services container-fluid py-5" id="ministries">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-%(cards)s
-                </div>
-                <div class="text-center mt-5 kz-reveal">
-                    <a class="btn kz-btn kz-btn-dark" href="ministries.html">All 8 Ministries <i class="fas fa-arrow-right ms-2"></i></a>
-                </div>
-            </div>
-        </section>
-        <!-- Ministries / Services End -->
-""" % {"head": section_head("The Ministry Family", "Eight doorways, <span class='kz-grad-text'>one fire</span>",
-                            "Every ministry is a doorway into the same thing: a generation being shaped by Jesus."),
-       "cards": "\n".join(cards)}
-
-
-def programs_section():
-    cards = [program_card(p) for p in PROGRAMS]
-    return """        <!-- Programs Start -->
-        <section class="kz-programs container-fluid py-5 kz-section-tint" id="programs">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-%(cards)s
-                </div>
-                <div class="text-center mt-5 kz-reveal">
-                    <a class="btn kz-btn kz-btn-dark" href="programs.html">All Programs <i class="fas fa-arrow-right ms-2"></i></a>
-                </div>
-            </div>
-        </section>
-        <!-- Programs End -->
-""" % {"head": section_head("Programs", "Pick a track, <span class='kz-grad-text'>get in</span>",
-                            "Structured ways to go deeper &mdash; every program is free unless it says otherwise."),
-       "cards": "\n".join(cards)}
-
-
-def program_card(p):
-    name, badge, photo, desc, leader, initials, when, where = p
-    return """<div class="col-md-6 col-xl-4 kz-reveal">
-                    <article class="kz-program-card">
-                        <div class="kz-program-img">
-                            %(photo)s
-                            <span class="kz-rate-badge">%(badge)s</span>
-                        </div>
-                        <div class="kz-program-body">
-                            <h4 class="kz-program-name">%(name)s</h4>
-                            <p class="kz-program-desc">%(desc)s</p>
-                        </div>
-                        <div class="kz-program-leader">
-                            <span class="kz-leader-avatar" aria-hidden="true">%(initials)s</span>
-                            <span class="kz-leader-text"><strong>%(leader)s</strong><small>leads this track</small></span>
-                        </div>
-                        <div class="kz-program-meta">
-                            <span><i class="fas fa-calendar-check"></i> %(when)s</span>
-                            <span><i class="fas fa-map-marker-alt"></i> %(where)s</span>
-                        </div>
-                    </article>
-                </div>""" % {"photo": img(photo, "%s — program" % name, cls="img-fluid"),
-                             "badge": badge, "name": name, "desc": desc, "leader": leader,
-                             "initials": initials, "when": when, "where": where}
-
-
-def events_section():
-    cards = [event_card(e, b) for e, b in zip(EVENTS, EVENT_BADGES)]
-    return """        <!-- Events Start -->
-        <section class="kz-events container-fluid py-5" id="events">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-%(cards)s
-                </div>
-                <div class="text-center mt-5 kz-reveal">
-                    <a class="btn kz-btn kz-btn-dark" href="events.html">All Events <i class="fas fa-arrow-right ms-2"></i></a>
-                </div>
-            </div>
-        </section>
-        <!-- Events End -->
-""" % {"head": section_head("Events", "Never miss <span class='kz-grad-text'>the fire</span>",
-                            "Fridays are set in stone. Everything else drops on our socials first."),
-       "cards": "\n".join(cards)}
-
-
-def event_card(e, badge):
-    if e["when"] == "friday":
-        badge_html = ('<div class="kz-event-date kz-event-date-auto">'
-                      '<span data-next-friday-day>&ndash;</span><small data-next-friday-mon>&ndash;</small></div>')
+def event_card(ev, delay):
+    if ev["when"] == "friday":
+        badge = ('<div class="px-4 py-2 bg-secondary text-white text-center events-rate">'
+                 '<span data-next-friday-day>&hellip;</span> <span data-next-friday-mon>&hellip;</span></div>')
+        when_cell = ('<small class="text-white"><i class="fas fa-calendar me-1 text-primary"></i> '
+                     '<span data-next-friday-long>&hellip;</span></small>')
     else:
-        big, small = badge
-        badge_html = '<div class="kz-event-date"><span>%s</span><small>%s</small></div>' % (big, small)
-    when_html = ('<span data-next-friday-long>&hellip;</span>' if e["when"] == "friday" else e["when"])
-    return """<div class="col-md-6 col-xl-3 kz-reveal">
-                    <article class="kz-event-card">
-                        <div class="kz-event-photo-wrap position-relative">
-                            <div class="kz-event-photo">%(photo)s</div>
-                            %(badge)s
-                        </div>
-                        <div class="kz-event-body">
-                            <span class="kz-event-tag">%(tag)s</span>
-                            <h4 class="kz-event-title">%(title)s</h4>
-                            <p class="kz-event-desc">%(desc)s</p>
-                            <ul class="kz-event-list">
-                                <li><i class="fas fa-calendar"></i> %(when)s</li>
-                                <li><i class="fas fa-clock"></i> %(time)s</li>
-                                <li><i class="fas fa-map-marker-alt"></i> %(place)s</li>
-                            </ul>
-                            <a class="btn kz-btn kz-btn-sweep text-white w-100" href="%(url)s" target="_blank" rel="noopener"><i class="fas %(icon)s me-2"></i>%(cta)s</a>
-                        </div>
-                    </article>
-                </div>""" % {"photo": img(e["photo"], alt_of(e["title"]), cls="img-fluid"),
-                             "badge": badge_html, "tag": e["tag"], "title": e["title"], "desc": e["desc"],
-                             "when": when_html, "time": e["time"], "place": e["place"],
-                             "url": e["cta_url"], "icon": e["cta_icon"], "cta": e["cta_label"]}
-
-
-def blog_section():
-    cards = [blog_card(b, full=False) for b in BLOG]
-    return """        <!-- Blog Start -->
-        <section class="kz-blog container-fluid py-5 kz-section-tint" id="blog">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4 justify-content-center">
-%(cards)s
-                </div>
-                <div class="text-center mt-5 kz-reveal">
-                    <a class="btn kz-btn kz-btn-dark" href="blog.html">Read the Blog <i class="fas fa-arrow-right ms-2"></i></a>
-                </div>
-            </div>
-        </section>
-        <!-- Blog End -->
-""" % {"head": section_head("Blog", "Word to the <span class='kz-grad-text'>generation</span>",
-                            "Devotionals, recaps and honest conversations from the KIZAZI fam."),
-       "cards": "\n".join(cards)}
-
-
-def blog_card(b, full=False):
-    title, date, team, initials, photo, tag, body = b
-    if full:
-        inner = "".join("<p>%s</p>" % p for p in body)
-        return """<article class="kz-blog-post kz-reveal">
-                        <div class="kz-blog-post-img">%(photo)s</div>
-                        <div class="kz-blog-post-body">
-                            <div class="kz-blog-post-meta">
-                                <span class="kz-event-tag">%(tag)s</span>
-                                <span><i class="fas fa-calendar"></i> %(date)s</span>
-                                <span class="d-flex align-items-center gap-2"><span class="kz-initials-avatar kz-initials-sm" aria-hidden="true">%(initials)s</span> %(team)s</span>
+        badge = ('<div class="px-4 py-2 bg-secondary text-white text-center events-rate">%s</div>'
+                 % ev["when"])
+        when_cell = ('<small class="text-white"><i class="fas fa-calendar me-1 text-primary"></i> %s</small>'
+                     % ev["when"])
+    return """                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="%(delay)s">
+                        <div class="events-item bg-primary rounded">
+                            <div class="events-inner position-relative">
+                                <div class="events-img overflow-hidden rounded-circle position-relative">
+                                    %(img)s
+                                    <div class="event-overlay">
+                                        <a href="%(full)s" data-lightbox="events"><i class="fas fa-search-plus text-white fa-2x"></i></a>
+                                    </div>
+                                </div>
+                                %(badge)s
+                                <div class="d-flex justify-content-between px-4 py-2 bg-secondary">
+                                    %(when_cell)s
+                                    <small class="text-white"><i class="fas fa-map-marker-alt me-1 text-primary"></i> %(place)s</small>
+                                </div>
                             </div>
-                            <h3 class="kz-blog-post-title">%(title)s</h3>
-                            %(inner)s
-                        </div>
-                    </article>""" % {"photo": img(photo, alt_of(title), cls="img-fluid"),
-                                    "tag": tag, "date": date, "initials": initials, "team": team,
-                                    "title": title, "inner": inner}
-    return """<div class="col-md-6 col-xl-4 kz-reveal">
-                    <article class="kz-blog-card">
-                        <div class="kz-blog-card-img">%(photo)s</div>
-                        <div class="kz-blog-card-meta">
-                            <span class="kz-event-tag">%(tag)s</span>
-                            <span><i class="fas fa-calendar"></i> %(date)s</span>
-                        </div>
-                        <div class="kz-blog-card-body">
-                            <h4 class="kz-blog-card-title">%(title)s</h4>
-                            <p class="kz-blog-card-excerpt">%(excerpt)s</p>
-                            <div class="kz-blog-card-author d-flex align-items-center gap-2">
-                                <span class="kz-initials-avatar kz-initials-sm" aria-hidden="true">%(initials)s</span>
-                                <span>%(team)s</span>
+                            <div class="events-text p-4 border border-primary bg-white border-top-0 rounded-bottom">
+                                <span class="badge bg-secondary mb-2">%(tag)s</span>
+                                <a href="events.html" class="h4 d-block">%(title)s</a>
+                                <p class="mb-3 mt-2">%(desc)s</p>
+                                <a class="btn btn-primary btn-sm text-white px-4 py-2 btn-border-radius" href="%(cta_url)s" target="_blank" rel="noopener"><i class="fas fa-bolt me-1"></i> %(cta_label)s</a>
                             </div>
-                            <a class="kz-blog-read" href="blog.html">Read more <i class="fas fa-arrow-right"></i></a>
                         </div>
-                    </article>
-                </div>""" % {"photo": img(photo, alt_of(title), cls="img-fluid"), "tag": tag, "date": date,
-                             "initials": initials, "team": team, "title": title, "excerpt": body[0]}
-
-
-def team_section(limit=4):
-    cards = [team_card(t) for t in TEAMS[:limit]]
-    more = ""
-    if limit < len(TEAMS):
-        more = """<div class="text-center mt-5 kz-reveal">
-                    <a class="btn kz-btn kz-btn-dark" href="team.html">All Serving Teams <i class="fas fa-arrow-right ms-2"></i></a>
-                </div>"""
-    return """        <!-- Team Start -->
-        <section class="kz-team container-fluid py-5" id="team">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4 justify-content-center">
-%(cards)s
-                </div>
-%(more)s
-            </div>
-        </section>
-        <!-- Team End -->
-""" % {"head": section_head("The Team", "Servants, not <span class='kz-grad-text'>headshots</span>",
-                            "We serve as teams &mdash; the same way the body of Christ actually works. Faces come when the team says so."),
-       "cards": "\n".join(cards), "more": more}
-
-
-def team_card(t):
-    initials, name, desc, ministry = t
-    return """<div class="col-md-6 col-xl-3 kz-reveal">
-                    <div class="kz-team-card">
-                        <span class="kz-team-tile" aria-hidden="true">%(initials)s</span>
-                        <h4 class="kz-team-name">%(name)s</h4>
-                        <p class="kz-team-desc">%(desc)s</p>
-                        <span class="kz-team-serving"><i class="fas fa-arrow-right"></i> Serves under %(ministry)s</span>
                     </div>
-                </div>""" % {"initials": initials, "name": name, "desc": desc, "ministry": ministry}
+""" % dict(delay=delay, badge=badge, when_cell=when_cell, title=ev["title"],
+           desc=ev["desc"], place=ev["place"], tag=ev["tag"],
+           cta_url=ev["cta_url"], cta_label=ev["cta_label"], full=durl(ev["photo"]),
+           img=img(ev["photo"], ev["title"], cls="img-fluid w-100 rounded-circle kz-cover", w=800))
 
 
-def testimonial_section():
-    items = [testimonial_item(t) for t in TESTIMONIALS]
-    return """        <!-- Testimonial Start -->
-        <section class="kz-testimonial container-fluid py-5 kz-section-tint" id="testimonial">
-            <div class="container py-4">
-                %(head)s
-                <div class="owl-carousel kz-testimonial-carousel kz-reveal">
-%(items)s
-                </div>
-                <div class="text-center mt-5 kz-reveal">
-                    <a class="btn kz-btn kz-btn-dark" href="testimonial.html">More Testimonies <i class="fas fa-arrow-right ms-2"></i></a>
-                </div>
-            </div>
-        </section>
-        <!-- Testimonial End -->
-""" % {"head": section_head("Testimonials", "The fam, <span class='kz-grad-text'>in their words</span>"),
-       "items": "\n".join(items)}
+def blog_card(post, delay, read_link):
+    title, date, team, initials, photo_i, tag, paras = post
+    slug = "post-%d" % (BLOG.index(post) + 1)
+    excerpt = paras[0][:150].rsplit(" ", 1)[0] + "&hellip;"
+    return """                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="%(delay)s">
+                        <div class="blog-item rounded-bottom">
+                            <div class="blog-img overflow-hidden position-relative img-border-radius">
+                                %(img)s
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-3 bg-light border-bottom border-primary blog-date-comments">
+                                <small class="text-dark"><i class="fas fa-calendar me-1 text-dark"></i> %(date)s</small>
+                                <small class="text-dark"><i class="fas fa-tag me-1 text-dark"></i> %(tag)s</small>
+                            </div>
+                            <div class="blog-content d-flex align-items-center px-4 py-3 bg-light">
+                                <div class="kz-initials rounded-circle border border-primary bg-white d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">%(initials)s</div>
+                                <div class="ms-3">
+                                    <h6 class="text-primary">%(team)s</h6>
+                                    <p class="text-muted mb-0">KIZAZI Phenomenal</p>
+                                </div>
+                            </div>
+                            <div class="px-4 pb-4 bg-light rounded-bottom">
+                                <div class="blog-text-inner">
+                                    <a href="%(read)s" class="h4">%(title)s</a>
+                                    <p class="mt-3 mb-4">%(excerpt)s</p>
+                                </div>
+                                <div class="text-center">
+                                    <a href="%(read)s" class="btn btn-primary text-white px-4 py-2 mb-3 btn-border-radius">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+""" % dict(delay=delay, date=date, tag=tag, team=team, initials=initials,
+           title=title, excerpt=excerpt, read=read_link % slug,
+           img=img(photo_i, title, cls="img-fluid w-100 kz-cover", w=900))
+
+
+def team_card(t, delay):
+    initials, name, desc, ministry, photo_i = t
+    return """                    <div class="col-md-6 col-lg-4 col-xl-3 wow fadeIn" data-wow-delay="%(delay)s">
+                        <div class="team-item border border-primary img-border-radius overflow-hidden">
+                            %(img)s
+                            <div class="team-icon d-flex align-items-center justify-content-center">
+                                <a class="share btn btn-primary btn-md-square text-white rounded-circle me-3" href="%(reg)s" target="_blank" rel="noopener" aria-label="Join this team"><i class="fas fa-share-alt"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle me-3" href="%(fb)s" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle me-3" href="%(tt)s" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle" href="%(ig)s" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            </div>
+                            <div class="team-content text-center py-3">
+                                <h4 class="text-primary">%(name)s</h4>
+                                <p class="text-muted mb-2">%(desc)s</p>
+                            </div>
+                        </div>
+                    </div>
+""" % dict(delay=delay, name=name, desc=desc, reg=REG_URL, fb=FACEBOOK_URL,
+           tt=TIKTOK_URL, ig=INSTAGRAM_URL,
+           img=img(photo_i, name + " serving at KIZAZI 2026", cls="img-fluid w-100 kz-cover", w=700))
 
 
 def testimonial_item(t):
     initials, label, quote = t
-    stars = "".join('<i class="fas fa-star"></i>' for _ in range(5))
-    return """<div class="testimonial-item">
-                        <div class="kz-testimonial-card">
-                            <i class="fas fa-quote-right kz-testimonial-quote"></i>
-                            <p class="kz-testimonial-text">&ldquo;%(quote)s&rdquo;</p>
-                            <div class="kz-testimonial-person">
-                                <span class="kz-initials-avatar" aria-hidden="true">%(initials)s</span>
-                                <span class="kz-testimonial-meta"><strong>%(initials)s</strong><small>%(label)s</small></span>
-                                <span class="kz-testimonial-stars" aria-label="5 out of 5 stars">%(stars)s</span>
+    return """                    <div class="testimonial-item img-border-radius bg-light border border-primary p-4">
+                        <div class="p-4 position-relative">
+                            <i class="fa fa-quote-right fa-2x text-primary position-absolute" style="top: 15px; right: 15px;"></i>
+                            <div class="d-flex align-items-center">
+                                <div class="border border-primary bg-white rounded-circle">
+                                    <div class="kz-initials kz-initials-lg rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">%(initials)s</div>
+                                </div>
+                                <div class="ms-4">
+                                    <h4 class="text-dark">%(initials)s</h4>
+                                    <p class="m-0 pb-3">%(label)s</p>
+                                    <div class="d-flex pe-5">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-top border-primary mt-4 pt-3">
+                                <p class="mb-0">%(quote)s</p>
                             </div>
                         </div>
-                    </div>""" % {"initials": initials, "label": label, "quote": quote, "stars": stars}
+                    </div>
+""" % dict(initials=initials, label=label, quote=quote)
 
 
-def cta_band():
-    return """        <!-- CTA Start -->
-        <section class="kz-cta-band position-relative">
-            <div class="kz-zigzag kz-zigzag-cta"></div>
-            <div class="container py-5 py-lg-6 text-center text-white">
-                <span class="kz-hand kz-cta-hand">no small steps in this house &hellip;</span>
-                <h2 class="kz-cta-title">Ready to be <span class="kz-grad-text kz-grad-text-light">phenomenal</span>?</h2>
-                <p class="kz-cta-sub">&ldquo;%(verse)s&rdquo; &mdash; <em>%(ref)s</em></p>
-                <div class="d-flex justify-content-center flex-wrap gap-3">
-                    <a class="btn kz-btn kz-btn-sweep btn-lg text-white" href="%(reg)s" target="_blank" rel="noopener">Register &mdash; it&rsquo;s free</a>
-                    <a class="btn kz-btn kz-btn-ghost btn-lg text-white" href="%(meet)s" target="_blank" rel="noopener">This Friday &middot; 8:00 PM EAT</a>
+def play_button():
+    """Template play button: opens the Drive video modal, or links to TikTok."""
+    vids = videos()
+    if vids:
+        return ('<button type="button" class="btn btn-play" data-bs-toggle="modal" '
+                'data-src="%s" data-bs-target="#videoModal" aria-label="Play the KIZAZI highlight film">'
+                '<span></span></button>' % vids[0]["embed"])
+    return ('<a class="btn btn-play" href="%s" target="_blank" rel="noopener" '
+            'title="Highlight film coming soon — watch clips on TikTok" '
+            'aria-label="Watch KIZAZI clips on TikTok"><span></span></a>' % TIKTOK_URL)
+
+
+def watch_section(delay_head="0.1s"):
+    vids = videos()
+    head_html = section_head("KIZAZI On Film", "Watch The Movement",
+                             "Films from the family &mdash; worship, word and the rooms in between. "
+                             "Every clip is hosted on our Drive album.")
+    if not vids:
+        body = """                <div class="row g-5 justify-content-center">
+                    <div class="col-lg-8 wow fadeIn" data-wow-delay="0.2s">
+                        <div class="video border kz-video-thumb kz-video-empty mx-auto" %(bg)s>
+                            %(play)s
+                        </div>
+                        <div class="text-center mt-4">
+                            <h4 class="text-primary mb-2">The highlight film is being cut</h4>
+                            <p class="text-body mb-4">Until the KIZAZI 2026 film drops, catch the moments on our socials &mdash; and the full photo album in the gallery.</p>
+                            <div class="d-flex flex-wrap justify-content-center gap-3">
+                                <a class="btn btn-primary px-4 py-2 text-white btn-border-radius" href="%(tt)s" target="_blank" rel="noopener"><i class="fab fa-tiktok me-2"></i>TikTok clips</a>
+                                <a class="btn btn-primary px-4 py-2 text-white btn-border-radius" href="%(ig)s" target="_blank" rel="noopener"><i class="fab fa-instagram me-2"></i>Instagram</a>
+                                <a class="btn btn-primary px-4 py-2 text-white btn-border-radius" href="gallery.html">Photo gallery</a>
+                                %(album)s
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </section>
-        <!-- CTA End -->
-""" % {"verse": SITE["verse"], "ref": SITE["verse_ref"], "reg": REG_URL, "meet": MEET_URL}
+""" % dict(bg=bg(10), play=play_button(), tt=TIKTOK_URL, ig=INSTAGRAM_URL, album=album_button())
+    else:
+        cards = []
+        for n, v in enumerate(vids):
+            cards.append("""                    <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="%(delay)s">
+                        <div class="border border-primary bg-white rounded overflow-hidden h-100">
+                            <div class="video kz-video-thumb" %(bg)s>
+                                <button type="button" class="btn btn-play" data-bs-toggle="modal" data-src="%(embed)s" data-bs-target="#videoModal" aria-label="Play %(title)s"><span></span></button>
+                            </div>
+                            <div class="p-4">
+                                <span class="badge bg-secondary mb-2">%(tag)s</span>
+                                <h4 class="text-primary">%(title)s</h4>
+                                <p class="text-body mb-0">%(desc)s</p>
+                            </div>
+                        </div>
+                    </div>
+""" % dict(delay=("0.%ds" % (1 + n * 2)), bg=bg(v["poster"]), embed=v["embed"],
+           title=v["title"], desc=v["desc"], tag=v["tag"]))
+        body = ('                <div class="row g-5 justify-content-center">\n%s\n                </div>\n'
+                % "".join(cards))
+        if album_button():
+            body += ('                <div class="text-center mt-4">%s</div>\n' % album_button())
+    return """        <!-- Watch Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+%s%s            </div>
+        </div>
+        <!-- Watch End -->
+""" % (head_html, body)
 
 
-def verse_band():
-    return """        <!-- Verse Band -->
-        <section class="kz-verse-band position-relative">
-            <div class="kz-zigzag kz-zigzag-verse"></div>
-            <div class="container py-5 text-center text-white">
-                <i class="fas fa-cross kz-verse-cross"></i>
-                <blockquote class="kz-verse-text">&ldquo;%(verse)s&rdquo;</blockquote>
-                <cite class="kz-verse-cite kz-hand">&mdash; %(ref)s</cite>
+def testimonials_carousel():
+    return """        <!-- Testimonial Start -->
+        <div class="container-fluid testimonial py-5">
+            <div class="container py-5">
+%s                <div class="owl-carousel testimonial-carousel wow fadeIn" data-wow-delay="0.3s">
+%s                </div>
             </div>
-        </section>
-        <!-- Verse Band End -->
-""" % {"verse": SITE["verse"], "ref": SITE["verse_ref"]}
+        </div>
+        <!-- Testimonial End -->
+""" % (section_head("Our Testimonials", "Voices From The Family"),
+       "".join(testimonial_item(t) for t in TESTIMONIALS))
+
+
+def page(title, desc, active, body, with_video_modal=True):
+    parts = [head(title, desc), body_open(), spinner(), topbar_navbar(active)]
+    if with_video_modal:
+        parts.append(video_modal())
+    parts.append(body)
+    parts.append(footer())
+    parts.append(back_to_top())
+    parts.append(scripts())
+    return "".join(parts)
 
 
 # ------------------------------------------------------------------- pages ---
-def page_index():
-    return (hero_header() + marquee() + about_section() + services_section() +
-            programs_section() + events_section() + blog_section() +
-            team_section(limit=4) + testimonial_section() + cta_band())
-
-
-def page_about():
-    story = """        <!-- Story Start -->
-        <section class="container-fluid kz-about-2 py-5">
-            <div class="container py-4">
-                <div class="row align-items-center g-5">
-                    <div class="col-lg-6 kz-reveal">
-                        <span class="kz-kicker">Our Story</span>
-                        <h2 class="kz-section-title">A generation that <span class="kz-grad-text">refused to be skipped</span></h2>
-                        <p>It started with a question on a Friday night: <em>what if our generation is the one?</em>
-                        A handful of students, a Google Meet link, one verse on the screen &mdash; %(verse_ref)s.</p>
-                        <p>From that night, KIZAZI Phenomenal grew into a cross-border youth family across
-                        %(countries)s: worship nights, discipleship cells, prayer watches, campus tours and
-                        creative labs. No headquarters worship, no VIP seating &mdash; just a generation that
-                        decided faith was not a phase, and fire was not a gimmick.</p>
-                        <p>Two days in August 2026 &mdash; <strong>KIZAZI 2026</strong> &mdash; proved what we had
-                        been claiming all along: this generation shows up. The photos are in the
-                        <a href="gallery.html">gallery</a>; the next conference is already being built.</p>
-                        <div class="d-flex flex-wrap gap-3 mt-2">
-                            <a class="btn kz-btn kz-btn-sweep text-white" href="%(reg)s" target="_blank" rel="noopener">Join the Movement <i class="fas fa-bolt ms-2"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 kz-reveal">
-                        <div class="kz-about-strip">
-                            %(p1)s
-                            %(p2)s
-                            %(p3)s
-                        </div>
+def build_index():
+    body = """
+        <!-- Hero Start -->
+        <div class="container-fluid py-5 hero-header wow fadeIn" data-wow-delay="0.1s" %(bg)s>
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-7 col-md-12">
+                        <h1 class="mb-3 text-primary">A Generation On Fire For God</h1>
+                        <h1 class="mb-4 display-1 text-white">KIZAZI Phenomenal</h1>
+                        <p class="text-white mb-5" style="max-width: 560px;">Christian youth movement across %(countries)s &mdash;
+                        worship that moves, discipleship that sticks, a family that carries you.
+                        <strong class="text-white">This Friday:</strong> Online Catch-Up, 8:00 PM EAT
+                        (<span data-next-friday-long>&hellip;</span>).</p>
+                        <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-primary px-4 py-3 px-md-5 me-4 btn-border-radius">Register Free</a>
+                        <a href="about.html" class="btn btn-secondary px-4 py-3 px-md-5 btn-border-radius">Our Story</a>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- Story End -->
-""" % {"verse_ref": SITE["verse_ref"], "countries": SITE["countries"], "reg": REG_URL,
-       "p1": img(36, "KIZAZI 2026 — day one", cls="img-fluid rounded-4"),
-       "p2": img(37, "KIZAZI 2026 — worship", cls="img-fluid rounded-4"),
-       "p3": img(38, "KIZAZI 2026 — the fam", cls="img-fluid rounded-4")}
+        </div>
+        <!-- Hero End -->
 
-    stats = """        <!-- Stats -->
-        <section class="kz-stats container-fluid">
-            <div class="container py-4">
-                <div class="row g-4 text-center">
-                    <div class="col-6 col-lg-3 kz-reveal"><div class="kz-stat"><strong><span class="kz-counter" data-count="4"></span></strong><span>nations</span></div></div>
-                    <div class="col-6 col-lg-3 kz-reveal"><div class="kz-stat"><strong><span class="kz-counter" data-count="500" data-suffix="+"></span></strong><span>young people reached</span></div></div>
-                    <div class="col-6 col-lg-3 kz-reveal"><div class="kz-stat"><strong><span class="kz-counter" data-count="8"></span></strong><span>ministries</span></div></div>
-                    <div class="col-6 col-lg-3 kz-reveal"><div class="kz-stat"><strong><span class="kz-counter" data-count="52"></span></strong><span>Fridays a year</span></div></div>
+
+        <!-- About Start -->
+        <div class="container-fluid py-5 about bg-light">
+            <div class="container py-5">
+                <div class="row g-5 align-items-center">
+                    <div class="col-lg-5 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="video border" %(about_bg)s>
+                            %(play)s
+                        </div>
+                    </div>
+                    <div class="col-lg-7 wow fadeIn" data-wow-delay="0.3s">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">About Us</h4>
+                        <h1 class="text-dark mb-4 display-5">We Are The Generation That Sets The Example</h1>
+                        <p class="text-dark mb-4">&ldquo;%(verse)s&rdquo; &mdash; %(verse_ref)s. KIZAZI Phenomenal is a family of students
+                        and young workers across Kenya, Uganda, Tanzania and Rwanda, gathered every Friday
+                        online and in cells through the week.</p>
+                        <div class="row mb-4">
+                            <div class="col-lg-6">
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2"></i>Weekly Friday catch-up</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-primary"></i>Discipleship cells</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-secondary"></i>Campus &amp; school tours</h6>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2"></i>Creative &amp; media lab</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-primary"></i>Mentorship &amp; career</h6>
+                                <h6><i class="fas fa-check-circle me-2 text-secondary"></i>Serve East Africa trips</h6>
+                            </div>
+                        </div>
+                        <a href="about.html" class="btn btn-primary px-5 py-3 btn-border-radius">More Details</a>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+        <!-- About End -->
+
+
+        <!-- Ministries / Service Start -->
+        <div class="container-fluid service py-5">
+            <div class="container py-5">
+%(service_head)s                <div class="row g-5">
+%(service_cards)s                </div>
+            </div>
+        </div>
+        <!-- Ministries / Service End -->
+
+
+        <!-- Programs Start -->
+        <div class="container-fluid program py-5">
+            <div class="container py-5">
+%(program_head)s                <div class="row g-5 justify-content-center">
+%(program_cards)s                    <div class="d-inline-block text-center wow fadeIn" data-wow-delay="0.1s">
+                        <a href="programs.html" class="btn btn-primary px-5 py-3 text-white btn-border-radius">View All Programs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Program End -->
+
+
+        <!-- Events Start -->
+        <div class="container-fluid events py-5 bg-light">
+            <div class="container py-5">
+%(events_head)s                <div class="row g-5 justify-content-center">
+%(event_cards)s                </div>
+            </div>
+        </div>
+        <!-- Events End-->
+
+
+%(watch)s
+
+        <!-- Blog Start-->
+        <div class="container-fluid blog py-5">
+            <div class="container py-5">
+%(blog_head)s                <div class="row g-5 justify-content-center">
+%(blog_cards)s                </div>
+            </div>
+        </div>
+        <!-- Blog End-->
+
+
+        <!-- Team Start-->
+        <div class="container-fluid team py-5 bg-light">
+            <div class="container py-5">
+%(team_head)s                <div class="row g-5 justify-content-center">
+%(team_cards)s                    <div class="d-inline-block text-center wow fadeIn" data-wow-delay="0.1s">
+                        <a href="team.html" class="btn btn-primary px-5 py-3 text-white btn-border-radius">Meet The Whole Family</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Team End-->
+
+
+%(testimonials)s
+""" % dict(
+        bg=bg(HERO_PHOTO), about_bg=bg(ABOUT_PHOTO), play=play_button(),
+        countries=SITE["countries"], verse=SITE["verse"], verse_ref=SITE["verse_ref"],
+        reg=REG_URL,
+        service_head=section_head("What We Do", "Eight Doorways Into The Family"),
+        service_cards="".join(service_card(m, "0.%ds" % (1 + (n % 4) * 2)) for n, m in enumerate(MINISTRIES)),
+        program_head=section_head("Our Programs", "Programs That Build A Generation"),
+        program_cards="".join(program_card(p, "0.%ds" % (1 + (n % 3) * 2)) for n, p in enumerate(PROGRAMS[:3])),
+        events_head=section_head("Our Events", "Where We Meet Next"),
+        event_cards="".join(event_card(e, "0.%ds" % (1 + (n % 4) * 2)) for n, e in enumerate(EVENTS)),
+        watch=watch_section(),
+        blog_head=section_head("Word &amp; Stories", "Read Our Latest"),
+        blog_cards="".join(blog_card(b, "0.%ds" % (1 + n * 2), "blog.html#%s") for n, b in enumerate(BLOG)),
+        team_head=section_head("Serving Teams", "The Crew Behind The Fire"),
+        team_cards="".join(team_card(t, "0.%ds" % (1 + n * 2)) for n, t in enumerate(TEAMS[:4])),
+        testimonials=testimonials_carousel(),
+    )
+    return page("KIZAZI Phenomenal — A Generation on Fire for God",
+                "KIZAZI Phenomenal is a Christian youth ministry serving Kenya, Uganda, "
+                "Tanzania and Rwanda. Phenomenal Fridays, 8:00 PM EAT. Register free.",
+                "home", body)
+
+
+def build_about():
+    stats = [("4", "Nations served"), ("500+", "Young people reached"),
+             ("8", "Ministries"), ("52", "Fridays a year")]
+    stat_html = "".join(
+        """                    <div class="col-6 col-lg-3 wow fadeIn" data-wow-delay="0.%ds">
+                        <div class="text-center border border-primary bg-white p-4 rounded h-100">
+                            <h1 class="display-4 text-primary mb-0">%s</h1>
+                            <p class="text-body mb-0">%s</p>
+                        </div>
+                    </div>
+""" % (1 + n * 2, v, l_) for n, (v, l_) in enumerate(stats))
+    values = [
+        ("fa-fire", "On fire", "Worship and prayer first &mdash; everything else is overflow."),
+        ("fa-book-open", "In the Word", "Scripture taught plainly, questioned honestly, lived loudly."),
+        ("fa-hands-holding-child", "In family", "Nobody walks exams, home or grief alone."),
+        ("fa-globe-africa", "On mission", "Campuses, schools and borders &mdash; the gospel goes."),
+    ]
+    value_html = "".join(
+        """                    <div class="col-md-6 col-xl-3 wow fadeIn" data-wow-delay="0.%ds">
+                        <div class="text-center border-primary border bg-white service-item h-100">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-4"><i class="fas %s fa-6x text-primary"></i></div>
+                                    <a href="#" class="h4">%s</a>
+                                    <p class="my-3">%s</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+""" % (1 + n * 2, icon, name, desc) for n, (icon, name, desc) in enumerate(values))
+    body = """
+%(header)s
+
+        <!-- About Start -->
+        <div class="container-fluid py-5 about bg-light">
+            <div class="container py-5">
+                <div class="row g-5 align-items-center">
+                    <div class="col-lg-5 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="video border" %(about_bg)s>
+                            %(play)s
+                        </div>
+                    </div>
+                    <div class="col-lg-7 wow fadeIn" data-wow-delay="0.3s">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">About Us</h4>
+                        <h1 class="text-dark mb-4 display-5">KIZAZI Means &ldquo;Generation&rdquo; &mdash; And That Is Exactly Who We Are</h1>
+                        <p class="text-dark mb-4">KIZAZI Phenomenal began the way most moves of God do: a few students who refused
+                        to wait for &ldquo;after graduation&rdquo; to live for God. Today the family gathers every Friday at 8:00 PM EAT
+                        on Google Meet &mdash; Kenya, Uganda, Tanzania and Rwanda in one room &mdash; and in discipleship cells,
+                        campus fellowships and Serve East Africa trips through the week.</p>
+                        <p class="text-dark mb-4">We are not a building and we are not a brand. We are a generation learning to set
+                        the example &mdash; in speech, in conduct, in love, in faith, in purity.</p>
+                        <div class="row mb-4">
+                            <div class="col-lg-6">
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-primary"></i>Online every Friday</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-secondary"></i>Cells in person weekly</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2"></i>Free to join, always</h6>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2"></i>Student-led, mentor-backed</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-primary"></i>Creative-first culture</h6>
+                                <h6><i class="fas fa-check-circle me-2 text-secondary"></i>Four nations, one family</h6>
+                            </div>
+                        </div>
+                        <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-primary px-5 py-3 btn-border-radius">Join The Family</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About End -->
+
+
+        <!-- Stats Start -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+                <div class="row g-4">
+%(stats)s                </div>
+            </div>
+        </div>
         <!-- Stats End -->
-"""
 
-    mvv = """        <!-- Mission / Vision / Values -->
-        <section class="container-fluid kz-mvv py-5">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-mvv-card">
-                            <div class="kz-mvv-icon"><i class="fas fa-crosshairs"></i></div>
-                            <h4>Mission</h4>
-                            <p>Make East Africa&rsquo;s next generation fearless for Jesus &mdash; rooted in the Word,
-                            bold in the culture, faithful in the details.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-mvv-card">
-                            <div class="kz-mvv-icon"><i class="fas fa-eye"></i></div>
-                            <h4>Vision</h4>
-                            <p>A generation that leads the church, the campus and the culture with the gospel
-                            &mdash; and sends the next one after it.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-mvv-card">
-                            <div class="kz-mvv-icon"><i class="fas fa-heart"></i></div>
-                            <h4>Values</h4>
-                            <p>Radical faith. Holy friendship. Bold creativity. Servant hearts.
-                            Excellence &mdash; God is not impressed by almost.</p>
-                        </div>
+
+        <!-- Values Start -->
+        <div class="container-fluid service py-5">
+            <div class="container py-5">
+%(values_head)s                <div class="row g-5">
+%(values)s                </div>
+            </div>
+        </div>
+        <!-- Values End -->
+
+
+        <!-- Verse Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9 text-center wow fadeIn" data-wow-delay="0.2s">
+                        <i class="fas fa-cross fa-2x text-secondary mb-4"></i>
+                        <h1 class="display-5 text-dark fst-italic">&ldquo;%(verse)s&rdquo;</h1>
+                        <h4 class="text-primary mt-4 mb-0">&mdash; %(verse_ref)s</h4>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- Mission / Vision / Values End -->
-""" % {"head": section_head("Why We Exist", "Mission, vision &amp; <span class='kz-grad-text'>values</span>")}
+        </div>
+        <!-- Verse End -->
 
-    believe = """        <!-- What we believe -->
-        <section class="container-fluid kz-believe py-5 kz-section-tint">
-            <div class="container py-4">
-                <div class="row align-items-center g-5">
-                    <div class="col-lg-6 kz-reveal">
-                        <div class="kz-believe-photo">%(photo)s</div>
-                    </div>
-                    <div class="col-lg-6 kz-reveal">
-                        <span class="kz-kicker">The Basics</span>
-                        <h2 class="kz-section-title">What we <span class="kz-grad-text">believe</span></h2>
-                        <ul class="kz-check-list kz-check-list-lg">
-                            <li><i class="fas fa-check"></i> <span><strong>Jesus first.</strong> He is the whole gospel &mdash; not one verse of it.</span></li>
-                            <li><i class="fas fa-check"></i> <span><strong>The Bible is true.</strong> We read it to be changed, not just quoted.</span></li>
-                            <li><i class="fas fa-check"></i> <span><strong>Prayer is real.</strong> Heaven listens, especially when we stop whispering.</span></li>
-                            <li><i class="fas fa-check"></i> <span><strong>Community is essential.</strong> Nobody gets to grow up alone.</span></li>
-                            <li><i class="fas fa-check"></i> <span><strong>The world matters.</strong> Campus, career, culture &mdash; all of it is ministry ground.</span></li>
-                        </ul>
-                    </div>
+
+        <!-- CTA Start -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+                <div class="p-5 bg-light rounded text-center wow fadeIn" data-wow-delay="0.2s">
+                    <h1 class="display-4 mb-4">Come As You Are</h1>
+                    <p class="text-body mb-4">Register free, get the Friday link, and let a cell near you adopt you this term.</p>
+                    <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-primary px-5 py-3 me-3 text-white btn-border-radius">Register Free</a>
+                    <a href="%(meet)s" target="_blank" rel="noopener" class="btn btn-secondary px-5 py-3 text-white btn-border-radius">Join This Friday</a>
                 </div>
             </div>
-        </section>
-        <!-- What we believe End -->
-""" % {"photo": img(39, "KIZAZI Phenomenal — community", cls="img-fluid rounded-4")}
+        </div>
+        <!-- CTA End -->
+""" % dict(header=page_header("About Us", "One generation, four nations, on fire for God.", 25),
+           about_bg=bg(ABOUT_PHOTO), play=play_button(), reg=REG_URL, meet=MEET_URL,
+           stats=stat_html,
+           values_head=section_head("Mission &middot; Vision &middot; Values", "What We Hold Onto"),
+           values=value_html, verse=SITE["verse"], verse_ref=SITE["verse_ref"])
+    return page("About Us — KIZAZI Phenomenal",
+                "The story, mission and values of KIZAZI Phenomenal, a Christian youth "
+                "movement across Kenya, Uganda, Tanzania and Rwanda.",
+                "about", body)
 
-    return (page_header("About Us", "Who we are, where we came from, and the verse that runs everything.", 17, "Our Story") +
-            story + verse_band() + stats + mvv + believe + cta_band())
 
-
-def page_ministries():
-    cards = []
-    for slug, icon, name, blurb, detail, expect in MINISTRIES:
-        expect_html = "".join("<li>%s</li>" % e for e in expect)
-        cards.append("""<div class="col-lg-6 kz-reveal">
-                    <div class="kz-flip" id="w-%(slug)s">
-                        <div class="kz-flip-inner">
-                            <div class="kz-flip-front">
-                                <div class="kz-flip-icon"><i class="fas %(icon)s"></i></div>
-                                <h3 class="kz-flip-name">%(name)s</h3>
-                                <p class="kz-flip-blurb">%(blurb)s</p>
-                                <span class="kz-flip-hint">flip for the real talk <i class="fas fa-rotate"></i></span>
+def build_ministries():
+    cards = "".join(service_card(m, "0.%ds" % (1 + (n % 4) * 2), detail=True, anchor=False)
+                    for n, m in enumerate(MINISTRIES))
+    acc = []
+    for slug, icon, name, blurb, long_, bullets in MINISTRIES:
+        acc.append("""                            <div class="accordion-item" id="%(slug)s">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-%(slug)s" aria-expanded="false" aria-controls="acc-%(slug)s">
+                                        <i class="fas %(icon)s me-3 text-primary"></i>%(name)s &mdash; what to expect
+                                    </button>
+                                </h2>
+                                <div id="acc-%(slug)s" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
+                                    <div class="accordion-body">
+                                        <p class="mb-3">%(long)s</p>
+                                        <ul class="mb-0">
+%(bullets)s
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="kz-flip-back">
-                                <h4>%(name)s</h4>
-                                <p>%(detail)s</p>
-                                <ul class="kz-flip-expect">%(expect)s</ul>
-                                <a class="btn kz-btn kz-btn-sweep text-white" href="%(reg)s" target="_blank" rel="noopener"><i class="fas fa-bolt me-2"></i>Sign me up</a>
-                            </div>
+""" % dict(slug=slug, icon=icon, name=name, long=long_,
+           bullets="\n".join("                                            <li>%s</li>" % b for b in bullets)))
+    body = """
+%(header)s
+
+        <!-- Ministries Start -->
+        <div class="container-fluid service py-5">
+            <div class="container py-5">
+%(head)s                <div class="row g-5">
+%(cards)s                </div>
+            </div>
+        </div>
+        <!-- Ministries End -->
+
+
+        <!-- Expect Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+%(expect_head)s                <div class="row justify-content-center">
+                    <div class="col-lg-9 wow fadeIn" data-wow-delay="0.2s">
+                        <div class="accordion" id="ministryAccordion">
+%(accordion)s                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Expect End -->
+""" % dict(header=page_header("Ministries", "Eight doorways into the family &mdash; pick the one that fits your gift.", 26),
+           head=section_head("What We Do", "The Eight Ministries"),
+           cards=cards,
+           expect_head=section_head("Get Involved", "What To Expect In Each Ministry"),
+           accordion="".join(acc))
+    return page("Ministries — KIZAZI Phenomenal",
+                "The eight ministries of KIZAZI Phenomenal: worship & the Word, discipleship "
+                "cells, prayer, Friday catch-up, outreach, creative lab, mentorship and care.",
+                "ministries", body)
+
+
+def build_programs():
+    cards = "".join(program_card(p, "0.%ds" % (1 + (n % 3) * 2)) for n, p in enumerate(PROGRAMS))
+    phases = [
+        ("Weeks 1&ndash;3", "Foundations", ["Who God is &mdash; and who you are in Him", "How to read Scripture without panic", "Your first honest prayer rhythm"]),
+        ("Weeks 4&ndash;6", "Hearing God", ["Spirit, word and wisdom", "Journaling &amp; quiet mornings", "Testing what you hear"]),
+        ("Weeks 7&ndash;9", "Living On Purpose", ["Gifts, calling and campus", "Friendships that carry you", "Saying no without guilt"]),
+        ("Weeks 10&ndash;12", "Sent", ["Building your cell&rsquo;s outreach project", "Leading something small", "Commissioning night"]),
+    ]
+    phase_html = "".join(
+        """                    <div class="col-md-6 col-xl-3 wow fadeIn" data-wow-delay="%(delay)s">
+                        <div class="border border-primary bg-white p-4 rounded h-100">
+                            <div class="px-3 py-2 bg-primary text-white d-inline-block mb-3 program-rate-static">%(weeks)s</div>
+                            <h4 class="text-primary">%(name)s</h4>
+                            <ul class="mb-0">
+%(items)s
+                            </ul>
                         </div>
                     </div>
-                </div>""" % {"slug": slug, "icon": icon, "name": name, "blurb": blurb,
-                             "detail": detail, "expect": expect_html, "reg": REG_URL})
-    return (page_header("Ministries", "Eight doorways into the same fire — find the one God opened for you.", 18, "8 Doorways") +
-            """        <section class="container-fluid kz-ministries py-5">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-%(cards)s
+""" % dict(delay="0.%ds" % (1 + n * 2), weeks=w, name=nme,
+           items="\n".join("                                <li>%s</li>" % i for i in its))
+        for n, (w, nme, its) in enumerate(phases))
+    body = """
+%(header)s
+
+        <!-- Programs Start -->
+        <div class="container-fluid program py-5">
+            <div class="container py-5">
+%(head)s                <div class="row g-5 justify-content-center">
+%(cards)s                </div>
+            </div>
+        </div>
+        <!-- Program End -->
+
+
+        <!-- Rooted timeline Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+%(rooted_head)s                <div class="row g-4">
+%(phases)s                </div>
+                <div class="text-center mt-5 wow fadeIn" data-wow-delay="0.2s">
+                    <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-primary px-5 py-3 text-white btn-border-radius">Apply For The Next Rooted Intake</a>
                 </div>
             </div>
-        </section>
-""" % {"head": section_head("Ministries", "Every ministry is a <span class='kz-grad-text'>doorway</span>",
-                          "None of them are optional, and all of them are open. Hover (or tap) a card for the real talk."),
-       "cards": "\n".join(cards)} +
-            cta_band())
+        </div>
+        <!-- Rooted timeline End -->
+""" % dict(header=page_header("Programs", "Six programs, one goal: a generation that knows what it believes.", 27),
+           head=section_head("Our Programs", "Pick Your Track"),
+           cards=cards,
+           rooted_head=section_head("Rooted &middot; 12 Weeks", "The Rooted Journey, Week By Week"),
+           phases=phase_html, reg=REG_URL)
+    return page("Programs — KIZAZI Phenomenal",
+                "KIZAZI Phenomenal programs: Rooted (12 weeks), Phenomenal Fridays, Creative Lab, "
+                "Mentorship Circle, Campus Ambassadors and Serve East Africa.",
+                "programs", body)
 
 
-def page_programs():
-    cards = [program_card(p) for p in PROGRAMS]
-    rooted = """        <!-- Rooted timeline -->
-        <section class="container-fluid kz-rooted py-5 kz-section-tint">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-phase-card">
-                            <span class="kz-phase-num">01</span>
-                            <h4>Weeks 1&ndash;4 &middot; Foundation</h4>
-                            <p>Who God is. What the gospel actually says. How to read your Bible without crying by chapter two (okay, maybe a little crying).</p>
+def build_events():
+    cards = "".join(event_card(e, "0.%ds" % (1 + (n % 4) * 2)) for n, e in enumerate(EVENTS))
+    mosaic = []
+    for i in range(16, 28):
+        mosaic.append("""                        <div class="col-6 col-md-4 col-lg-2 wow fadeIn" data-wow-delay="0.1s">
+                            <a href="%s" data-lightbox="kizazi-2026" class="d-block border border-primary rounded-circle overflow-hidden kz-square">
+                                %s
+                            </a>
                         </div>
-                    </div>
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-phase-card">
-                            <span class="kz-phase-num">02</span>
-                            <h4>Weeks 5&ndash;8 &middot; Deep Roots</h4>
-                            <p>Prayer, obedience, sin and freedom &mdash; the stuff that separates a religion from a relationship.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-phase-card">
-                            <span class="kz-phase-num">03</span>
-                            <h4>Weeks 9&ndash;12 &middot; Go Forth</h4>
-                            <p>Sending you out: a serving role, a cell of your own, a campus, a mission. You graduate by being sent.</p>
-                        </div>
-                    </div>
-                </div>
-                <p class="kz-rooted-note kz-hand">graduates of Rooted join the mentorship &amp; serving teams &mdash; the fire keeps moving.</p>
-            </div>
-        </section>
-""" % {"head": section_head("Inside Rooted", "The 12 weeks, <span class='kz-grad-text'>phase by phase</span>",
-                            "Our flagships discipleship track. One cohort at a time, in a small group, with a mentor who actually checks in.")}
-    return (page_header("Programs", "Structured tracks to go deeper — every program has a door and a way in.", 19, "Go Deeper") +
-            """        <section class="container-fluid kz-programs-2 py-5">
-            <div class="container py-4">
-                <div class="row g-4">
-%(cards)s
+""" % (durl(i), img(i, "KIZAZI 2026 photo", cls="img-fluid w-100 kz-cover", w=600)))
+    body = """
+%(header)s
+
+        <!-- Events Start -->
+        <div class="container-fluid events py-5 bg-light">
+            <div class="container py-5">
+%(head)s                <div class="row g-5 justify-content-center">
+%(cards)s                </div>
+                <div class="text-center mt-5 wow fadeIn" data-wow-delay="0.2s">
+                    <p class="text-body mb-3">Every Friday is free and open &mdash; no registration needed to join the Meet.</p>
+                    <a href="%(meet)s" target="_blank" rel="noopener" class="btn btn-primary px-5 py-3 me-3 text-white btn-border-radius"><i class="fas fa-video me-2"></i>Join This Friday</a>
+                    <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-secondary px-5 py-3 text-white btn-border-radius">Get Event Updates</a>
                 </div>
             </div>
-        </section>
-""" % {"cards": "\n".join(cards)} + rooted + cta_band())
+        </div>
+        <!-- Events End-->
 
 
-def page_events():
-    cards = [event_card(e, b) for e, b in zip(EVENTS, EVENT_BADGES)]
-    featured = """        <!-- Featured: next Friday -->
-        <section class="kz-events-featured container-fluid py-5">
-            <div class="container">
-                <div class="kz-featured-card kz-reveal">
-                    <div class="kz-featured-info">
-                        <span class="kz-event-tag kz-event-tag-light">Happens weekly &middot; never skip</span>
-                        <h2 class="kz-featured-title">Phenomenal Friday &mdash; Online Catch-Up</h2>
-                        <p>Worship, a Word bite, prayer and connection &mdash; live on Google Meet across
-                        Kenya, Uganda, Tanzania and Rwanda. First-timers welcome, earphones optional (not recommended).</p>
-                        <ul class="kz-event-list kz-event-list-light">
-                            <li><i class="fas fa-calendar"></i> Next up: <strong data-next-friday-long>&hellip;</strong> <span class="kz-friday-rel" data-next-friday-rel></span></li>
-                            <li><i class="fas fa-clock"></i> 8:00 PM EAT (5:00 PM UTC)</li>
-                            <li><i class="fas fa-video"></i> Google Meet &mdash; link below</li>
-                        </ul>
-                        <div class="d-flex flex-wrap gap-3">
-                            <a class="btn kz-btn kz-btn-sweep text-white btn-lg" href="%(meet)s" target="_blank" rel="noopener"><i class="fas fa-video me-2"></i>Join Live</a>
-                            <a class="btn kz-btn kz-btn-ghost text-white btn-lg" href="%(reg)s" target="_blank" rel="noopener">Register with us</a>
-                        </div>
-                    </div>
-                    <div class="kz-featured-photo">%(photo)s
-                        <div class="kz-event-date kz-event-date-big kz-event-date-auto">
-                            <span data-next-friday-day>&ndash;</span><small data-next-friday-mon>&ndash;</small>
-                        </div>
-                    </div>
+        <!-- Recap Start -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+%(recap_head)s                <div class="row g-3 justify-content-center">
+%(mosaic)s                </div>
+                <div class="text-center mt-4">
+                    <a class="btn btn-primary px-5 py-3 text-white btn-border-radius" href="gallery.html">See All 42 Photos</a>
+                    %(album)s
                 </div>
             </div>
-        </section>
-""" % {"meet": MEET_URL, "reg": REG_URL, "photo": img(34, "Phenomenal Friday — online catch-up", cls="img-fluid rounded-4 w-100")}
-
-    past = """        <!-- Past flagship: KIZAZI 2026 -->
-        <section class="kz-events-past container-fluid py-5">
-            <div class="container py-4">
-                <div class="kz-past-card kz-reveal">
-                    <div class="kz-past-info">
-                        <span class="kz-event-tag">Past flagship</span>
-                        <h3 class="kz-past-title">KIZAZI 2026 <span class="kz-hand kz-hand-gold">&mdash; thank you, fam.</span></h3>
-                        <p><strong>14&ndash;15 August 2026.</strong> Two days, one generation, zero chill. The highlight
-                        film is in the works &mdash; until then, the 42 photos from the event live in the gallery.</p>
-                        <a class="btn kz-btn kz-btn-sweep text-white" href="gallery.html"><i class="fas fa-images me-2"></i>Relive It in the Gallery</a>
-                    </div>
-                    <div class="kz-past-photos">
-                        %(p1)s
-                        %(p2)s
-                        %(p3)s
-                    </div>
-                </div>
-            </div>
-        </section>
-""" % {"p1": img(35, "KIZAZI 2026 — day one", cls="img-fluid rounded-4"),
-       "p2": img(40, "KIZAZI 2026 — worship", cls="img-fluid rounded-4"),
-       "p3": img(41, "KIZAZI 2026 — night two", cls="img-fluid rounded-4")}
-
-    prepare = """        <!-- Prepare for Friday -->
-        <section class="container-fluid kz-prepare py-5 kz-section-tint">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-prepare-card"><span class="kz-prepare-num">1</span><h4>Pray on your day</h4><p>Before you ever click Join, pray for the night, the speakers and your city. Five minutes counts.</p></div>
-                    </div>
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-prepare-card"><span class="kz-prepare-num">2</span><h4>Set up your corner</h4><p>Quiet place, charged phone, earphones if you can. Camera on if you&rsquo;re up for it &mdash; faces make a family.</p></div>
-                    </div>
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-prepare-card"><span class="kz-prepare-num">3</span><h4>Arrive 5 early</h4><p>Doors at 7:55, fire at 8:00. Grab a prayer topic from someone in the chat before you go.</p></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-""" % {"head": section_head("Before Friday", "Three habits that <span class='kz-grad-text'>level you up</span>")}
-
-    return (page_header("Events", "Fridays are set in stone. Everything else drops on socials first.", 20, "What's On") +
-            featured + past +
-            """        <section class="container-fluid kz-events-2 py-5">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-%(cards)s
-                </div>
-            </div>
-        </section>
-""" % {"head": section_head("The Calendar", "Everything KIZAZI, <span class='kz-grad-text'>in one place</span>"),
-       "cards": "\n".join(cards)} + prepare + cta_band())
+        </div>
+        <!-- Recap End -->
+""" % dict(header=page_header("Events", "Fridays online, nights in person, conferences and tours.", 10),
+           head=section_head("Our Events", "What&rsquo;s Coming Up"),
+           cards=cards, meet=MEET_URL, reg=REG_URL,
+           recap_head=section_head("KIZAZI 2026 &middot; 14&ndash;15 August", "The Flagship, In Pictures"),
+           mosaic="".join(mosaic), album=album_button())
+    return page("Events — KIZAZI Phenomenal",
+                "Upcoming KIZAZI Phenomenal events: Phenomenal Fridays online catch-up, KIZAZI "
+                "Conference 2027, Worship & Word Nights and the Campus & School Tour.",
+                "events", body)
 
 
-def page_gallery():
-    chips = ['<button type="button" class="kz-filter-chip active" data-filter="all">All <span class="kz-chip-count">%d</span></button>' % len(PHOTOS)]
+def build_gallery():
+    filters = ['<button type="button" class="btn btn-primary kz-filter-btn active btn-border-radius px-4 py-2 text-white" data-filter="all">All</button>']
     for key, label in GALLERY_CATS:
-        count = sum(1 for i in range(len(PHOTOS)) if gallery_cat(i)[0] == key)
-        chips.append('<button type="button" class="kz-filter-chip" data-filter="%s">%s <span class="kz-chip-count">%d</span></button>' % (key, label, count))
-
+        filters.append('<button type="button" class="btn btn-primary kz-filter-btn btn-border-radius px-4 py-2 text-white" data-filter="%s">%s</button>' % (key, label))
     items = []
     for i in range(len(PHOTOS)):
-        key, label = gallery_cat(i)
-        items.append("""<a class="kz-gallery-item" data-cat="%(key)s" href="%(href)s" data-lightbox="kizazi-2026" data-title="KIZAZI 2026 · %(label)s · photo %(num)d">
-                    %(img)s
-                    <span class="kz-gallery-cat">%(label)s</span>
-                </a>""" % {"key": key, "href": durl(i, 1600), "label": label, "num": i + 1,
-                            "img": img(i, "KIZAZI 2026 photo %d" % (i + 1), cls="img-fluid")})
-    return (page_header("Gallery", "The entire KIZAZI 2026 album — 42 photos from two days that shook us. (Lightbox inside.)", 21, "KIZAZI 2026") +
-            """        <section class="container-fluid kz-gallery-sec py-5">
-            <div class="container py-4">
-                <div class="kz-filter-bar kz-reveal">
-%(chips)s
-                </div>
-                <p class="kz-gallery-note kz-hand">tap any photo to open it full-size &rarr;</p>
-                <div class="kz-gallery-grid">
-%(items)s
-                </div>
-            </div>
-        </section>
-""" % {"chips": "\n".join(chips), "items": "\n".join(items)} + cta_band())
-
-
-def page_blog():
-    posts = [blog_card(b, full=True) for b in BLOG]
-    return (page_header("Blog", "Devotionals, recaps and honest conversations from the KIZAZI fam.", 22, "Word to You") +
-            """        <section class="container-fluid kz-blog-sec py-5">
-            <div class="container py-4">
-                <div class="kz-blog-stack">
-%(posts)s
-                </div>
-                <div class="kz-blog-coming kz-reveal text-center mt-5">
-                    <p class="kz-hand kz-hand-dark mb-2">more is loading&hellip;</p>
-                    <p class="mb-3">New devotionals drop on our socials before they land here.</p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a class="btn kz-btn kz-btn-dark" href="%(tiktok)s" target="_blank" rel="noopener"><i class="fab fa-tiktok me-2"></i>TikTok</a>
-                        <a class="btn kz-btn kz-btn-dark" href="%(ig)s" target="_blank" rel="noopener"><i class="fab fa-instagram me-2"></i>Instagram</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-""" % {"posts": "\n".join(posts), "tiktok": TIKTOK_URL, "ig": INSTAGRAM_URL} + cta_band())
-
-
-def page_team():
-    cards = [team_card(t) for t in TEAMS]
-    steps = """        <!-- How to serve -->
-        <section class="container-fluid kz-serve py-5 kz-section-tint">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-serve-card"><span class="kz-prepare-num">1</span><h4>Register</h4><p>Fill the registration form &mdash; it tells the team where you are and what you&rsquo;re into.</p></div>
-                    </div>
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-serve-card"><span class="kz-prepare-num">2</span><h4>Tell us your gift</h4><p>Singing? Design? Prayer? Driving the van? Every gift gets a door.</p></div>
-                    </div>
-                    <div class="col-lg-4 kz-reveal">
-                        <div class="kz-serve-card"><span class="kz-prepare-num">3</span><h4>Join a team this term</h4><p>Teams meet, train and ship together. You&rsquo;ll know your team by your second Friday.</p></div>
-                    </div>
-                </div>
-                <div class="text-center mt-5 kz-reveal">
-                    <a class="btn kz-btn kz-btn-sweep text-white btn-lg" href="%(reg)s" target="_blank" rel="noopener"><i class="fas fa-hand-holding-heart me-2"></i>I Want to Serve</a>
-                </div>
-            </div>
-        </section>
-""" % {"head": section_head("How to Serve", "Three steps, <span class='kz-grad-text'>zero gatekeeping</span>"), "reg": REG_URL}
-    intro_note = """        <section class="container-fluid kz-team-note py-5">
-            <div class="container">
-                <div class="kz-note-card kz-reveal text-center">
-                    <i class="fas fa-users kz-note-icon"></i>
-                    <p>We&rsquo;re a movement first, so this page shows <strong>serving teams and roles</strong> rather than
-                    named individuals &mdash; no invented names, no borrowed faces. Real names and photos land here
-                    as the team consents to be public. (And no, we will not put random event photos on leaders.)</p>
-                </div>
-            </div>
-        </section>
-"""
-    return (page_header("Team", "The people behind the fire — and how to join one of the teams.", 23, "The Fam") +
-            intro_note +
-            """        <section class="container-fluid kz-team-sec py-5">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4 justify-content-center">
-%(cards)s
-                </div>
-            </div>
-        </section>
-""" % {"head": section_head("Serving Teams", "Eight teams, <span class='kz-grad-text'>one body</span>"),
-       "cards": "\n".join(cards)} + steps + cta_band())
-
-
-def page_testimonial():
-    cards = []
-    for t in TESTIMONIALS:
-        initials, label, quote = t
-        stars = "".join('<i class="fas fa-star"></i>' for _ in range(5))
-        cards.append("""<div class="col-lg-6 kz-reveal">
-                    <div class="kz-testimonial-card kz-testimonial-card-lg">
-                        <i class="fas fa-quote-right kz-testimonial-quote"></i>
-                        <p class="kz-testimonial-text">&ldquo;%(quote)s&rdquo;</p>
-                        <div class="kz-testimonial-person">
-                            <span class="kz-initials-avatar" aria-hidden="true">%(initials)s</span>
-                            <span class="kz-testimonial-meta"><strong>%(initials)s</strong><small>%(label)s</small></span>
-                            <span class="kz-testimonial-stars" aria-label="5 out of 5 stars">%(stars)s</span>
+        key, label = GALLERY_CATS[i % len(GALLERY_CATS)]
+        items.append("""                        <div class="col-6 col-md-4 col-lg-3 kz-gallery-item" data-cat="%s">
+                            <a href="%s" data-lightbox="kizazi-gallery" data-title="KIZAZI 2026 &middot; %s" class="d-block border border-primary rounded overflow-hidden kz-square">
+                                %s
+                            </a>
                         </div>
-                    </div>
-                </div>""" % {"initials": initials, "label": label, "quote": quote, "stars": stars})
-    return (page_header("Testimonial", "Voices from the family — real stories, initials only, consent first.", 24, "In Their Words") +
-            """        <section class="container-fluid kz-testimonial-sec py-5">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-%(cards)s
-                </div>
-            </div>
-        </section>
-""" % {"head": section_head("Voices", "The fam, <span class='kz-grad-text'>in their words</span>",
-                          "Illustrative quotes from where the family is today. Share yours and it can be here, with your consent."),
-       "cards": "\n".join(cards)} + verse_band() +
-            """        <section class="container-fluid kz-share py-5">
-            <div class="container">
-                <div class="kz-share-card kz-reveal text-center text-white">
-                    <span class="kz-hand kz-cta-hand">your story could be next&hellip;</span>
-                    <h2 class="kz-share-title">Share your story</h2>
-                    <p>DM us on Instagram or fill the form &mdash; we&rsquo;ll find a way to feature you (with your name, or without, your call).</p>
-                    <div class="d-flex justify-content-center flex-wrap gap-3">
-                        <a class="btn kz-btn kz-btn-sweep btn-lg text-white" href="%(reg)s" target="_blank" rel="noopener">Send Your Story</a>
-                        <a class="btn kz-btn kz-btn-ghost btn-lg text-white" href="%(ig)s" target="_blank" rel="noopener"><i class="fab fa-instagram me-2"></i>DM on Instagram</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-""" % {"reg": REG_URL, "ig": INSTAGRAM_URL})
-
-
-def page_contact():
-    friday = """        <section class="container-fluid kz-contact py-5">
-            <div class="container py-4">
-                %(head)s
-                <div class="row g-4">
-                    <div class="col-md-6 col-xl-3 kz-reveal">
-                        <div class="kz-contact-card">
-                            <div class="kz-contact-icon"><i class="fas fa-pen"></i></div>
-                            <h4>Register with us</h4>
-                            <p>The fastest way to say hi &mdash; join the family, pick a program, get on the map.</p>
-                            <a class="kz-contact-link" href="%(reg)s" target="_blank" rel="noopener">Open the form <i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-xl-3 kz-reveal">
-                        <div class="kz-contact-card">
-                            <div class="kz-contact-icon"><i class="fas fa-video"></i></div>
-                            <h4>Friday Catch-Up</h4>
-                            <p>Next up: <strong data-next-friday-long>&hellip;</strong> at 8:00 PM EAT on Google Meet.</p>
-                            <a class="kz-contact-link" href="%(meet)s" target="_blank" rel="noopener">Join the Meet <i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-xl-3 kz-reveal">
-                        <div class="kz-contact-card">
-                            <div class="kz-contact-icon"><i class="fab fa-instagram"></i></div>
-                            <h4>Find us on socials</h4>
-                            <p>TikTok, Instagram &amp; Facebook &mdash; the fastest replies are usually on DMs.</p>
-                            <div class="d-flex gap-2">
-                                <a class="kz-social kz-social-lg" href="%(tiktok)s" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-                                <a class="kz-social kz-social-lg" href="%(ig)s" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                                <a class="kz-social kz-social-lg" href="%(fb)s" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+""" % (key, durl(i), label, img(i, "KIZAZI 2026 photo — %s" % label, cls="img-fluid w-100 kz-cover", w=800)))
+    vids = videos()
+    if vids:
+        vcards = "".join(
+            """                    <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.%ds">
+                        <div class="border border-primary bg-white rounded overflow-hidden h-100">
+                            <div class="video kz-video-thumb" %s>
+                                <button type="button" class="btn btn-play" data-bs-toggle="modal" data-src="%s" data-bs-target="#videoModal" aria-label="Play %s"><span></span></button>
+                            </div>
+                            <div class="p-4">
+                                <span class="badge bg-secondary mb-2">%s</span>
+                                <h4 class="text-primary">%s</h4>
+                                <p class="text-body mb-0">%s</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3 kz-reveal">
-                        <div class="kz-contact-card">
-                            <div class="kz-contact-icon"><i class="fas fa-link"></i></div>
-                            <h4>One link, everything</h4>
-                            <p>%(linktree)s &mdash; soon you&rsquo;ll find every link in one place.</p>
-                            <span class="kz-contact-soon">Coming soon</span>
+""" % (1 + n * 2, bg(v["poster"]), v["embed"], v["title"], v["tag"], v["title"], v["desc"])
+            for n, v in enumerate(vids))
+        video_block = """        <!-- Videos Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+%s                <div class="row g-5 justify-content-center">
+%s                </div>
+            </div>
+        </div>
+        <!-- Videos End -->
+""" % (section_head("Films", "Watch The Movement"), vcards)
+    else:
+        video_block = """        <!-- Videos Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+%(head)s                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center wow fadeIn" data-wow-delay="0.2s">
+                        <div class="video border kz-video-thumb kz-video-empty mx-auto mb-4" %(bg)s>
+                            %(play)s
                         </div>
+                        <p class="text-body mb-4">The film room is being loaded from our Drive album &mdash; clips drop here first.
+                        Meanwhile the photos above and our socials carry the story.</p>
+                        %(album)s
                     </div>
                 </div>
-                <div class="kz-contact-honesty kz-reveal">
-                    <p><i class="fas fa-info-circle me-2"></i> We deliberately haven&rsquo;t published an email, phone or
-                    physical address yet &mdash; the moment they&rsquo;re confirmed they&rsquo;ll appear here and on our socials.</p>
+            </div>
+        </div>
+        <!-- Videos End -->
+""" % dict(head=section_head("Films", "Videos Coming Soon"), bg=bg(10), play=play_button(), album=album_button())
+    body = """
+%(header)s
+
+        <!-- Gallery Start -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+%(head)s                <div class="d-flex flex-wrap justify-content-center gap-2 mb-5 wow fadeIn" data-wow-delay="0.2s">
+%(filters)s                </div>
+                <div class="row g-3" id="kz-gallery-grid">
+%(items)s                </div>
+            </div>
+        </div>
+        <!-- Gallery End -->
+
+
+%(videos)s
+""" % dict(header=page_header("Gallery", "All 42 photos from KIZAZI 2026 &mdash; 14&ndash;15 August, two days of fire.", 21),
+           head=section_head("KIZAZI 2026", "The Album", "Tap any photo to open the lightbox. Filters are our best guess at categories &mdash; the album came unlabelled."),
+           filters="\n".join("                    " + f for f in filters),
+           items="".join(items), videos=video_block)
+    return page("Gallery — KIZAZI Phenomenal",
+                "The full KIZAZI 2026 photo album: worship, word, community, service, creative "
+                "and behind-the-scenes, plus films from the Drive album.",
+                "gallery", body)
+
+
+def build_blog():
+    cards = "".join(blog_card(b, "0.%ds" % (1 + n * 2), "#%s") for n, b in enumerate(BLOG))
+    posts = []
+    for n, (title, date, team, initials, photo_i, tag, paras) in enumerate(BLOG):
+        posts.append("""                <div class="row g-5 align-items-start mb-5 pb-5 border-bottom border-primary wow fadeIn" data-wow-delay="0.1s" id="post-%(n)d">
+                    <div class="col-lg-5">
+                        <div class="overflow-hidden img-border-radius border border-primary">
+                            %(img)s
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="d-flex flex-wrap gap-3 mb-3">
+                            <span class="badge bg-primary">%(tag)s</span>
+                            <small class="text-body my-auto"><i class="fas fa-calendar me-1"></i>%(date)s</small>
+                            <small class="text-body my-auto"><i class="fas fa-user-pen me-1"></i>%(team)s</small>
+                        </div>
+                        <h1 class="display-5 text-dark mb-4">%(title)s</h1>
+%(paras)s
+                    </div>
+                </div>
+""" % dict(n=n + 1, tag=tag, date=date, team=team, title=title,
+           img=img(photo_i, title, cls="img-fluid w-100 kz-cover", w=1000),
+           paras="\n".join("                        <p class=\"text-body mb-3\">%s</p>" % p for p in paras)))
+    body = """
+%(header)s
+
+        <!-- Blog Start-->
+        <div class="container-fluid blog py-5">
+            <div class="container py-5">
+%(head)s                <div class="row g-5 justify-content-center">
+%(cards)s                </div>
+            </div>
+        </div>
+        <!-- Blog End-->
+
+
+        <!-- Posts Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+%(posts_head)s%(posts)s                <div class="text-center">
+                    <a href="blog.html" class="btn btn-primary px-5 py-3 text-white btn-border-radius">Back To Top Of The Blog</a>
                 </div>
             </div>
-        </section>
-""" % {"head": section_head("Contact", "Say hi, <span class='kz-grad-text'>find the fire</span>",
-                          "No inboxes invented, no addresses made up &mdash; these are the real doors."),
-       "reg": REG_URL, "meet": MEET_URL, "tiktok": TIKTOK_URL, "ig": INSTAGRAM_URL,
-       "fb": FACEBOOK_URL, "linktree": LINKTREE_NOTE}
+        </div>
+        <!-- Posts End -->
+""" % dict(header=page_header("Word &amp; Stories", "Devotionals, recaps and practicals from the family.", 14),
+           head=section_head("Latest News &amp; Blog", "Read Our Latest"),
+           cards=cards,
+           posts_head=section_head("Full Posts", "This Term&rsquo;s Writing"),
+           posts="".join(posts))
+    return page("Blog — KIZAZI Phenomenal",
+                "Devotionals, conference recaps and practical discipleship writing from the "
+                "KIZAZI Phenomenal teams.",
+                "blog", body)
 
-    faq_items = [
-        ("What exactly is KIZAZI Phenomenal?",
-         "A Christian youth ministry and fellowship serving East Africa &mdash; "
-         + SITE["countries"] + " &ldquo;Kizazi&rdquo; means <em>generation</em>. We exist so this "
-         "generation knows Jesus deeply, worships boldly, and gets sent out into campuses, "
-         "careers and culture."),
-        ("Who can join? Do I have to be from East Africa?",
-         "Students, fresh graduates, young professionals &mdash; anyone who&rsquo;s in it. If you&rsquo;re in East "
-         "Africa you can join cells, events and trips; if you&rsquo;re anywhere else, Fridays are online, "
-         "so the whole world can catch up with us."),
-        ("What happens on Fridays?",
-         "Worship, a Word bite, prayer and connection &mdash; live on Google Meet at 8:00 PM EAT. "
-         "No registration needed to sit in; the link is right on the homepage."),
-        ("How do I serve or reach the team?",
-         "Fill the registration form and tell us your gift &mdash; the teams take it from there. "
-         "Until our official email is published, the fastest way to reach a human is a DM on "
-         "Instagram or TikTok."),
+
+def build_team():
+    cards = "".join(team_card(t, "0.%ds" % (1 + (n % 4) * 2)) for n, t in enumerate(TEAMS))
+    steps = [
+        ("fa-user-plus", "1 &middot; Register", "Fill the free form &mdash; it takes two minutes."),
+        ("fa-comments", "2 &middot; Get placed", "A cell and a serving team near you adopt you."),
+        ("fa-hands-helping", "3 &middot; Serve", "Show up for one thing this term. That&rsquo;s how it starts."),
     ]
-    items = []
-    for i, (q, a) in enumerate(faq_items):
-        items.append("""<div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button kz-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kzFaq%(i)d"
-                                        aria-expanded="%(expanded)s" aria-controls="kzFaq%(i)d">%(q)s</button>
-                            </h2>
-                            <div id="kzFaq%(i)d" class="accordion-collapse collapse" data-bs-parent="#kzFaq">
-                                <div class="accordion-body">%(a)s</div>
+    step_html = "".join(
+        """                    <div class="col-md-4 wow fadeIn" data-wow-delay="0.%ds">
+                        <div class="text-center border border-primary bg-white p-4 rounded h-100">
+                            <i class="fas %s fa-4x text-primary mb-3"></i>
+                            <h4 class="text-primary">%s</h4>
+                            <p class="text-body mb-0">%s</p>
+                        </div>
+                    </div>
+""" % (1 + n * 2, icon, name, desc) for n, (icon, name, desc) in enumerate(steps))
+    body = """
+%(header)s
+
+        <!-- Team Start-->
+        <div class="container-fluid team py-5">
+            <div class="container py-5">
+%(head)s                <div class="row g-5 justify-content-center">
+%(cards)s                </div>
+            </div>
+        </div>
+        <!-- Team End-->
+
+
+        <!-- Serve Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+%(serve_head)s                <div class="row g-4">
+%(steps)s                </div>
+                <div class="text-center mt-5 wow fadeIn" data-wow-delay="0.2s">
+                    <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-primary px-5 py-3 text-white btn-border-radius">Register &amp; Pick A Team</a>
+                </div>
+            </div>
+        </div>
+        <!-- Serve End -->
+""" % dict(header=page_header("Team", "Serving teams, not celebrities &mdash; every role is a doorway.", 17),
+           head=section_head("Serving Teams", "Meet The Crew", "Photos are from KIZAZI 2026; roles are open &mdash; yours could be next."),
+           cards=cards,
+           serve_head=section_head("How To Serve", "Three Steps In"),
+           steps=step_html, reg=REG_URL)
+    return page("Team — KIZAZI Phenomenal",
+                "The serving teams of KIZAZI Phenomenal: worship & sound, word & teaching, "
+                "prayer watch, discipleship mentors, media crew, outreach, hospitality and mentorship.",
+                "team", body)
+
+
+def build_testimonial():
+    body = """
+%(header)s
+
+%(carousel)s
+
+        <!-- Share Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+                <div class="p-5 bg-white border border-primary rounded text-center wow fadeIn" data-wow-delay="0.2s">
+                    <h1 class="display-5 mb-4">Your Story Belongs Here</h1>
+                    <p class="text-body mb-4">What has God done in you since you joined? Tell us &mdash; initials only if you prefer,
+                    exactly like the voices above.</p>
+                    <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-primary px-5 py-3 me-3 text-white btn-border-radius">Share Your Testimony</a>
+                    <a href="%(ig)s" target="_blank" rel="noopener" class="btn btn-secondary px-5 py-3 text-white btn-border-radius">Or DM Us On Instagram</a>
+                </div>
+            </div>
+        </div>
+        <!-- Share End -->
+""" % dict(header=page_header("Testimonial", "Voices from the family &mdash; initials only, stories real.", 30),
+           carousel=testimonials_carousel(), reg=REG_URL, ig=INSTAGRAM_URL)
+    return page("Testimonial — KIZAZI Phenomenal",
+                "Testimonies from KIZAZI Phenomenal: students and young workers across East Africa "
+                "on what the family has meant to them.",
+                "testimonial", body)
+
+
+def build_contact():
+    routes = [
+        ("fa-user-plus", "Register", "The free form is the front door &mdash; placement, cells and updates start here.", REG_URL, "Open the form"),
+        ("fa-video", "Friday Meet", "Every Friday, 8:00 PM EAT (<span data-next-friday-long>&hellip;</span>). No registration needed to join.", MEET_URL, "Join the Meet"),
+        ("fa-hashtag", "Socials", "Clips, announcements and DMs &mdash; TikTok, Instagram and Facebook.", INSTAGRAM_URL, "Follow us"),
+        ("fa-link", LINKTREE_NOTE, "One link with everything lands here soon; until then the form and socials cover it.", REG_URL, "Use the form"),
+    ]
+    route_html = "".join(
+        """                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.%ds">
+                            <div class="d-flex w-100 border border-primary p-4 rounded bg-white h-100">
+                                <i class="fas %s fa-2x text-primary me-4"></i>
+                                <div>
+                                    <h4>%s</h4>
+                                    <p class="mb-2">%s</p>
+                                    <a class="btn btn-primary btn-sm px-4 py-2 text-white btn-border-radius" href="%s" target="_blank" rel="noopener">%s</a>
+                                </div>
                             </div>
-                        </div>""" % {"q": q, "a": a, "i": i, "expanded": "true" if i == 0 else "false"})
-    faq = """        <section class="container-fluid kz-faq py-5 kz-section-tint">
-            <div class="container py-4">
-                %(head)s
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="accordion kz-accordion" id="kzFaq">
-%(items)s
+                        </div>
+""" % (1 + n * 2, icon, name, desc, url, cta) for n, (icon, name, desc, url, cta) in enumerate(routes))
+    faqs = [
+        ("Do I need to register to join a Friday?", "No &mdash; the Meet link is open. Registration only helps us place you in a cell and keep you posted."),
+        ("Is KIZAZI a denomination?", "No. We are a youth fellowship; students from every church and campus fellowship are welcome."),
+        ("Which countries do you serve?", "Kenya, Uganda, Tanzania and Rwanda &mdash; online every Friday, in person through cells and tours."),
+        ("What does it cost?", "Nothing. Programs, cells and Friday catch-ups are free; Serve East Africa trips fundraise together."),
+        ("Can I serve behind the scenes?", "Yes &mdash; pick a team on the Team page and register; a leader will reach out on socials."),
+    ]
+    faq_html = "".join(
+        """                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-%d" aria-expanded="false" aria-controls="faq-%d">%s</button>
+                                </h2>
+                                <div id="faq-%d" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">%s</div>
+                                </div>
+                            </div>
+""" % (n, n, q, n, a) for n, (q, a) in enumerate(faqs))
+    body = """
+%(header)s
+
+        <!-- Contact Start -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+                <div class="p-5 bg-light rounded">
+%(head)s                    <div class="row g-4 mb-5">
+%(routes)s                    </div>
+                    <div class="row g-5">
+                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
+                            <div class="border border-primary h-100 rounded overflow-hidden kz-square-lg">
+                                %(photo)s
+                            </div>
+                        </div>
+                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                            <div class="d-flex flex-column p-4 ps-5 text-dark border border-primary bg-white h-100" style="border-radius: 50%% 20%% / 10%% 40%%;">
+                                <h4 class="text-primary mb-3">This week at KIZAZI</h4>
+                                <p><strong>Friday:</strong> Online Catch-Up, 8:00 PM EAT</p>
+                                <p><strong>Next Friday:</strong> <span data-next-friday-long>&hellip;</span></p>
+                                <p><strong>Weekdays:</strong> cells, prayer &amp; campus visits (schedule shared weekly)</p>
+                                <p><strong>Where:</strong> Google Meet + cells in KE &middot; UG &middot; TZ &middot; RW</p>
+                                <p class="mb-0"><strong>Fastest reply:</strong> DM us on Instagram or TikTok</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-""" % {"head": section_head("FAQ", "Before you <span class='kz-grad-text'>ask&hellip;</span>"),
-       "items": "\n".join(items), "countries": SITE["countries"]}
-    return (page_header("Contact", "The real doors in — register, join the Friday, or DM the fam.", 25, "Talk to Us") +
-            friday + faq + cta_band())
+        </div>
+        <!-- Contact End -->
 
 
-def page_404():
-    body = """        <!-- 404 Start -->
-        <section class="kz-404 container-fluid position-relative overflow-hidden">
-            <div class="kz-hero-dots"></div>
-            <div class="kz-aurora kz-aurora-1"></div>
-            <div class="kz-aurora kz-aurora-2"></div>
-            <div class="container py-5 py-lg-0 text-center text-white">
-                <div style="min-height: 70vh;" class="d-flex flex-column align-items-center justify-content-center">
-                    <span class="kz-hand kz-404-hand">oh no &mdash; this page burned away</span>
-                    <h1 class="kz-404-code">4<span class="kz-grad-text">0</span>4</h1>
-                    <p class="kz-404-sub">The page you&rsquo;re looking for isn&rsquo;t here &mdash; but the fire is.</p>
-                    <div class="d-flex flex-wrap justify-content-center gap-3 mt-2">
-                        <a class="btn kz-btn kz-btn-sweep btn-lg text-white" href="index.html"><i class="fas fa-home me-2"></i>Back Home</a>
-                        <a class="btn kz-btn kz-btn-ghost btn-lg text-white" href="contact.html">Contact Us</a>
-                        <a class="btn kz-btn kz-btn-ghost btn-lg text-white" href="gallery.html">See the Fire</a>
+        <!-- FAQ Start -->
+        <div class="container-fluid py-5 bg-light">
+            <div class="container py-5">
+%(faq_head)s                <div class="row justify-content-center">
+                    <div class="col-lg-9 wow fadeIn" data-wow-delay="0.2s">
+                        <div class="accordion" id="faqAccordion">
+%(faqs)s                        </div>
                     </div>
-                    <p class="kz-verse-ref-404 kz-hand mt-4">&ldquo;%(verse_short)s&rdquo; &mdash; %(ref)s</p>
                 </div>
             </div>
-        </section>
+        </div>
+        <!-- FAQ End -->
+""" % dict(header=page_header("Contact", "No office, no inbox &mdash; just doors that actually open.", 31),
+           head=section_head("Contact Us", "Four Ways In"),
+           routes=route_html, photo=img(32, "KIZAZI 2026 gathering", cls="img-fluid w-100 h-100 kz-cover", w=1200),
+           faq_head=section_head("Quick Answers", "Asked Every Term"),
+           faqs=faq_html)
+    return page("Contact — KIZAZI Phenomenal",
+                "Reach KIZAZI Phenomenal: the free registration form, the Friday Google Meet, "
+                "our socials and answers to common questions.",
+                "contact", body)
+
+
+def build_404():
+    body = """
+%(header)s
+
+        <!-- 404 Start -->
+        <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.3s">
+            <div class="container text-center py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <i class="bi bi-exclamation-triangle display-1 text-primary"></i>
+                        <h1 class="display-1">404</h1>
+                        <h1 class="mb-4">Page Not Found</h1>
+                        <p class="mb-4">We&rsquo;re sorry &mdash; that page isn&rsquo;t here. Maybe head home, or catch us live this Friday at 8:00 PM EAT?</p>
+                        <a class="btn btn-primary rounded-pill py-3 px-5 me-2" href="index.html">Go Home</a>
+                        <a class="btn btn-secondary rounded-pill py-3 px-5" href="%(meet)s" target="_blank" rel="noopener">Join Friday</a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- 404 End -->
-""" % {"verse_short": SITE["verse"][:60] + "&hellip;", "ref": SITE["verse_ref"]}
-    return body
+""" % dict(header=page_header("404 Error", "Lost? The family is one click away.", 33), meet=MEET_URL)
+    return page("404 — KIZAZI Phenomenal", "Page not found — KIZAZI Phenomenal.", "home", body,
+                with_video_modal=False)
 
 
-# ---------------------------------------------------------------- assembly ---
-PAGES_META = {
-    "index.html": ("KIZAZI Phenomenal — A Generation on Fire for God",
-                   "KIZAZI Phenomenal is a Christian youth ministry serving Kenya, Uganda, Tanzania and Rwanda. "
-                   "Phenomenal Fridays, 8:00 PM EAT. Register free.",
-                   "home", page_index),
-    "about.html": ("About Us — KIZAZI Phenomenal",
-                   "The story, mission, vision and values of KIZAZI Phenomenal — a youth movement built on 1 Timothy 4:12.",
-                   "about", page_about),
-    "ministries.html": ("Ministries — KIZAZI Phenomenal",
-                   "Eight ministries: Worship & The Word, Discipleship Cells, Prayer & Intercession, Friday Online Catch-Up, "
-                   "Outreach & Missions, Creative & Media Lab, Mentorship & Career, Community & Care.",
-                   "ministries", page_ministries),
-    "programs.html": ("Programs — KIZAZI Phenomenal",
-                   "Rooted 12-week discipleship, Phenomenal Fridays, Creative Lab, Mentorship Circle, Campus Ambassadors and Serve East Africa.",
-                   "programs", page_programs),
-    "events.html": ("Events — KIZAZI Phenomenal",
-                   "Phenomenal Friday Online Catch-Up (8:00 PM EAT), KIZAZI Conference 2027, Worship & Word Night and Campus & School Tour.",
-                   "events", page_events),
-    "gallery.html": ("Gallery — KIZAZI 2026 Photos — KIZAZI Phenomenal",
-                   "The full KIZAZI 2026 album: 42 photos from two days on fire, in a filterable lightbox gallery.",
-                   "gallery", page_gallery),
-    "blog.html": ("Blog — KIZAZI Phenomenal",
-                   "Devotionals, recaps and honest conversations from the KIZAZI Phenomenal family.",
-                   "blog", page_blog),
-    "team.html": ("Team — KIZAZI Phenomenal",
-                   "The serving teams of KIZAZI Phenomenal and how to join one of them.",
-                   "team", page_team),
-    "testimonial.html": ("Testimonial — KIZAZI Phenomenal",
-                   "Voices from the KIZAZI Phenomenal family — real stories, initials only, consent first.",
-                   "testimonial", page_testimonial),
-    "contact.html": ("Contact — KIZAZI Phenomenal",
-                   "Register, join the Friday Catch-Up, find us on TikTok, Instagram and Facebook. Linktree coming soon.",
-                   "contact", page_contact),
-    "404.html": ("Page Not Found — KIZAZI Phenomenal",
-                   "This page burned away — but the fire is. Head back to KIZAZI Phenomenal.",
-                   "404", page_404),
-}
+BUILDERS = [
+    ("index.html", build_index),
+    ("about.html", build_about),
+    ("ministries.html", build_ministries),
+    ("programs.html", build_programs),
+    ("events.html", build_events),
+    ("gallery.html", build_gallery),
+    ("blog.html", build_blog),
+    ("team.html", build_team),
+    ("testimonial.html", build_testimonial),
+    ("contact.html", build_contact),
+    ("404.html", build_404),
+]
 
 
 def main():
-    for file_, (title, desc, active, builder) in PAGES_META.items():
-        html = head(title, desc) + body_open(active) + topbar() + navbar(active)
-        html += builder()
-        html += footer() + back_to_top() + scripts()
-        path = os.path.join(ROOT, file_)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(html)
-        print("wrote %-18s %6d bytes" % (file_, len(html)))
-    print("done — %d pages" % len(PAGES_META))
+    for name, fn in BUILDERS:
+        with open(os.path.join(ROOT, name), "w", encoding="utf-8") as fh:
+            fh.write(fn())
+        print("wrote %s" % name)
 
 
 if __name__ == "__main__":
