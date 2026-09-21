@@ -6,6 +6,8 @@
      3. the template's full-screen quick search
      4. the decorative newsletter form
      5. last-resort placeholder for a broken gallery photo
+     6. the scroll progress bar (transform: scaleX, no layout shift)
+     7. the counting stats (data-kz-count, skipped for reduced motion)
    Photos are vendored in img/gallery/ (plain <img src> + inline --kz-photo
    backgrounds). There is no Drive resolution chain any more.
    Core behaviour has NO CDN dependency (jQuery + Bootstrap are vendored).
@@ -149,12 +151,81 @@
         });
     }
 
+    /* ------------------------------------------------- 6. Scroll progress --
+       The fixed gradient rule at the top of the viewport. Driven purely
+       with transform: scaleX() (no layout shift); rAF-throttled, passive
+       listeners. The bar reflects the user's own scrolling, so it stays
+       under reduced motion (no autonomous animation). */
+    function initProgress() {
+        var bar = doc.querySelector('.kz-progress-bar');
+        if (!bar) { return; }
+        var ticking = false;
+        function update() {
+            ticking = false;
+            var el = doc.documentElement;
+            var max = el.scrollHeight - el.clientHeight;
+            var top = el.scrollTop !== undefined ? el.scrollTop : doc.body.scrollTop;
+            var p = max > 0 ? Math.min(1, Math.max(0, top / max)) : 0;
+            bar.style.transform = 'scaleX(' + p + ')';
+        }
+        function onScroll() {
+            if (!ticking) {
+                ticking = true;
+                window.requestAnimationFrame(update);
+            }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        update();
+    }
+
+    /* ------------------------------------------------- 7. Counting stats ---
+       [data-kz-count] numerals count up from 0 when they scroll into view.
+       The final value (plus data-kz-suffix) is already in the markup, so
+       no-JS visitors read the real number, and reduced-motion visitors
+       keep it without the animation. */
+    function initCounters() {
+        var els = $all('[data-kz-count]');
+        if (!els.length) { return; }
+        var reduced = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduced || !('IntersectionObserver' in window)) { return; }
+        var DURATION = 1200;
+
+        function run(el) {
+            var target = parseInt(el.getAttribute('data-kz-count'), 10);
+            if (isNaN(target) || target <= 0) { return; }
+            var suffix = el.getAttribute('data-kz-suffix') || '';
+            var start = null;
+            function frame(ts) {
+                if (start === null) { start = ts; }
+                var t = Math.min(1, (ts - start) / DURATION);
+                var eased = 1 - Math.pow(1 - t, 3); /* ease-out cubic */
+                el.textContent = Math.round(target * eased) + suffix;
+                if (t < 1) { window.requestAnimationFrame(frame); }
+            }
+            window.requestAnimationFrame(frame);
+        }
+
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    io.unobserve(entry.target);
+                    run(entry.target);
+                }
+            });
+        }, { threshold: 0.4 });
+        els.forEach(function (el) { io.observe(el); });
+    }
+
     /* ---------------------------------------------------------------- boot -- */
     doc.addEventListener('DOMContentLoaded', function () {
         updateFridays();
         initGalleryFilter();
         initSearch();
         initNewsletter();
+        initProgress();
+        initCounters();
         if (window.lightbox && typeof window.lightbox.option === 'function') {
             window.lightbox.option({
                 resizeDuration: 200,

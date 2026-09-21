@@ -79,17 +79,33 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 
 ## Photos & privacy
 
-- **2026-09-21:** the 42 "KIZAZI 2026" photos are now **vendored in the repo** at
-  `img/gallery/01.jpg … 42.jpg` (downloaded at w1600, same order as `PHOTOS`).
-  Every page serves them locally; the Drive hotlink / JS fallback chain is gone.
-  To refresh them (or after editing `PHOTOS`), run
-  `python3 tools/fetch_gallery_photos.py` on a machine with internet access to
-  Google Drive and commit the JPEGs. The script refuses to run if the album is
-  not shared as "Anyone with the link → Viewer" — that sharing requirement now
+- **2026-09-21:** the 42 "KIZAZI 2026" photos are **vendored in the repo** at
+  `img/gallery/01.jpg … 42.jpg` (downloaded at w1600, same order as `PHOTOS`),
+  committed as binaries with `img/gallery/manifest.json` (Drive ID, SHA-256
+  and byte size per photo, in `PHOTOS` order). Every page serves them
+  locally; the Drive hotlink / JS fallback chain is gone, so the site never
+  hotlinks Drive for photos.
+- Refresh paths (details in README → "Photos"): `tools/fetch_gallery_photos.py`
+  is manifest-aware (a re-run on an unchanged album re-downloads nothing and
+  commits nothing; `--force` re-downloads all 42, `--changed-out FILE` lists
+  the changed names for commit messages, `--manifest-only` rebuilds the
+  manifest from local files, `--verify` checks 42 real JPEGs > 10 KB with
+  hashes matching the manifest, completely offline). For sandboxes with no
+  route to Google there is the browser-assisted
+  `python3 tools/fetch_gallery_server.py 8123 --fetch-root`. The automated
+  path is the GitHub Actions workflow
+  `.github/workflows/fetch-gallery-photos.yml` (weekly, Mondays 06:30 UTC, and
+  on demand): same script, verifies, commits `img/gallery/` only when
+  something changed. No secrets; the job needs `contents: write` on the
+  default `GITHUB_TOKEN`.
+- The script probes the first ID and refuses to run if the album is not
+  shared as "Anyone with the link → Viewer" — that sharing requirement now
   applies to **videos only** (they are still Drive embeds).
 - All gallery photos show identifiable people. **Confirm you have consent to
-  publish them publicly** before going live. To pull any photo, delete its file
-  in `img/gallery/` and remove its ID from `PHOTOS` in `tools/build_common.py`.
+  publish them publicly** before going live. To pull any photo, delete its
+  file in `img/gallery/` and remove its ID from `PHOTOS` in
+  `tools/build_common.py` (then re-run `python3 tools/fetch_gallery_photos.py
+  --manifest-only` and `python3 tools/fetch_gallery_photos.py --verify`).
 
 ## Home hero: the transition photos (2026-09-21)
 
@@ -121,6 +137,55 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
   portrait.
 - To pull a person: delete their file in `img/team/` and their entry in
   `tools/build_common.py`, then re-run `python3 tools/build.py`.
+
+## Energy layer (2026-09-21)
+
+The site's young/energetic feel is one documented layer, kept and extended
+from here on. It lives in **section 9 of `css/kizazi.css`** and in
+`js/kizazi.js` (behaviours 6 and 7), additive on the BabyCare skin: nothing
+template-visible was removed.
+
+- **Palette and fonts are fixed**: pink `#FF4880` / blue `#4D65F9`, Fredoka
+  + Montserrat. **No gold, no `#FFC53D`, no flame-orange anywhere.** New
+  accents only through the one gradient token below.
+- **One gradient token** — `--kz-grad:
+  linear-gradient(120deg, #FF4880, #FFECF2 50%, #4D65F9)` (pink → light pink
+  → blue, all from the template's own CSS variables). It is the only new
+  accent, and it paints: the buttons (`.btn-primary` / `.btn-secondary`,
+  with the template's blue/pink hover inversion kept on top), the sticker
+  kicker pills, the about-page stat numerals (`.kz-stat-num`), the marquee
+  rules, the copyright rule and the scroll progress bar.
+- **Marquee ticker** under the navbar on every page: the phrases live in
+  `TICKER` (`tools/build_common.py`), repeated exactly twice in the DOM so
+  the CSS -50% translate loop is seamless; it pauses on hover and is
+  `aria-hidden` (decorative reinforcement of copy that lives on the pages).
+- **Sticker kickers**: the template's `h4.title-border-radius` section
+  kickers are now white, slightly tilted (rotate -1.5deg) pills carrying a
+  gradient rule underneath (the old 2px pink underline is neutralised).
+- **Lifting/tilting cards**: `.service-item`, `.program-item`,
+  `.events-item`, `.blog-item`, `.team-item`, the gallery tiles and the hero
+  moments lift and tilt on hover. Transform + shadow only; the template's
+  own inner hover effects (icon inversion, image zoom, event overlay) keep
+  working.
+- **Counting stats**: the about-page stat numerals carry `data-kz-count`
+  (and `data-kz-suffix` for the "+") and count up (ease-out cubic, 1.2s)
+  when they scroll into view. The final value stays in the markup, so no-JS
+  visitors read the real number and reduced-motion visitors skip the count.
+  (The numbers themselves are still the illustrative ones, see
+  Assumptions #2.)
+- **Scroll progress bar**: fixed 4px gradient rule at the very top of the
+  viewport, driven by `transform: scaleX()` only (rAF-throttled, passive
+  listeners). No layout shift.
+- **Pulsing play button**: the template's pulse ring (its own
+  `pulse-border` animation) is re-inked in the gradient token.
+- **Honest motion**: every animation here is transform/opacity only (no
+  layout shift), and the `prefers-reduced-motion: reduce` block at the end
+  of `css/kizazi.css` switches the marquee, the card motion and the play
+  pulse off (and `js/kizazi.js` checks the same media query to skip the
+  count-up). The progress bar is the one element kept, because it mirrors
+  the user's own scrolling instead of running on its own.
+- **New copy** (the ticker phrases) follows the house rules: short lines,
+  second person, verbs first, no dashes.
 
 ## Dash policy (2026-09-21)
 

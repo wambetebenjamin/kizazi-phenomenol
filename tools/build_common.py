@@ -47,6 +47,22 @@ SITE = {
     "countries": "Kenya &bull; Uganda &bull; Tanzania &bull; Rwanda",
 }
 
+# ------------------------------------------------------------- ticker phrases
+# The marquee strip that runs under the navbar on every page (chrome, see
+# ticker()). KIZAZI voice: short lines, second person, verbs first, and no
+# dashes (see NOTES.md). Edit freely; the strip loops seamlessly.
+TICKER = [
+    "Worship that moves",
+    "Prayer that covers",
+    "The Word, taught plainly",
+    "Fellowship that carries you",
+    "Join this Friday, 8:00 PM EAT",
+    "Meet your cell near you",
+    "Register free in two minutes",
+    "Set the example",
+    "A generation on fire for God",
+]
+
 # Nav: main items in this order; gallery/blog/team/testimonial live under "Pages".
 PAGES = [
     ("index.html", "Home", "home"),
@@ -333,6 +349,40 @@ def social_buttons(cls="btn btn-light btn-sm-square rounded-circle", icon_cls="t
     return "\n".join("                                " + o for o in out)
 
 
+def ticker():
+    """Marquee strip under the navbar.
+
+    The phrase set (TICKER) is repeated exactly twice in the DOM so the CSS
+    -50% translate loop (section 9 of css/kizazi.css) is seamless. The strip
+    is decorative reinforcement of copy that lives on the pages, so it is
+    aria-hidden.
+    """
+    def one_set():
+        parts = []
+        for phrase in TICKER:
+            parts.append('<span class="kz-ticker-item">%s</span>' % _html.escape(phrase))
+            parts.append('<span class="kz-ticker-star">&#10022;</span>')
+        return "".join(parts)
+    set_ = one_set()
+    return """        <!-- Ticker Start -->
+        <div class="kz-ticker" aria-hidden="true">
+            <div class="kz-ticker-track">%s%s</div>
+        </div>
+        <!-- Ticker End -->
+""" % (set_, set_)
+
+
+def scroll_progress():
+    """Fixed gradient progress rule at the very top of the viewport.
+
+    js/kizazi.js drives it with transform: scaleX() only (no layout shift).
+    """
+    return """        <!-- Scroll progress Start -->
+        <div class="kz-progress" aria-hidden="true"><span class="kz-progress-bar"></span></div>
+        <!-- Scroll progress End -->
+"""
+
+
 def topbar_navbar(active):
     links = []
     for file_, label, key in PAGES:
@@ -396,7 +446,7 @@ def topbar_navbar(active):
         </div>
         <!-- Navbar End -->
 
-
+%(ticker)s
         <!-- Modal Search Start -->
         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
@@ -419,7 +469,7 @@ def topbar_navbar(active):
         </div>
         <!-- Modal Search End -->
 """ % {"countries": SITE["countries"], "meet": MEET_URL, "reg": REG_URL,
-       "socials": social_buttons(), "links": "\n".join(links)}
+       "socials": social_buttons(), "links": "\n".join(links), "ticker": ticker()}
 
 
 def video_modal():
