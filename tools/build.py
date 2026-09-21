@@ -238,6 +238,33 @@ def hero_slides():
     return "\n".join(out) + "\n"
 
 
+def hero_moments():
+    """The same four photos as a slim strip under the hero.
+
+    The rotating hero crops the photos to a wide band, so this strip shows all
+    four of them whole, in template columns, each opening in the lightbox.
+    """
+    cells = []
+    for n, path in enumerate(HERO_SLIDES):
+        cells.append("""                <div class="col-6 col-lg-3 wow fadeIn" data-wow-delay="%(delay)s">
+                    <a class="kz-moment img-border-radius overflow-hidden d-block" href="%(src)s" data-lightbox="hero-moments" title="Open photo %(n)d of %(total)d">
+                        <img src="%(src)s" class="img-fluid w-100 kz-cover" alt="KIZAZI Phenomenal family, photo %(n)d of %(total)d" loading="lazy">
+                    </a>
+                </div>""" % dict(delay="0.%ds" % (1 + n * 2), src=path,
+                              n=n + 1, total=len(HERO_SLIDES)))
+    return """
+        <!-- Hero moments Start -->
+        <div class="container-fluid pt-5">
+            <div class="container pt-5 pb-0">
+                <div class="row g-4">
+%s
+                </div>
+            </div>
+        </div>
+        <!-- Hero moments End -->
+""" % "\n".join(cells)
+
+
 # ------------------------------------------------------- portraits: people ---
 def patron_section(compact=False):
     """Featured Patron block (team page) or the slim variant (about page).
@@ -420,6 +447,8 @@ def build_index():
         </div>
         <!-- Hero End -->
 
+%(moments)s
+
 
         <!-- About Start -->
         <div class="container-fluid py-5 about bg-light">
@@ -519,7 +548,7 @@ def build_index():
 %(testimonials)s
 """ % dict(
         bg=bg_file(HERO_SLIDE_BG), about_bg=bg(ABOUT_PHOTO), play=play_button(),
-        slides=hero_slides(),
+        slides=hero_slides(), moments=hero_moments(),
         countries=SITE["countries"], verse=SITE["verse"], verse_ref=SITE["verse_ref"],
         family=FAMILY_DESC_HTML, family_who=FAMILY_WHO,
         reg=REG_URL,

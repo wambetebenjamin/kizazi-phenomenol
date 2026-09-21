@@ -202,6 +202,30 @@ img.kz-cover {
     height: auto;
 }
 
+/* The four transition photos, shown whole under the home hero. */
+.kz-moment {
+    border: 3px solid var(--bs-light);
+    background: var(--bs-light);
+    transition: .4s;
+}
+
+.kz-moment img {
+    height: 190px;
+    transition: .4s;
+}
+
+.kz-moment:hover {
+    border-color: var(--bs-primary);
+}
+
+.kz-moment:hover img {
+    transform: scale(1.04);
+}
+
+@media (max-width: 575.98px) {
+    .kz-moment img { height: 130px; }
+}
+
 /* -------------------------------------------------------- 6. Misc --- */
 .kz-newsletter .form-control:focus { box-shadow: none; }
 

@@ -14,7 +14,10 @@ Use it when the machine running the build cannot reach Google Drive itself
 (allowlisted sandboxes, locked-down CI):  python3 tools/fetch_gallery_server.py
 then open the served /__fetch.html (e.g. http://localhost:8123/__fetch.html, or
 the proxied preview URL of port 8123) in a normal browser and click
-"Fetch all 42 photos".
+"Fetch all 42 photos".  With `--fetch-root` the same page is served at "/",
+so a bare preview link works too:
+
+    python3 tools/fetch_gallery_server.py 8123 --fetch-root
 
 How the browser part works (no CORS needed):
   * every source URL is requested with `fetch(url, {mode: 'no-cors'})`, which
@@ -42,7 +45,11 @@ from build_common import PHOTOS  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GALLERY = os.path.join(ROOT, "img", "gallery")
-PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8123
+# usage: python3 tools/fetch_gallery_server.py [port] [--fetch-root]
+#   --fetch-root also serves the fetch page at "/" (handy when the port is
+#   opened through a preview proxy, where the root is the only easy entry).
+PORT = next((int(a) for a in sys.argv[1:] if a.isdigit()), 8123)
+FETCH_AT_ROOT = "--fetch-root" in sys.argv[1:]
 
 MIN_BYTES = 10 * 1024
 MAX_BYTES = 30 * 1024 * 1024
@@ -273,8 +280,14 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _wants_fetch_page(self):
+        path = (self.path or "").split("?")[0]
+        if path in ("/__fetch.html", "/__fetch"):
+            return True
+        return FETCH_AT_ROOT and path in ("/", "/index.html")
+
     def do_GET(self):
-        if self.path.split("?")[0] in ("/__fetch.html", "/__fetch"):
+        if self._wants_fetch_page():
             body = (PAGE % {"ids": json.dumps(PHOTOS), "min": MIN_BYTES,
                             "count": len(PHOTOS)}).encode()
             self.send_response(200)
@@ -323,6 +336,8 @@ class Handler(SimpleHTTPRequestHandler):
 def main():
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     print("serving %s on port %d  (fetch page: /__fetch.html)" % (ROOT, PORT))
+    if FETCH_AT_ROOT:
+        print("the fetch page is also served at / (--fetch-root)")
     server.serve_forever()
 
 
