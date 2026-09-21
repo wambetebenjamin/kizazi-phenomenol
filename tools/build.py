@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""KIZAZI Phenomenal — page builder (BabyCare-template edition).
+"""KIZAZI Phenomenal, page builder (BabyCare-template edition).
 
 Composes the 11 pages from the BabyCare template's own markup structure
 (hero-header / about+video / service / program / events / blog / team /
@@ -13,12 +13,13 @@ Usage:  python3 tools/build.py
 import os
 
 from build_common import (
-    ABOUT_PHOTO, BLOG, DRIVE_ALBUM_URL, EVENTS, FOOTER_PHOTO, GALLERY_CATS,
-    HERO_PHOTO, INSTAGRAM_URL, LINKTREE_NOTE, MEET_URL, MINISTRIES, PAGES,
-    PHOTOS, PROGRAMS, REG_URL, SITE, TEAMS, TESTIMONIALS, TIKTOK_URL,
-    FACEBOOK_URL, back_to_top, bg, body_open, durl, footer, head, img,
-    page_header, scripts, section_head, social_buttons, spinner, topbar_navbar,
-    video_embed, video_modal, videos,
+    ABOUT_PHOTO, BLOG, DRIVE_ALBUM_URL, EVENTS, FAMILY_DESC, FAMILY_DESC_HTML,
+    FAMILY_WHO, FOOTER_PHOTO, GALLERY_CATS, HERO_PHOTO, HERO_SLIDE_BG,
+    HERO_SLIDES, INSTAGRAM_URL, LINKTREE_NOTE, MEET_URL, MINISTRIES, PAGES,
+    PATRON, PEOPLE, PHOTOS, PROGRAMS, REG_URL, SITE, TEAMS, TESTIMONIALS,
+    TIKTOK_URL, FACEBOOK_URL, back_to_top, bg, bg_file, body_open, durl, footer, head,
+    img, page_header, patron, people, scripts, section_head, social_buttons,
+    spinner, topbar_navbar, video_embed, video_modal, videos,
 )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -92,7 +93,7 @@ def program_card(p, delay):
 """ % dict(delay=delay, rate=rate, name=name, desc=desc, leader=leader,
            initials=initials, when=when, slug=name.lower().replace(" ", "-").replace("&", "and"),
            m0=meta[0], m1=meta[1], m2=meta[2],
-           img=img(photo_i, name + " — KIZAZI 2026", cls="img-fluid w-100 kz-cover", w=900))
+           img=img(photo_i, name + " at KIZAZI 2026", cls="img-fluid w-100 kz-cover", w=900))
 
 
 def event_card(ev, delay):
@@ -222,6 +223,118 @@ def testimonial_item(t):
 """ % dict(initials=initials, label=label, quote=quote)
 
 
+# ---------------------------------------------- home hero: transition photos ---
+def hero_slides():
+    """Crossfading background layers for the home hero.
+
+    One .kz-hero-slide per file in HERO_SLIDES, staggered so exactly one is at
+    full opacity at any moment (4 photos x 8s = the 32s cycle in kizazi.css).
+    """
+    out = []
+    for n, path in enumerate(HERO_SLIDES):
+        delay = " animation-delay: -%ds;" % (n * 8) if n else ""
+        out.append('            <div class="kz-hero-slide" aria-hidden="true" '
+                   'style="background-image: url(\'%s\');%s"></div>' % (path, delay))
+    return "\n".join(out) + "\n"
+
+
+def hero_moments():
+    """The same four photos as a slim strip under the hero.
+
+    The rotating hero crops the photos to a wide band, so this strip shows all
+    four of them whole, in template columns, each opening in the lightbox.
+    """
+    cells = []
+    for n, path in enumerate(HERO_SLIDES):
+        cells.append("""                <div class="col-6 col-lg-3 wow fadeIn" data-wow-delay="%(delay)s">
+                    <a class="kz-moment img-border-radius overflow-hidden d-block" href="%(src)s" data-lightbox="hero-moments" title="Open photo %(n)d of %(total)d">
+                        <img src="%(src)s" class="img-fluid w-100 kz-cover" alt="KIZAZI Phenomenal family, photo %(n)d of %(total)d" loading="lazy">
+                    </a>
+                </div>""" % dict(delay="0.%ds" % (1 + n * 2), src=path,
+                              n=n + 1, total=len(HERO_SLIDES)))
+    return """
+        <!-- Hero moments Start -->
+        <div class="container-fluid pt-5">
+            <div class="container pt-5 pb-0">
+                <div class="row g-4">
+%s
+                </div>
+            </div>
+        </div>
+        <!-- Hero moments End -->
+""" % "\n".join(cells)
+
+
+# ------------------------------------------------------- portraits: people ---
+def patron_section(compact=False):
+    """Featured Patron block (team page) or the slim variant (about page).
+
+    Renders nothing at all until img/team/<slug>.jpg for PATRON is committed.
+    """
+    p = patron()
+    if not p:
+        return ""
+    cols = ("col-lg-4", "col-lg-7") if not compact else ("col-lg-3", "col-lg-8")
+    return """
+        <!-- Patron Start -->
+        <div class="container-fluid py-5%(section_class)s">
+            <div class="container py-5">
+                <div class="row g-5 align-items-center justify-content-center">
+                    <div class="%(img_col)s wow fadeIn" data-wow-delay="0.1s">
+                        <div class="border border-primary border-2 img-border-radius overflow-hidden bg-white p-2">
+                            <img src="%(photo)s" class="img-fluid w-100 kz-cover kz-portrait" alt="%(name)s, %(role)s of KIZAZI Phenomenal">
+                        </div>
+                    </div>
+                    <div class="%(txt_col)s wow fadeIn" data-wow-delay="0.3s">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Our Patron</h4>
+                        <h1 class="text-dark mb-3 display-5">%(name)s</h1>
+                        <span class="badge bg-secondary mb-3">%(role)s</span>
+                        <p class="text-body mb-3">%(line)s</p>
+                        <p class="text-dark fst-italic mb-0">%(family)s.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Patron End -->
+""" % dict(section_class=" bg-light" if compact else "", img_col=cols[0], txt_col=cols[1],
+           photo=p["photo"], name=p["name"], role=p["role"], line=p["line"],
+           family=FAMILY_DESC_HTML)
+
+
+def person_card(p, delay):
+    """One admin card, template team-item styling, real portrait (img/team/)."""
+    return """                    <div class="col-md-6 col-lg-4 col-xl-3 wow fadeIn" data-wow-delay="%(delay)s">
+                        <div class="team-item border border-primary img-border-radius overflow-hidden">
+                            <img src="%(photo)s" class="img-fluid w-100 kz-cover" alt="%(name)s, %(role)s at KIZAZI Phenomenal" loading="lazy">
+                            <div class="team-content text-center py-3">
+                                <h4 class="text-primary">%(name)s</h4>
+                                <p class="text-muted mb-2">%(role)s</p>
+                            </div>
+                        </div>
+                    </div>
+""" % dict(delay=delay, photo=p["photo"], name=p["name"], role=p["role"])
+
+
+def people_section():
+    """The admin team cards. Empty (and invisible) until portraits are added."""
+    crew = people()
+    if not crew:
+        return ""
+    cards = "".join(person_card(p, "0.%ds" % (1 + (n % 4) * 2)) for n, p in enumerate(crew))
+    return """
+        <!-- Admin Team Start -->
+        <div class="container-fluid team py-5 bg-light">
+            <div class="container py-5">
+%(head)s                <div class="row g-5 justify-content-center">
+%(cards)s                </div>
+            </div>
+        </div>
+        <!-- Admin Team End -->
+""" % dict(head=section_head("Admin", "The Admin Team",
+                            "Portraits published with permission. Roles read simply as Admin."),
+           cards=cards)
+
+
 def play_button():
     """Template play button: opens the Drive video modal, or links to TikTok."""
     vids = videos()
@@ -230,14 +343,14 @@ def play_button():
                 'data-src="%s" data-bs-target="#videoModal" aria-label="Play the KIZAZI highlight film">'
                 '<span></span></button>' % vids[0]["embed"])
     return ('<a class="btn btn-play" href="%s" target="_blank" rel="noopener" '
-            'title="Highlight film coming soon — watch clips on TikTok" '
+            'title="Highlight film coming soon, watch clips on TikTok" '
             'aria-label="Watch KIZAZI clips on TikTok"><span></span></a>' % TIKTOK_URL)
 
 
 def watch_section(delay_head="0.1s"):
     vids = videos()
     head_html = section_head("KIZAZI On Film", "Watch The Movement",
-                             "Films from the family &mdash; worship, word and the rooms in between. "
+                             "Films from the family: worship, word and the rooms in between. "
                              "Every clip is hosted on our Drive album.")
     if not vids:
         body = """                <div class="row g-5 justify-content-center">
@@ -247,7 +360,7 @@ def watch_section(delay_head="0.1s"):
                         </div>
                         <div class="text-center mt-4">
                             <h4 class="text-primary mb-2">The highlight film is being cut</h4>
-                            <p class="text-body mb-4">Until the KIZAZI 2026 film drops, catch the moments on our socials &mdash; and the full photo album in the gallery.</p>
+                            <p class="text-body mb-4">Until the KIZAZI 2026 film drops, catch the moments on our socials, and the full photo album in the gallery.</p>
                             <div class="d-flex flex-wrap justify-content-center gap-3">
                                 <a class="btn btn-primary px-4 py-2 text-white btn-border-radius" href="%(tt)s" target="_blank" rel="noopener"><i class="fab fa-tiktok me-2"></i>TikTok clips</a>
                                 <a class="btn btn-primary px-4 py-2 text-white btn-border-radius" href="%(ig)s" target="_blank" rel="noopener"><i class="fab fa-instagram me-2"></i>Instagram</a>
@@ -316,14 +429,14 @@ def page(title, desc, active, body, with_video_modal=True):
 def build_index():
     body = """
         <!-- Hero Start -->
-        <div class="container-fluid py-5 hero-header wow fadeIn" data-wow-delay="0.1s" %(bg)s>
-            <div class="container py-5">
+        <div class="container-fluid py-5 hero-header kz-hero kz-hero-slideshow wow fadeIn" data-wow-delay="0.1s" %(bg)s>
+%(slides)s            <div class="container py-5">
                 <div class="row g-5">
                     <div class="col-lg-7 col-md-12">
                         <h1 class="mb-3 text-primary">A Generation On Fire For God</h1>
                         <h1 class="mb-4 display-1 text-white">KIZAZI Phenomenal</h1>
-                        <p class="text-white mb-5" style="max-width: 560px;">Christian youth movement across %(countries)s &mdash;
-                        worship that moves, discipleship that sticks, a family that carries you.
+                        <p class="text-white mb-5" style="max-width: 560px;">Christian youth movement across %(countries)s.
+                        %(family)s.
                         <strong class="text-white">This Friday:</strong> Online Catch-Up, 8:00 PM EAT
                         (<span data-next-friday-long>&hellip;</span>).</p>
                         <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-primary px-4 py-3 px-md-5 me-4 btn-border-radius">Register Free</a>
@@ -333,6 +446,8 @@ def build_index():
             </div>
         </div>
         <!-- Hero End -->
+
+%(moments)s
 
 
         <!-- About Start -->
@@ -347,9 +462,11 @@ def build_index():
                     <div class="col-lg-7 wow fadeIn" data-wow-delay="0.3s">
                         <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">About Us</h4>
                         <h1 class="text-dark mb-4 display-5">We Are The Generation That Sets The Example</h1>
-                        <p class="text-dark mb-4">&ldquo;%(verse)s&rdquo; &mdash; %(verse_ref)s. KIZAZI Phenomenal is a family of students
-                        and young workers across Kenya, Uganda, Tanzania and Rwanda, gathered every Friday
-                        online and in cells through the week.</p>
+                        <p class="text-dark mb-4">&ldquo;%(verse)s&rdquo; &middot; %(verse_ref)s</p>
+                        <p class="text-dark mb-4 kz-family-desc">%(family)s.</p>
+                        <p class="text-dark mb-4"><strong>%(family_who)s</strong> KIZAZI Phenomenal gathers students
+                        and young workers across Kenya, Uganda, Tanzania and Rwanda, every Friday online and in
+                        cells through the week.</p>
                         <div class="row mb-4">
                             <div class="col-lg-6">
                                 <h6 class="mb-3"><i class="fas fa-check-circle me-2"></i>Weekly Friday catch-up</h6>
@@ -430,8 +547,10 @@ def build_index():
 
 %(testimonials)s
 """ % dict(
-        bg=bg(HERO_PHOTO), about_bg=bg(ABOUT_PHOTO), play=play_button(),
+        bg=bg_file(HERO_SLIDE_BG), about_bg=bg(ABOUT_PHOTO), play=play_button(),
+        slides=hero_slides(), moments=hero_moments(),
         countries=SITE["countries"], verse=SITE["verse"], verse_ref=SITE["verse_ref"],
+        family=FAMILY_DESC_HTML, family_who=FAMILY_WHO,
         reg=REG_URL,
         service_head=section_head("What We Do", "Eight Doorways Into The Family"),
         service_cards="".join(service_card(m, "0.%ds" % (1 + (n % 4) * 2)) for n, m in enumerate(MINISTRIES)),
@@ -446,7 +565,7 @@ def build_index():
         team_cards="".join(team_card(t, "0.%ds" % (1 + n * 2)) for n, t in enumerate(TEAMS[:4])),
         testimonials=testimonials_carousel(),
     )
-    return page("KIZAZI Phenomenal — A Generation on Fire for God",
+    return page("KIZAZI Phenomenal: A Generation on Fire for God",
                 "KIZAZI Phenomenal is a Christian youth ministry serving Kenya, Uganda, "
                 "Tanzania and Rwanda. Phenomenal Fridays, 8:00 PM EAT. Register free.",
                 "home", body)
@@ -464,10 +583,10 @@ def build_about():
                     </div>
 """ % (1 + n * 2, v, l_) for n, (v, l_) in enumerate(stats))
     values = [
-        ("fa-fire", "On fire", "Worship and prayer first &mdash; everything else is overflow."),
+        ("fa-fire", "On fire", "Worship and prayer first: everything else is overflow."),
         ("fa-book-open", "In the Word", "Scripture taught plainly, questioned honestly, lived loudly."),
         ("fa-hands-holding-child", "In family", "Nobody walks exams, home or grief alone."),
-        ("fa-globe-africa", "On mission", "Campuses, schools and borders &mdash; the gospel goes."),
+        ("fa-globe-africa", "On mission", "Campuses, schools and borders: the gospel goes."),
     ]
     value_html = "".join(
         """                    <div class="col-md-6 col-xl-3 wow fadeIn" data-wow-delay="0.%ds">
@@ -496,13 +615,14 @@ def build_about():
                     </div>
                     <div class="col-lg-7 wow fadeIn" data-wow-delay="0.3s">
                         <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">About Us</h4>
-                        <h1 class="text-dark mb-4 display-5">KIZAZI Means &ldquo;Generation&rdquo; &mdash; And That Is Exactly Who We Are</h1>
+                        <h1 class="text-dark mb-4 display-5">KIZAZI Means &ldquo;Generation&rdquo;. And That Is Exactly Who We Are</h1>
+                        <p class="text-dark mb-4 kz-family-desc">%(family)s. <strong>%(family_who)s</strong></p>
                         <p class="text-dark mb-4">KIZAZI Phenomenal began the way most moves of God do: a few students who refused
                         to wait for &ldquo;after graduation&rdquo; to live for God. Today the family gathers every Friday at 8:00 PM EAT
-                        on Google Meet &mdash; Kenya, Uganda, Tanzania and Rwanda in one room &mdash; and in discipleship cells,
+                        on Google Meet, Kenya, Uganda, Tanzania and Rwanda in one room, and in discipleship cells,
                         campus fellowships and Serve East Africa trips through the week.</p>
                         <p class="text-dark mb-4">We are not a building and we are not a brand. We are a generation learning to set
-                        the example &mdash; in speech, in conduct, in love, in faith, in purity.</p>
+                        the example: in speech, in conduct, in love, in faith, in purity.</p>
                         <div class="row mb-4">
                             <div class="col-lg-6">
                                 <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-primary"></i>Online every Friday</h6>
@@ -550,13 +670,15 @@ def build_about():
                     <div class="col-lg-9 text-center wow fadeIn" data-wow-delay="0.2s">
                         <i class="fas fa-cross fa-2x text-secondary mb-4"></i>
                         <h1 class="display-5 text-dark fst-italic">&ldquo;%(verse)s&rdquo;</h1>
-                        <h4 class="text-primary mt-4 mb-0">&mdash; %(verse_ref)s</h4>
+                        <h4 class="text-primary mt-4 mb-0">%(verse_ref)s</h4>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Verse End -->
 
+
+%(patron)s
 
         <!-- CTA Start -->
         <div class="container-fluid py-5">
@@ -573,11 +695,12 @@ def build_about():
 """ % dict(header=page_header("About Us", "One generation, four nations, on fire for God.", 25),
            about_bg=bg(ABOUT_PHOTO), play=play_button(), reg=REG_URL, meet=MEET_URL,
            stats=stat_html,
-           values_head=section_head("Mission &middot; Vision &middot; Values", "What We Hold Onto"),
-           values=value_html, verse=SITE["verse"], verse_ref=SITE["verse_ref"])
-    return page("About Us — KIZAZI Phenomenal",
+           values_head=section_head("Mission &middot; Vision &middot; Values", "What We Hold Onto", FAMILY_DESC_HTML + "."),
+           values=value_html, verse=SITE["verse"], verse_ref=SITE["verse_ref"],
+           family=FAMILY_DESC_HTML, family_who=FAMILY_WHO, patron=patron_section(compact=True))
+    return page("About Us: KIZAZI Phenomenal",
                 "The story, mission and values of KIZAZI Phenomenal, a Christian youth "
-                "movement across Kenya, Uganda, Tanzania and Rwanda.",
+                "movement across Kenya, Uganda, Tanzania and Rwanda. " + FAMILY_DESC + ".",
                 "about", body)
 
 
@@ -589,7 +712,7 @@ def build_ministries():
         acc.append("""                            <div class="accordion-item" id="%(slug)s">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acc-%(slug)s" aria-expanded="false" aria-controls="acc-%(slug)s">
-                                        <i class="fas %(icon)s me-3 text-primary"></i>%(name)s &mdash; what to expect
+                                        <i class="fas %(icon)s me-3 text-primary"></i>%(name)s: what to expect
                                     </button>
                                 </h2>
                                 <div id="acc-%(slug)s" class="accordion-collapse collapse" data-bs-parent="#ministryAccordion">
@@ -628,12 +751,12 @@ def build_ministries():
             </div>
         </div>
         <!-- Expect End -->
-""" % dict(header=page_header("Ministries", "Eight doorways into the family &mdash; pick the one that fits your gift.", 26),
+""" % dict(header=page_header("Ministries", "Eight doorways into the family. Pick the one that fits your gift.", 26),
            head=section_head("What We Do", "The Eight Ministries"),
            cards=cards,
            expect_head=section_head("Get Involved", "What To Expect In Each Ministry"),
            accordion="".join(acc))
-    return page("Ministries — KIZAZI Phenomenal",
+    return page("Ministries: KIZAZI Phenomenal",
                 "The eight ministries of KIZAZI Phenomenal: worship & the Word, discipleship "
                 "cells, prayer, Friday catch-up, outreach, creative lab, mentorship and care.",
                 "ministries", body)
@@ -642,10 +765,10 @@ def build_ministries():
 def build_programs():
     cards = "".join(program_card(p, "0.%ds" % (1 + (n % 3) * 2)) for n, p in enumerate(PROGRAMS))
     phases = [
-        ("Weeks 1&ndash;3", "Foundations", ["Who God is &mdash; and who you are in Him", "How to read Scripture without panic", "Your first honest prayer rhythm"]),
-        ("Weeks 4&ndash;6", "Hearing God", ["Spirit, word and wisdom", "Journaling &amp; quiet mornings", "Testing what you hear"]),
-        ("Weeks 7&ndash;9", "Living On Purpose", ["Gifts, calling and campus", "Friendships that carry you", "Saying no without guilt"]),
-        ("Weeks 10&ndash;12", "Sent", ["Building your cell&rsquo;s outreach project", "Leading something small", "Commissioning night"]),
+        ("Weeks 1 to 3", "Foundations", ["Who God is, and who you are in Him", "How to read Scripture without panic", "Your first honest prayer rhythm"]),
+        ("Weeks 4 to 6", "Hearing God", ["Spirit, word and wisdom", "Journaling &amp; quiet mornings", "Testing what you hear"]),
+        ("Weeks 7 to 9", "Living On Purpose", ["Gifts, calling and campus", "Friendships that carry you", "Saying no without guilt"]),
+        ("Weeks 10 to 12", "Sent", ["Building your cell&rsquo;s outreach project", "Leading something small", "Commissioning night"]),
     ]
     phase_html = "".join(
         """                    <div class="col-md-6 col-xl-3 wow fadeIn" data-wow-delay="%(delay)s">
@@ -689,7 +812,7 @@ def build_programs():
            cards=cards,
            rooted_head=section_head("Rooted &middot; 12 Weeks", "The Rooted Journey, Week By Week"),
            phases=phase_html, reg=REG_URL)
-    return page("Programs — KIZAZI Phenomenal",
+    return page("Programs: KIZAZI Phenomenal",
                 "KIZAZI Phenomenal programs: Rooted (12 weeks), Phenomenal Fridays, Creative Lab, "
                 "Mentorship Circle, Campus Ambassadors and Serve East Africa.",
                 "programs", body)
@@ -714,7 +837,7 @@ def build_events():
 %(head)s                <div class="row g-5 justify-content-center">
 %(cards)s                </div>
                 <div class="text-center mt-5 wow fadeIn" data-wow-delay="0.2s">
-                    <p class="text-body mb-3">Every Friday is free and open &mdash; no registration needed to join the Meet.</p>
+                    <p class="text-body mb-3">Every Friday is free and open. No registration needed to join the Meet.</p>
                     <a href="%(meet)s" target="_blank" rel="noopener" class="btn btn-primary px-5 py-3 me-3 text-white btn-border-radius"><i class="fas fa-video me-2"></i>Join This Friday</a>
                     <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-secondary px-5 py-3 text-white btn-border-radius">Get Event Updates</a>
                 </div>
@@ -738,9 +861,9 @@ def build_events():
 """ % dict(header=page_header("Events", "Fridays online, nights in person, conferences and tours.", 10),
            head=section_head("Our Events", "What&rsquo;s Coming Up"),
            cards=cards, meet=MEET_URL, reg=REG_URL,
-           recap_head=section_head("KIZAZI 2026 &middot; 14&ndash;15 August", "The Flagship, In Pictures"),
+           recap_head=section_head("KIZAZI 2026 &middot; 14 to 15 August", "The Flagship, In Pictures"),
            mosaic="".join(mosaic), album=album_button())
-    return page("Events — KIZAZI Phenomenal",
+    return page("Events: KIZAZI Phenomenal",
                 "Upcoming KIZAZI Phenomenal events: Phenomenal Fridays online catch-up, KIZAZI "
                 "Conference 2027, Worship & Word Nights and the Campus & School Tour.",
                 "events", body)
@@ -758,7 +881,7 @@ def build_gallery():
                                 %s
                             </a>
                         </div>
-""" % (key, durl(i), label, img(i, "KIZAZI 2026 photo — %s" % label, cls="img-fluid w-100 kz-cover", w=800)))
+""" % (key, durl(i), label, img(i, "KIZAZI 2026 photo, %s" % label, cls="img-fluid w-100 kz-cover", w=800)))
     vids = videos()
     if vids:
         vcards = "".join(
@@ -794,7 +917,7 @@ def build_gallery():
                         <div class="video border kz-video-thumb kz-video-empty mx-auto mb-4" %(bg)s>
                             %(play)s
                         </div>
-                        <p class="text-body mb-4">The film room is being loaded from our Drive album &mdash; clips drop here first.
+                        <p class="text-body mb-4">The film room is being loaded from our Drive album. Clips drop here first.
                         Meanwhile the photos above and our socials carry the story.</p>
                         %(album)s
                     </div>
@@ -819,11 +942,11 @@ def build_gallery():
 
 
 %(videos)s
-""" % dict(header=page_header("Gallery", "All 42 photos from KIZAZI 2026 &mdash; 14&ndash;15 August, two days of fire.", 21),
-           head=section_head("KIZAZI 2026", "The Album", "Tap any photo to open the lightbox. Filters are our best guess at categories &mdash; the album came unlabelled."),
+""" % dict(header=page_header("Gallery", "All 42 photos from KIZAZI 2026, 14 to 15 August, two days of fire.", 21),
+           head=section_head("KIZAZI 2026", "The Album", "Tap any photo to open the lightbox. Filters are our best guess at categories. The album came unlabelled."),
            filters="\n".join("                    " + f for f in filters),
            items="".join(items), videos=video_block)
-    return page("Gallery — KIZAZI Phenomenal",
+    return page("Gallery: KIZAZI Phenomenal",
                 "The full KIZAZI 2026 photo album: worship, word, community, service, creative "
                 "and behind-the-scenes, plus films from the Drive album.",
                 "gallery", body)
@@ -879,7 +1002,7 @@ def build_blog():
            cards=cards,
            posts_head=section_head("Full Posts", "This Term&rsquo;s Writing"),
            posts="".join(posts))
-    return page("Blog — KIZAZI Phenomenal",
+    return page("Blog: KIZAZI Phenomenal",
                 "Devotionals, conference recaps and practical discipleship writing from the "
                 "KIZAZI Phenomenal teams.",
                 "blog", body)
@@ -888,7 +1011,7 @@ def build_blog():
 def build_team():
     cards = "".join(team_card(t, "0.%ds" % (1 + (n % 4) * 2)) for n, t in enumerate(TEAMS))
     steps = [
-        ("fa-user-plus", "1 &middot; Register", "Fill the free form &mdash; it takes two minutes."),
+        ("fa-user-plus", "1 &middot; Register", "Fill the free form. It takes two minutes."),
         ("fa-comments", "2 &middot; Get placed", "A cell and a serving team near you adopt you."),
         ("fa-hands-helping", "3 &middot; Serve", "Show up for one thing this term. That&rsquo;s how it starts."),
     ]
@@ -904,6 +1027,8 @@ def build_team():
     body = """
 %(header)s
 
+%(patron)s
+%(admins)s
         <!-- Team Start-->
         <div class="container-fluid team py-5">
             <div class="container py-5">
@@ -925,12 +1050,14 @@ def build_team():
             </div>
         </div>
         <!-- Serve End -->
-""" % dict(header=page_header("Team", "Serving teams, not celebrities &mdash; every role is a doorway.", 17),
-           head=section_head("Serving Teams", "Meet The Crew", "Photos are from KIZAZI 2026; roles are open &mdash; yours could be next."),
+""" % dict(header=page_header("Team", "Serving teams, not celebrities. Every role is a doorway.", 17),
+           patron=patron_section(),
+           admins=people_section(),
+           head=section_head("Serving Teams", "Meet The Crew", "Photos are from KIZAZI 2026; roles are open, yours could be next."),
            cards=cards,
            serve_head=section_head("How To Serve", "Three Steps In"),
            steps=step_html, reg=REG_URL)
-    return page("Team — KIZAZI Phenomenal",
+    return page("Team: KIZAZI Phenomenal",
                 "The serving teams of KIZAZI Phenomenal: worship & sound, word & teaching, "
                 "prayer watch, discipleship mentors, media crew, outreach, hospitality and mentorship.",
                 "team", body)
@@ -947,7 +1074,7 @@ def build_testimonial():
             <div class="container py-5">
                 <div class="p-5 bg-white border border-primary rounded text-center wow fadeIn" data-wow-delay="0.2s">
                     <h1 class="display-5 mb-4">Your Story Belongs Here</h1>
-                    <p class="text-body mb-4">What has God done in you since you joined? Tell us &mdash; initials only if you prefer,
+                    <p class="text-body mb-4">What has God done in you since you joined? Tell us, initials only if you prefer,
                     exactly like the voices above.</p>
                     <a href="%(reg)s" target="_blank" rel="noopener" class="btn btn-primary px-5 py-3 me-3 text-white btn-border-radius">Share Your Testimony</a>
                     <a href="%(ig)s" target="_blank" rel="noopener" class="btn btn-secondary px-5 py-3 text-white btn-border-radius">Or DM Us On Instagram</a>
@@ -955,9 +1082,9 @@ def build_testimonial():
             </div>
         </div>
         <!-- Share End -->
-""" % dict(header=page_header("Testimonial", "Voices from the family &mdash; initials only, stories real.", 30),
+""" % dict(header=page_header("Testimonial", "Voices from the family: initials only, stories real.", 30),
            carousel=testimonials_carousel(), reg=REG_URL, ig=INSTAGRAM_URL)
-    return page("Testimonial — KIZAZI Phenomenal",
+    return page("Testimonial: KIZAZI Phenomenal",
                 "Testimonies from KIZAZI Phenomenal: students and young workers across East Africa "
                 "on what the family has meant to them.",
                 "testimonial", body)
@@ -965,9 +1092,9 @@ def build_testimonial():
 
 def build_contact():
     routes = [
-        ("fa-user-plus", "Register", "The free form is the front door &mdash; placement, cells and updates start here.", REG_URL, "Open the form"),
+        ("fa-user-plus", "Register", "The free form is the front door. Placement, cells and updates start here.", REG_URL, "Open the form"),
         ("fa-video", "Friday Meet", "Every Friday, 8:00 PM EAT (<span data-next-friday-long>&hellip;</span>). No registration needed to join.", MEET_URL, "Join the Meet"),
-        ("fa-hashtag", "Socials", "Clips, announcements and DMs &mdash; TikTok, Instagram and Facebook.", INSTAGRAM_URL, "Follow us"),
+        ("fa-hashtag", "Socials", "Clips, announcements and DMs on TikTok, Instagram and Facebook.", INSTAGRAM_URL, "Follow us"),
         ("fa-link", LINKTREE_NOTE, "One link with everything lands here soon; until then the form and socials cover it.", REG_URL, "Use the form"),
     ]
     route_html = "".join(
@@ -983,11 +1110,11 @@ def build_contact():
                         </div>
 """ % (1 + n * 2, icon, name, desc, url, cta) for n, (icon, name, desc, url, cta) in enumerate(routes))
     faqs = [
-        ("Do I need to register to join a Friday?", "No &mdash; the Meet link is open. Registration only helps us place you in a cell and keep you posted."),
+        ("Do I need to register to join a Friday?", "No, the Meet link is open. Registration only helps us place you in a cell and keep you posted."),
         ("Is KIZAZI a denomination?", "No. We are a youth fellowship; students from every church and campus fellowship are welcome."),
-        ("Which countries do you serve?", "Kenya, Uganda, Tanzania and Rwanda &mdash; online every Friday, in person through cells and tours."),
+        ("Which countries do you serve?", "Kenya, Uganda, Tanzania and Rwanda: online every Friday, in person through cells and tours."),
         ("What does it cost?", "Nothing. Programs, cells and Friday catch-ups are free; Serve East Africa trips fundraise together."),
-        ("Can I serve behind the scenes?", "Yes &mdash; pick a team on the Team page and register; a leader will reach out on socials."),
+        ("Can I serve behind the scenes?", "Yes. Pick a team on the Team page and register; a leader will reach out on socials."),
     ]
     faq_html = "".join(
         """                            <div class="accordion-item">
@@ -1043,12 +1170,12 @@ def build_contact():
             </div>
         </div>
         <!-- FAQ End -->
-""" % dict(header=page_header("Contact", "No office, no inbox &mdash; just doors that actually open.", 31),
+""" % dict(header=page_header("Contact", "No office, no inbox. Just doors that actually open.", 31),
            head=section_head("Contact Us", "Four Ways In"),
            routes=route_html, photo=img(32, "KIZAZI 2026 gathering", cls="img-fluid w-100 h-100 kz-cover", w=1200),
            faq_head=section_head("Quick Answers", "Asked Every Term"),
            faqs=faq_html)
-    return page("Contact — KIZAZI Phenomenal",
+    return page("Contact: KIZAZI Phenomenal",
                 "Reach KIZAZI Phenomenal: the free registration form, the Friday Google Meet, "
                 "our socials and answers to common questions.",
                 "contact", body)
@@ -1066,7 +1193,7 @@ def build_404():
                         <i class="bi bi-exclamation-triangle display-1 text-primary"></i>
                         <h1 class="display-1">404</h1>
                         <h1 class="mb-4">Page Not Found</h1>
-                        <p class="mb-4">We&rsquo;re sorry &mdash; that page isn&rsquo;t here. Maybe head home, or catch us live this Friday at 8:00 PM EAT?</p>
+                        <p class="mb-4">We&rsquo;re sorry, that page isn&rsquo;t here. Maybe head home, or catch us live this Friday at 8:00 PM EAT?</p>
                         <a class="btn btn-primary rounded-pill py-3 px-5 me-2" href="index.html">Go Home</a>
                         <a class="btn btn-secondary rounded-pill py-3 px-5" href="%(meet)s" target="_blank" rel="noopener">Join Friday</a>
                     </div>
@@ -1075,7 +1202,7 @@ def build_404():
         </div>
         <!-- 404 End -->
 """ % dict(header=page_header("404 Error", "Lost? The family is one click away.", 33), meet=MEET_URL)
-    return page("404 — KIZAZI Phenomenal", "Page not found — KIZAZI Phenomenal.", "home", body,
+    return page("404: KIZAZI Phenomenal", "Page not found. KIZAZI Phenomenal.", "home", body,
                 with_video_modal=False)
 
 

@@ -15,8 +15,9 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - Socials — TikTok `@kizazi.phenomenal`, Instagram `kizazi_phenomenal`,
   Facebook `kizaziphenomenal` — wired in topbar, footer, team cards, contact, blog.
 - **"Linktree coming soon"** — shown in the footer and on the contact page.
-- Photos — the 42 public Drive file IDs of the **"KIZAZI 2026"** album, hotlinked
-  with fallbacks (see README). KIZAZI 2026 = **14–15 Aug 2026**, treated as the
+- Photos — the 42 file IDs of the **"KIZAZI 2026"** album, **vendored locally** as
+  `img/gallery/01.jpg … 42.jpg` (registry in `PHOTOS`; refresh with
+  `tools/fetch_gallery_photos.py` — see README). KIZAZI 2026 = **14–15 Aug 2026**, treated as the
   past flagship event and the gallery album.
 - Verse used throughout: **1 Timothy 4:12**.
 - No email, phone or physical address is invented anywhere — the contact page
@@ -24,8 +25,8 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - **Design (2026-09-20, per your instruction):** the site now uses the BabyCare
   zip's own structure, fonts (**Fredoka + Montserrat**) and palette
   (**pink `#FF4880` / blue `#4D65F9`**) — the previous flame/gold skin is gone.
-  **No gold theme anywhere** (verified: zero `#FFC53D` / flame-orange tokens in
-  any shipped asset).
+  **No gold / flame-orange theme anywhere** (verified: zero gold or orange
+  colour tokens in any shipped asset).
 
 ## ⚠️ Assumptions to confirm / replace
 
@@ -50,10 +51,11 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 7. **Blog posts** — three drafted posts (1 Timothy 4:12 devotional, KIZAZI 2026
    recap, "5 habits" practical) with dates in Aug–Sep 2026. Titles, dates and
    bodies are placeholders until you write/confirm the real ones.
-8. **Team page** — shows **serving teams/roles**, now with KIZAZI 2026 *event*
-   photos on the cards (roles, not portraits — the photo caption/alt says
-   "…serving at KIZAZI 2026"). Swap in consented portraits whenever you want them
-   (`TEAMS` in `tools/build_common.py`).
+8. **Team page** — now has three layers: the **featured Patron panel**
+   (Reverend Dr. Joslyn Isigi), the **admin team portrait cards**
+   (`PEOPLE`) and the **serving teams/roles** with KIZAZI 2026 event photos
+   (`TEAMS`). Add the real admin names/portraits in `tools/build_common.py`
+   once you send them; the cards skip anyone without a JPEG in `img/team/`.
 9. **Testimonies** — four quotes, **initials only** (K., A., M., T.), labelled
    "joined online, Kampala", "Campus Ambassador", "Rooted graduate",
    "first-year student" — all **illustrative**. Replace with real, consented
@@ -77,15 +79,64 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 
 ## Photos & privacy
 
-- **2026-09-20:** the Drive album turned out to be **not publicly shared**, so
-  every photo was falling back to the branded placeholder tile. **Fix: share the
-  "KIZAZI 2026" folder in Drive as "Anyone with the link → Viewer" (folder + each
-  file, and each video file).** Nothing to rebuild; the existing `data-drive`
-  hotlinks pick the photos up automatically.
-- All gallery photos are **hotlinked from the public Drive folder** — they show
-  identifiable people. **Confirm you have consent to publish them publicly**
-  before going live. To pull any photo, remove its ID from `PHOTOS` in
-  `tools/build_common.py` and rebuild (or block its URL at the host level).
+- **2026-09-21:** the 42 "KIZAZI 2026" photos are now **vendored in the repo** at
+  `img/gallery/01.jpg … 42.jpg` (downloaded at w1600, same order as `PHOTOS`).
+  Every page serves them locally; the Drive hotlink / JS fallback chain is gone.
+  To refresh them (or after editing `PHOTOS`), run
+  `python3 tools/fetch_gallery_photos.py` on a machine with internet access to
+  Google Drive and commit the JPEGs. The script refuses to run if the album is
+  not shared as "Anyone with the link → Viewer" — that sharing requirement now
+  applies to **videos only** (they are still Drive embeds).
+- All gallery photos show identifiable people. **Confirm you have consent to
+  publish them publicly** before going live. To pull any photo, delete its file
+  in `img/gallery/` and remove its ID from `PHOTOS` in `tools/build_common.py`.
+
+## Home hero: the transition photos (2026-09-21)
+
+- The four photos uploaded for "the top of the first page" are vendored in
+  `img/hero/01.jpg` to `img/hero/04.jpg` (the
+  `front page transition pages .zip` upload was unpacked and removed; no other
+  file in the repo changed). The originals are WhatsApp JPEGs, 1600 x 718.
+- They are embedded as a **crossfading hero background** on `index.html` only:
+  one `.kz-hero-slide` layer per file, staggered 8 s each (32 s cycle), under
+  the template's existing blue wash so the hero copy keeps its contrast.
+  `prefers-reduced-motion` and no-JS visitors see `img/hero/01.jpg` as a still,
+  and `img/brand/photo-placeholder.svg` stays the CSS last-resort.
+- The CSS lives in section 7 of `css/kizazi.css`; the list is `HERO_SLIDES` in
+  `tools/build_common.py`. Swap a file (keep the name) or change the list and
+  adjust the 32 s cycle + keyframe percentages to match.
+
+## People, portraits & the Patron (2026-09-21)
+
+- **Consent: confirmed by the site owner for every portrait published here**
+  (the owner supplied the portrait files and asked for them to be published).
+  Only replace or remove them if that consent changes, and keep this note in
+  sync.
+- Portraits are vendored in `img/team/` and driven by `PEOPLE` (admin team) and
+  `PATRON` (Reverend Dr. Joslyn Isigi) in `tools/build_common.py`. Roles are
+  written exactly as **"Admin"** and **"Patron"**; no other titles are invented.
+- `team.html` shows the Patron as a featured panel plus the admin cards;
+  `about.html` shows the compact Patron panel in the mission area. An entry
+  whose JPEG is missing is skipped by the builder, so pages never show a broken
+  portrait.
+- To pull a person: delete their file in `img/team/` and their entry in
+  `tools/build_common.py`, then re-run `python3 tools/build.py`.
+
+## Dash policy (2026-09-21)
+
+- **No em-dashes (`&mdash;`, `—`) and no en-dashes (`&ndash;`, `–`) anywhere in visible
+  copy.** They were rewritten with plain punctuation (comma, colon, full stop,
+  or just a space) and date ranges now read "14 to 15 August". Word hyphens stay
+  (`catch-up`, `follow-up`).
+- The copyright bar's right-hand slot reads exactly
+  **"A generation on fire for God. 1 Timothy 4:12"** (the removed template credit
+  is documented below).
+- Proof: `grep -n "&mdash;\|&ndash;\|—\|–" tools/*.py` prints nothing and every generated
+  `*.html` page is clean. The only dashes left in the repo are inside the
+  untouched third-party template files (`css/bootstrap.min.css`,
+  `css/style.css`, `js/vendor/*`, `lib/*`), which are not site copy. The
+  font/palette rules are unchanged: Fredoka + Montserrat, pink `#FF4880` /
+  blue `#4D65F9`, and no gold or flame-orange anywhere.
 
 ## Design decisions (not copy, but easy to change)
 
@@ -96,15 +147,21 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - `css/bootstrap.min.css` and `css/style.css` are the **untouched files from
   BabyCare-1.0.0.zip**; `scss/bootstrap.scss` + `scss/bootstrap/` are the zip's
   sources if you ever recompile.
-- `css/kizazi.css` is a small add-on layer (Drive photos & backgrounds, video
+- `css/kizazi.css` is a small add-on layer (photo backgrounds via `--kz-photo`
+  with the placeholder SVG as CSS last-resort, video
   cards, initials avatars, gallery filter, search results) that only uses the
   template's CSS variables — no new palette.
 - `js/main.js` is the template's script (with one tweak: Drive embeds are used
-  as-is instead of getting YouTube autoplay params). `js/kizazi.js` adds Drive
-  photo/background resolution, next-Friday dates, gallery filter, quick search
-  and the newsletter note.
+  as-is instead of getting YouTube autoplay params). `js/kizazi.js` adds
+  next-Friday dates, gallery filter, quick search
+  and the newsletter note (plus a JS last-resort placeholder for a broken
+  photo) — the old Drive photo/background resolution chain was deleted when the
+  photos were vendored.
 - Logo: AI-generated flame-"K" badge in the template palette (pink→blue, no gold)
   at `img/brand/logo-mark.png` (favicon + og:image). The navbar/footer brand is
   the template's two-tone text wordmark. Regenerate/replace freely.
-- Template credit to **HTML Codex** is retained in the footer, per the BabyCare
-  template licence (`LICENSE.txt`).
+- **HTML Codex credit-removal note (2026-09-21):** the template credit line
+  ("Designed By HTML Codex / Distributed By ThemeWagon", plus its "keep the
+  credit" comment) is **deliberately removed from the copyright bar**. The
+  right-hand slot now reads **"A generation on fire for God. 1 Timothy 4:12"**.
+  Do **not** re-add any template credit line. `LICENSE.txt` stays in the repo.
