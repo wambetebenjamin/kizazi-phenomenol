@@ -1,0 +1,44 @@
+name: Fetch gallery photos
+
+# CI TEMPLATE — GitHub only runs workflows from .github/workflows/, and the
+# Arena agent's GitHub App token is not allowed to create files there. To
+# activate: copy this file to .github/workflows/fetch-gallery-photos.yml and
+# push (any token with `workflows` write can do that — e.g. a personal one).
+#
+# What it does: downloads the 42 "KIZAZI 2026" photos from Google Drive into
+# img/gallery/ (01.jpg … 42.jpg) and commits them to the branch.  The script
+# probes one photo ID first and fails loudly if the album is not shared as
+# "Anyone with the link → Viewer".
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "arena/01a0c25c-kizazi-phenomenol"
+    paths:
+      - ".github/workflows/fetch-gallery-photos.yml"
+      - "tools/fetch_gallery_photos.py"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the branch
+        uses: actions/checkout@v4
+
+      - name: Download 42 photos (probe gate + fallbacks + verification)
+        run: python3 tools/fetch_gallery_photos.py
+
+      - name: Commit img/gallery
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add img/gallery
+          if git diff --cached --quiet; then
+            echo "img/gallery already up to date."
+          else
+            git commit -m "Vendor KIZAZI 2026 photos in img/gallery/ (01.jpg-42.jpg)"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
