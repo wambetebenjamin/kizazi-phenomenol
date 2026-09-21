@@ -370,7 +370,7 @@ h6,
 
 /*** service Start ***/
 .service {
-    background: linear-gradient(rgba(255, 72, 128, 0.05), rgba(255, 72, 128, 0.2));
+    background: linear-gradient(rgba(109, 40, 217, 0.05), rgba(109, 40, 217, 0.2));
 }
 
 .service .service-item {
@@ -439,7 +439,7 @@ h6,
 
 /*** Programs Start ***/
 .program {
-    background: linear-gradient(rgba(255, 72, 128, 0.1), rgba(255, 72, 128, 0.1));
+    background: linear-gradient(rgba(109, 40, 217, 0.1), rgba(109, 40, 217, 0.1));
 }
 
 .program .program-item .program-img .program-rate {

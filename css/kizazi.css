@@ -1,8 +1,8 @@
 /* =========================================================================
    KIZAZI Phenomenal: add-ons on top of the BabyCare template skin.
    No new palette: every colour derives from the template's Bootstrap
-   variables (pink #FF4880 / blue #4D65F9).  This file teaches the template
-   about (1) vendored gallery photos in img/gallery/ (with the placeholder
+   variables (royal violet #6D28D9 / blue #4D65F9).  This file teaches the
+   template about (1) vendored gallery photos in img/gallery/ (with the placeholder
    SVG as CSS last-resort), (2) photo backgrounds via --kz-photo, (3) video
    cards, (4) initials avatars, (5) the gallery filter, (6) quick search,
    (7) the home hero crossfade, (8) the family description & portraits and
@@ -10,7 +10,7 @@
    card motion, counting stats, scroll progress, play pulse).
    ========================================================================= */
 
-/* The ONE gradient token of the energy layer: pink -> light pink -> blue,
+/* The ONE gradient token of the energy layer: violet -> light violet -> blue,
    straight from the template's palette (no new colours). It paints the
    buttons, the sticker kickers, the stat numerals, the marquee rules, the
    copyright rule and the scroll progress bar. */
@@ -251,7 +251,7 @@ img.kz-cover {
    ========================================================================= */
 
 /* ------------------------------ 9.1 Buttons: the gradient, worn like a --
-   The template's own hover inversion (blue background, pink text) keeps
+   The template's own hover inversion (blue background, violet text) keeps
    working: its `background` shorthand resets the gradient on hover. */
 .btn-primary,
 .btn-secondary {
@@ -271,7 +271,7 @@ img.kz-cover {
 
 /* --------------------------------- 9.2 Sticker kickers (h4 pills) --------
    The template's h4.title-border-radius becomes a slightly tilted white
-   sticker pill carrying a gradient rule underneath. The pink underline the
+   sticker pill carrying a gradient rule underneath. The violet underline the
    bootstrap border classes drew is neutralised (transparent) so the token
    owns the accent. */
 h4.title-border-radius {

@@ -7,8 +7,8 @@
 > *"Let no one despise you for your youth…"* — 1 Timothy 4:12
 
 Built **on the BabyCare Bootstrap template (HTML Codex) exactly as shipped**: same
-page structure, same components, same fonts and the template's own colour palette
-(pink `#FF4880` + blue `#4D65F9`). No gold anywhere.
+page structure, same components, same fonts and the template's palette shape,
+rebranded to royal purple (`#6D28D9` + blue `#4D65F9`). No gold anywhere.
 
 ---
 
@@ -45,9 +45,11 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 
 - **Fonts** — Fredoka 600/700 (display) + Montserrat 200/400/600 (body), loaded
   from Google Fonts exactly like the zip.
-- **Palette** — primary pink `#FF4880`, secondary blue `#4D65F9`, light
-  `#FFECF2`, dark `#393D72`, body grey `#70747F` — i.e. the zip's own
-  `css/bootstrap.min.css`, used as shipped. **No gold / no orange theme.**
+- **Palette (royal purple rebrand, 2026-09-21)** — primary violet `#6D28D9`
+  (hover `#5B21B6`), secondary blue `#4D65F9`, light `#F3E8FF`, dark `#393D72`,
+  body grey `#70747F`. The owner rejected the template pink, so the swap was
+  applied in place to the zip's own `css/bootstrap.min.css` / `css/style.css`
+  (and `scss/bootstrap.scss`). **No pink, no gold / no orange theme.**
 - **Layout & components** — topbar + navbar with Pages dropdown, full-screen
   search modal, `hero-header` / `page-header` heroes with breadcrumbs, service /
   program / events / blog / team cards, Owl testimonial carousel, 4-column footer
@@ -59,7 +61,7 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
   CSS last-resort), video cards, initials avatars, the gallery filter,
   quick-search results, the home hero crossfade and the energy layer below.
 - **Energy layer** (section 9 of `css/kizazi.css` + behaviours 6-7 of
-  `js/kizazi.js`) — one gradient token, `--kz-grad` (pink → light pink → blue,
+  `js/kizazi.js`) — one gradient token, `--kz-grad` (violet → light violet → blue,
   the template's own colours, **no gold / no orange**), worn by the buttons,
   the sticker kicker pills, the about-page stat numerals, the marquee rules,
   the copyright rule and the scroll progress bar. Plus the marquee ticker

@@ -3,8 +3,9 @@
 """KIZAZI Phenomenal, shared build data & site chrome (BabyCare-template edition).
 
 The site is a faithful BabyCare (HTML Codex) build: same markup structure, same
-fonts (Fredoka + Montserrat), same palette (pink #FF4880 / blue #4D65F9 from the
-template's own css/bootstrap.min.css).  This module holds everything the pages
+fonts (Fredoka + Montserrat), same palette shape, rebranded to royal purple
+(primary #6D28D9 / secondary blue #4D65F9, swapped in the template's own
+css/bootstrap.min.css).  This module holds everything the pages
 share:
 
   * external links (registration form, Friday Meet, socials)
@@ -287,7 +288,7 @@ def head(title, desc):
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="%(desc)s" name="description">
         <meta content="KIZAZI Phenomenal, Christian youth ministry, East Africa, youth fellowship, discipleship, worship, Kenya, Uganda, Tanzania, Rwanda" name="keywords">
-        <meta content="#FF4880" name="theme-color">
+        <meta content="#6D28D9" name="theme-color">
         <meta property="og:site_name" content="KIZAZI Phenomenal">
         <meta property="og:title" content="%(title)s">
         <meta property="og:description" content="%(desc)s">
