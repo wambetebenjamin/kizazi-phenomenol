@@ -132,7 +132,7 @@ PHOTOS = [
 
 assert len(PHOTOS) == 42, "expected exactly 42 Drive photo IDs"
 
-# Gallery filter categories, assigned round-robin (see NOTES.md).
+# Gallery filter categories: the six filter buttons ...
 GALLERY_CATS = [
     ("worship", "Worship"),
     ("word", "Word"),
@@ -140,6 +140,55 @@ GALLERY_CATS = [
     ("service", "Service"),
     ("creative", "Creative"),
     ("bts", "Behind the Scenes"),
+]
+
+# ... and one category per photo, in PHOTOS order (see tools/vendor_gallery.py
+# for what each slot shows).  The album arrived unlabelled; this list is the
+# curation read off the photos themselves, so the filter tells the truth
+# instead of cycling round-robin.
+GALLERY_ITEM_CATS = [
+    "worship",   # 01  three voices up, worship set
+    "bts",       # 02  sound and stage prep
+    "community", # 03  the circle of chairs outside
+    "service",   # 04  handing over the gift on stage
+    "community", # 05  three seated, talking it over
+    "bts",       # 06  the room filling up
+    "creative",  # 07  guitar and a voice
+    "community", # 08  two friends in the garden
+    "community", # 09  the whole group on the lawn
+    "service",   # 10  behind the serving table
+    "bts",       # 11  keys, board and cables
+    "worship",   # 12  the worship team on stage
+    "worship",   # 13  hands up, singing
+    "community", # 14  lawn games and laughter
+    "community", # 15  arms up together outside
+    "community", # 16  the group at the camp
+    "community", # 17  the family, all of us
+    "creative",  # 18  laughing in the front row
+    "word",      # 19  keys player in the set
+    "service",   # 20  the message, microphone in hand
+    "community", # 21  praying over one another
+    "bts",       # 22  two in conversation
+    "community", # 23  phones out, behind the scenes
+    "service",   # 24  sitting together outside
+    "community", # 25  serving the plates
+    "creative",  # 26  garden portraits
+    "community", # 27  guitar, mic and a testimony
+    "service",   # 28  sitting in the shade
+    "worship",   # 29  gifts handed over
+    "community", # 30  singing with the mic
+    "worship",   # 31  waving from the chair
+    "word",      # 32  voices together at the front
+    "community", # 33  two up front, folder in hand
+    "service",   # 34  thumbs up, chairs on the lawn
+    "worship",   # 35  the handover
+    "bts",       # 36  praise, hands and hearts
+    "worship",   # 37  a quiet portrait between sessions
+    "word",      # 38  singing it out
+    "community", # 39  the message from the front
+    "service",   # 40  lunch and laughter
+    "creative",  # 41  bags and blessings
+    "bts",       # 42  the last song of the night
 ]
 
 FOOTER_GRID = [28, 29, 30, 31, 32, 33]
@@ -218,8 +267,14 @@ def bg_file(path):
 
 
 def gallery_cat(i):
-    key, label = GALLERY_CATS[i % len(GALLERY_CATS)]
-    return key, label
+    """(key, label) for photo i: the curated label when we have one, else the
+    round-robin fallback (keeps the builder safe if PHOTOS ever grows)."""
+    labels = dict(GALLERY_CATS)
+    if 0 <= i < len(GALLERY_ITEM_CATS):
+        key = GALLERY_ITEM_CATS[i]
+    else:
+        key = GALLERY_CATS[i % len(GALLERY_CATS)][0]
+    return key, labels.get(key, key)
 
 
 # ------------------------------------------------ home hero "transition" pics --

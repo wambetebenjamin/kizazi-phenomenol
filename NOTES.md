@@ -47,10 +47,14 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
    actually runs. The Rooted week-by-week phases are drafted too.
 5. **Ministries** — the 8 names and their copy are drafted from your list —
    adjust the blurbs/"what to expect" bullets as needed.
-6. **Gallery categories** — the album has no labels, so the 6 filter categories
-   (Worship / Word / Community / Service / Creative / Behind the Scenes) are
-   assigned **round-robin** in `tools/build_common.py` (`GALLERY_CATS`). If you
-   label the photos, update the mapping.
+6. **Gallery categories** — the album has no labels, so the six filter
+   categories (Worship / Word / Community / Service / Creative / Behind the
+   Scenes) are now assigned **per photo** in `GALLERY_ITEM_CATS`
+   (`tools/build_common.py`), read off each curated photo by the curation in
+   `tools/vendor_gallery.py`. They are a best-effort read, not the owner's own
+   labels: if you relabel a photo, change its line in `GALLERY_ITEM_CATS` and
+   re-run `python3 tools/build.py` (the round-robin list is kept only as a
+   fallback for photos beyond the 42).
 7. **Blog posts** — three drafted posts (1 Timothy 4:12 devotional, KIZAZI 2026
    recap, "5 habits" practical) with dates in Aug–Sep 2026. Titles, dates and
    bodies are placeholders until you write/confirm the real ones.
@@ -82,24 +86,33 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 
 ## Photos & privacy
 
-- **2026-09-23:** this branch ships `img/gallery/` **empty**: the 42 JPEGs
-  are not committed here yet (the sandbox has no route to Google Drive). The
-  pages are already wired to `img/gallery/01.jpg … 42.jpg`, so they light up
-  as soon as the files land; until then every photo falls back to
-  `img/brand/photo-placeholder.svg` (CSS and JS last resort), so no page ever
-  shows a broken image. The owner is uploading the Drive files to GitHub; the
-  CI job (`.github/workflows/fetch-gallery-photos.yml`, whose byte-identical
-  copy sits in the working tree because pushing it needs a token with
-  `workflows` write) can also vendor them after it lands, and the
-  browser-assisted `tools/fetch_gallery_server.py 8123
-  --fetch-root` remains the manual route. The PR that carried this skin states
-  the photo count and the `du -sk img/gallery` size as they stand.
+- **2026-09-23 (later):** the 42 photos are **vendored** again, this time from
+  the owner's upload of the album (the eight split zip parts
+  `drive-download-20260922T141329Z-1-001-part-001..008.zip`, committed on
+  `main` and kept there as the master copy at the owner's request). The album
+  holds 220 JPEGs, 217 unique; the curated 42 were picked from them and written
+  by `tools/vendor_gallery.py` (slot order, web encode, metadata strip) with
+  `img/gallery/manifest.json` and `img/gallery/SOURCES.json`. 42 photos, about
+  6.2 MB, up to 1000 px on the long edge, no upscaling. Photography credit:
+  **SPLENDOR WEMA (@BELLA TEHILLAH)**, kept in `SOURCES.json` after the
+  metadata strip. **Privacy:** the camera metadata is removed from every
+  vendored file because it carried the body and lens serial numbers (the
+  originals had no GPS data). The curation records which upload each slot came
+  from, so any photo can be traced back.
 - **2026-09-21:** the 42 "KIZAZI 2026" photos were vendored in the repo at
   `img/gallery/01.jpg … 42.jpg` (downloaded at w1600, same order as `PHOTOS`),
   committed as binaries with `img/gallery/manifest.json` (Drive ID, SHA-256
   and byte size per photo, in `PHOTOS` order). Every page serves them
   locally; the Drive hotlink / JS fallback chain is gone, so the site never
   hotlinks Drive for photos.
+- **The Drive registry is legacy.** The 42 IDs in `PHOTOS` were the earlier
+  refresh design and are not the vendored files; `tools/fetch_gallery_photos.py`
+  now refuses to overwrite the curated set unless `--replace-curated` is passed
+  (that flag would download a different album). The weekly CI job
+  `.github/workflows/fetch-gallery-photos.yml` is the same legacy path: if it
+  ever lands (pushing it needs a token with `workflows` write, which is why the
+  file sits untracked in the working tree), **disable or delete it**, or it would
+  replace the curated photos on its Monday run.
 - Refresh paths (details in README → "Photos"): `tools/fetch_gallery_photos.py`
   is manifest-aware (a re-run on an unchanged album re-downloads nothing and
   commits nothing; `--force` re-downloads all 42, `--changed-out FILE` lists
@@ -116,11 +129,14 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - The script probes the first ID and refuses to run if the album is not
   shared as "Anyone with the link → Viewer" — that sharing requirement now
   applies to **videos only** (they are still Drive embeds).
-- All gallery photos show identifiable people. **Confirm you have consent to
-  publish them publicly** before going live. To pull any photo, delete its
-  file in `img/gallery/` and remove its ID from `PHOTOS` in
-  `tools/build_common.py` (then re-run `python3 tools/fetch_gallery_photos.py
-  --manifest-only` and `python3 tools/fetch_gallery_photos.py --verify`).
+- All gallery photos show identifiable people. The owner supplied the album and
+  asked for it to be published, which is the same consent basis as the
+  portraits; **confirm that again before going live**. To pull any photo:
+  delete `img/gallery/NN.jpg`, drop its source line from `CURATED` in
+  `tools/vendor_gallery.py` and its label from `GALLERY_ITEM_CATS` in
+  `tools/build_common.py`, then re-run `python3 tools/vendor_gallery.py --from
+  <album>` (or fix the numbering by hand and run
+  `python3 tools/fetch_gallery_photos.py --manifest-only` plus `--verify`).
 
 ## Home hero: the transition photos (2026-09-21)
 
@@ -274,6 +290,11 @@ paint.
 
 ## Design decisions (not copy, but easy to change)
 
+- **Photos (2026-09-23):** the 42 vendored photos come from the owner's album
+  upload and are placed by slot (hero fallback, page headers, card images,
+  footer grid, gallery wall) as documented in `tools/vendor_gallery.py`. Cards
+  and headers crop them with `object-fit: cover`, so portrait frames work in
+  landscape slots.
 - **Structure/fonts = the zip's.** Pages are generated from the template's
   own components (topbar+navbar+dropdown, search modal, hero/page-header, service,
   program, events, blog, team cards, Owl testimonial carousel, 4-column footer,

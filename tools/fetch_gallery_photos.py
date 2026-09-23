@@ -2,6 +2,12 @@
 # -*- coding: utf-8 -*-
 """Download the 42 "KIZAZI 2026" photos from Google Drive into img/gallery/.
 
+Legacy path: the site's photos are now the curated, vendored set produced by
+tools/vendor_gallery.py (img/gallery/SOURCES.json records the source of every
+slot).  This script keeps working for --verify and --manifest-only, and its
+Drive download refuses to run while SOURCES.json is present unless
+--replace-curated is passed.
+
 Files are written as 01.jpg … 42.jpg, in exactly the order of `PHOTOS` in
 tools/build_common.py (01.jpg == PHOTOS[0]).  Each file is fetched at w1600
 (gallery / lightbox quality) and must be a real JPEG larger than 10 KB.
@@ -62,6 +68,10 @@ from build_common import PHOTOS  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, "img", "gallery")
+# The vendored, curated set (see tools/vendor_gallery.py) records where each
+# slot came from.  While that file is present, this Drive fetch refuses to
+# overwrite the gallery unless --replace-curated says so on purpose.
+SOURCES = os.path.join(OUT_DIR, "SOURCES.json")
 MANIFEST = os.path.join(OUT_DIR, "manifest.json")
 
 ALBUM = "KIZAZI 2026"
@@ -120,9 +130,27 @@ def load_manifest():
     return photos if isinstance(photos, list) else None
 
 
-def save_manifest(entries):
+def manifest_width():
+    """The width recorded in the existing manifest, when it has one.
+
+    The curated, vendored set (tools/vendor_gallery.py) tops out at the upload
+    resolution (1000 px), so its manifest says 1000; keep that value when
+    rebuilding the manifest from local files instead of stamping the Drive
+    download width over it.
+    """
+    raw = read_file(MANIFEST)
+    if raw is None:
+        return None
+    try:
+        return json.loads(raw.decode("utf-8")).get("width")
+    except (ValueError, UnicodeDecodeError):
+        return None
+
+
+def save_manifest(entries, width=None):
     """Write manifest.json atomically.  Return True when the file changed."""
-    doc = {"album": ALBUM, "width": WIDTH, "photos": entries}
+    doc = {"album": ALBUM, "width": width or manifest_width() or WIDTH,
+           "photos": entries}
     text = json.dumps(doc, indent=2) + "\n"
     old = read_file(MANIFEST)
     if old is not None and old.decode("utf-8") == text:
@@ -331,8 +359,13 @@ def run_verify():
         for p in problems:
             print("  " + p)
         return 1
+    raw = read_file(MANIFEST) or b"{}"
+    try:
+        width = json.loads(raw.decode("utf-8")).get("width") or WIDTH
+    except (ValueError, UnicodeDecodeError):
+        width = WIDTH
     print("verify ok: 42 photos, real JPEGs, hashes match img/gallery/manifest.json "
-          "(album: %s, w%d, %.1f MB total)" % (ALBUM, WIDTH, total / 1e6))
+          "(album: %s, w%s, %.1f MB total)" % (ALBUM, width, total / 1e6))
     return 0
 
 
@@ -347,11 +380,22 @@ def main(argv=None):
                         help="no network: rebuild manifest.json from the files already on disk")
     parser.add_argument("--verify", action="store_true",
                         help="offline check: 42 real JPEGs > 10 KB, hashes match the manifest")
+    parser.add_argument("--replace-curated", action="store_true",
+                        help="allow a Drive download to overwrite the curated, "
+                             "vendored gallery (img/gallery/SOURCES.json)")
     args = parser.parse_args(argv)
     if args.verify:
         return run_verify()
     if args.manifest_only:
         return run_manifest_only(args.changed_out)
+    if os.path.exists(SOURCES) and not args.replace_curated:
+        print("img/gallery/ holds the curated, vendored set "
+              "(img/gallery/SOURCES.json).")
+        print("Refusing to overwrite it from Drive.")
+        print("  * to check the files:      python3 tools/fetch_gallery_photos.py --verify")
+        print("  * to re-vendor by hand:    python3 tools/vendor_gallery.py --from <album>")
+        print("  * to really re-download:   add --replace-curated")
+        return 1
     return run_fetch(args.force, args.changed_out)
 
 

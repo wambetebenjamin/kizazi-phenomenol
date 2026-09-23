@@ -94,25 +94,78 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 
 ## Photos
 
-The 42 "KIZAZI 2026" event photos belong at `img/gallery/01.jpg … 42.jpg`
-(same order as the `PHOTOS` list in `tools/build_common.py`) and are served
-locally — no hotlinking, no Drive dependency at runtime. Each tag is plain:
+All 42 "KIZAZI 2026" event photos are **vendored in the repo** at
+`img/gallery/01.jpg … 42.jpg` (same order as the `PHOTOS` list in
+`tools/build_common.py`) and served locally: no hotlinking, no Drive
+dependency at runtime. Each tag is plain:
 
 ```html
 <img src="img/gallery/07.jpg" class="img-fluid" alt="…" loading="lazy">
 ```
 
-> **Status (2026-09-23):** this branch ships `img/gallery/` **empty** — the
-> 42 files have not been committed here yet (the sandbox has no route to
-> Google Drive). The pages are already wired for them, so they light up the
-> moment the files land: until then every photo tag resolves to
-> `img/brand/photo-placeholder.svg` (the CSS/JS last-resort), so nothing is
-> ever a broken image. To vendor them, either run the browser-assisted fetcher
-> below, let the owner's upload land, or let the CI job commit them.
+Where the 42 came from: the owner's upload of the **"KIZAZI 2026"** album
+(14 to 15 August, the IGNITE camp) arrived as eight split zip parts,
+`drive-download-20260922T141329Z-1-001-part-001..008.zip` at the repo root.
+Those 220 JPEGs hold 217 unique frames (3 are exact duplicates); the curated
+42 were picked from them for people, spread and light and written to
+`img/gallery/` by:
+
+```bash
+# unzip the parts somewhere, then
+python3 tools/vendor_gallery.py --from /path/to/unzipped-album
+python3 tools/vendor_gallery.py --from /path/to/unzipped-album --dry-run  # preview
+```
+
+The tool (stdlib only; richer output with Pillow installed):
+
+- keeps the **slot order** that matters: `tools/build.py` points fixed slots at
+  fixed jobs, so slot 0 is the home hero fallback, slot 1 the default page
+  header, slot 2 the about video panel, slot 3 the footer photo, slots 4 to 9
+  the six program cards, 10 to 13 the event cards, 14 to 16 the blog cards,
+  17 to 24 the serving-team cards, 25 to 27 the about / ministries / programs
+  headers and 28 to 33 the footer photo grid (with slot 30 heading the
+  testimonial page, 31 the contact page and 33 the 404). `tools/vendor_gallery.py`
+  documents each slot next to its pick.
+- writes `img/gallery/manifest.json` (`{"album", "width", "photos": [...]}`,
+  one entry per slot with the Drive ID, SHA-256 and byte size) and
+  `img/gallery/SOURCES.json` (which upload each slot came from, the album,
+  the resolution, the encoding and the photographer credit).
+- **re-encodes for the web** (JPEG quality 82, progressive, optimize) at the
+  original upload resolution, up to 1000 px on the long edge, so no photo is
+  upscaled, and **strips the camera metadata** (EXIF/XMP/IPTC, which carried
+  body and lens serial numbers) while keeping the ICC profile. 42 photos,
+  about 6.2 MB in total instead of 172 MB.
+- Photography credit kept from the originals: **SPLENDOR WEMA
+  (@BELLA TEHILLAH)**, recorded in `img/gallery/SOURCES.json`.
 
 Section backgrounds (page headers, the play-button panel, footer) use the same
-files through the inline `--kz-photo` CSS variable.  The placeholder SVG is
-only ever the CSS/JS last-resort if a file is missing.
+files through the inline `--kz-photo` CSS variable. `img/brand/photo-placeholder.svg`
+remains only as the CSS/JS last-resort if a file is ever missing.
+
+### Refreshing the photos
+
+The Drive download path still exists, but the vendored set is now the source of
+truth, so the script **refuses to overwrite it** while
+`img/gallery/SOURCES.json` is present:
+
+```bash
+python3 tools/fetch_gallery_photos.py                       # refuses (curated set)
+python3 tools/fetch_gallery_photos.py --replace-curated     # really re-download all 42
+python3 tools/fetch_gallery_photos.py --verify               # offline: 42 real JPEGs
+                                                            # > 10 KB, hashes match
+python3 tools/fetch_gallery_photos.py --manifest-only        # rebuild the manifest
+                                                            # from files on disk
+python3 tools/vendor_gallery.py --from <album>               # re-vendor from the uploads
+```
+
+A re-run of `--manifest-only` on an unchanged set is a no-op.
+
+> **Note (2026-09-23):** the 42 Drive IDs in `PHOTOS`
+> (`tools/build_common.py`) are the registry from the earlier refresh design and
+> no longer correspond to the vendored set (which came from the uploads
+> instead). `--replace-curated` would therefore download a *different* album.
+> The weekly CI job `.github/workflows/fetch-gallery-photos.yml` is the same
+> legacy path and should be retired or left disabled: see NOTES.md.
 
 ### Home hero (the transition photos)
 
@@ -172,13 +225,14 @@ HTTP 403/404** — share the "KIZAZI 2026" folder as *"Anyone with the link
 `drive.google.com/uc`) and verifies every file is a real JPEG > 10 KB before
 writing it.
 
-**Automated:** `.github/workflows/fetch-gallery-photos.yml` (a byte-identical copy of the
-source template `tools/fetch-gallery-photos.workflow.yml`) runs the same script on a weekly
-schedule (Mondays 06:30 UTC) and on demand (`workflow_dispatch`), verifies,
-and commits `img/gallery/` **only when something changed** (the commit
-message lists the changed photo names from `--changed-out`). No secrets are
-needed: the album is public via link sharing and the job declares
-`contents: write` on the default `GITHUB_TOKEN`.
+**Automated (legacy, please retire):** `.github/workflows/fetch-gallery-photos.yml`
+(a byte-identical copy of the source template
+`tools/fetch-gallery-photos.workflow.yml`) would run a weekly Drive refresh
+(Mondays 06:30 UTC, plus `workflow_dispatch`) and commit `img/gallery/` when
+something changed. With the curated set vendored, that job is superseded: if it
+ever lands, disable it (Actions → *Fetch gallery photos* → *Disable workflow*)
+or delete it, since the refresh would replace the curated photos with the
+old Drive album.
 
 > **Pushing that workflow needs a token with `workflows` write.** The copy is
 > byte-identical to `tools/fetch-gallery-photos.workflow.yml`; if the push is
@@ -191,13 +245,11 @@ needed: the album is public via link sharing and the job declares
 > git push origin main
 > ```
 >
-> No direct Google access (restricted sandbox / CI)? Run
-> `python3 tools/fetch_gallery_server.py 8123 --fetch-root` and open the
-> served page (the preview of port 8123) in a normal browser, then click
-> "Fetch all 42 photos": your browser downloads each photo and POSTs it
-> back, writing `img/gallery/01.jpg … 42.jpg`. When it is done, run
-> `python3 tools/fetch_gallery_photos.py --manifest-only` and then
-> `python3 tools/fetch_gallery_photos.py --verify`.
+> Re-vendoring from a browser (no local unzip, no PIL)? Unzip the upload
+> parts, then run the tool with Pillow installed (`pip install Pillow`) so the
+> files come out web-encoded instead of straight off the camera. The
+> browser-assisted `python3 tools/fetch_gallery_server.py 8123 --fetch-root`
+> page remains for the legacy Drive route only.
 
 ## Copy conventions
 
@@ -258,9 +310,12 @@ python3 tools/build.py        # regenerates all 11 pages at the repo root
   `HERO_SLIDES`, the `FAMILY_DESC` copy, the `PEOPLE`/`PATRON` portraits,
   ministries/programs/events/blog/teams/testimonies, and the shared chrome.
 - `tools/build.py` — the per-page bodies, composed from the template's components.
-- `tools/fetch_gallery_photos.py` — refreshes `img/gallery/` + the manifest
-  from Drive (manifest-aware, `--force`, `--changed-out`, `--manifest-only`,
-  `--verify`).
+- `tools/vendor_gallery.py` — writes the curated 42 into `img/gallery/` from
+  the album uploads (slot order, web encode, metadata strip, manifest +
+  `SOURCES.json`).
+- `tools/fetch_gallery_photos.py` — the legacy Drive refresh/verify tool
+  (manifest-aware, `--force`, `--changed-out`, `--manifest-only`, `--verify`;
+  refuses to overwrite the curated set without `--replace-curated`).
 - `tools/fetch_gallery_server.py` — browser-assisted fetcher (serves the
   fetch page at `/` with `--fetch-root`) for machines without a route to
   Google; `tools/fetch-gallery-photos.workflow.yml` is the CI variant, live
@@ -315,6 +370,7 @@ python3 tools/check_html.py   # tag-balance validation for all 11 pages
   [HTML Codex](https://htmlcodex.com) (CC BY 4.0 — `LICENSE.txt` stays in the
   repo). The template credit line is **not** shown in the site footer — see the
   credit-removal note in [NOTES.md](NOTES.md).
-- Photography & films: the "KIZAZI 2026" album — photos vendored in
-  `img/gallery/`, films embedded from Drive.
+- Photography & films: the "KIZAZI 2026" album, photos by **SPLENDOR WEMA
+  (@BELLA TEHILLAH)**, vendored in `img/gallery/` (credit in
+  `img/gallery/SOURCES.json`); films embedded from Drive.
 - Copy: drafted for review — see [NOTES.md](NOTES.md).
