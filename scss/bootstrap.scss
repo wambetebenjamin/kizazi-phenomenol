@@ -1,9 +1,15 @@
 /******* Customized Bootstrap ********/
 
-$primary: #6D28D9;
-$secondary: #4D65F9;
-$light: #F3E8FF;
-$dark: #393D72;
+/* Street celebration palette (owner-approved 2026-09-23).
+   css/bootstrap.min.css is the zip's own compile with the palette swapped in
+   place (plus the derived tints/shades re-derived from these bases), because a
+   fresh dart-sass build drops the autoprefixer output the zip shipped with.
+   Keep these variables in sync with that file. */
+$primary: #E63946;
+// primary hover (links, stamp buttons): #C1121F
+$secondary: #16A34A;
+$light: #FAF7F0;
+$dark: #0A0A0A;
 
 $font-family-base: 'Montserrat', sans-serif;
 

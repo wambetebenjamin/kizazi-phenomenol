@@ -1,0 +1,347 @@
+{
+  "album": "KIZAZI 2026, 14 to 15 August 2026",
+  "source": "owner upload: drive-download-20260922T141329Z-1-001-part-001..008.zip",
+  "curated": "42 of 217 unique frames, chosen for people, spread and light",
+  "credit": "Photography: SPLENDOR WEMA (@BELLA TEHILLAH)",
+  "resolution": "original upload resolution, up to 1000 px on the long edge (no upscaling)",
+  "encoding": "re-encoded at JPEG quality 82, progressive, optimize on; camera EXIF/XMP/IPTC stripped (body and lens serial numbers removed); ICC profile kept",
+  "order": "slot order matters, see tools/vendor_gallery.py",
+  "photos": [
+    {
+      "name": "01.jpg",
+      "source": "20260814-IMG_1862.jpg",
+      "category": "worship",
+      "source_bytes": 776627,
+      "source_sha256": "afeb01a3196af2260632c744f5e99a837cf7dba79169dab60e93ac896c86000b",
+      "stripped_bytes": 622278
+    },
+    {
+      "name": "02.jpg",
+      "source": "20260814-IMG_1903.jpg",
+      "category": "bts",
+      "source_bytes": 449731,
+      "source_sha256": "0765ed1ca5f776189c404511f2455247ceda51fc71266b8efd608eda923470ab",
+      "stripped_bytes": 376759
+    },
+    {
+      "name": "03.jpg",
+      "source": "20260815-IMG_2130.jpg",
+      "category": "community",
+      "source_bytes": 1065034,
+      "source_sha256": "c19aefda225a65a6f849b04945eda234a37488def280ce6db1754366563a929c",
+      "stripped_bytes": 824474
+    },
+    {
+      "name": "04.jpg",
+      "source": "20260815-IMG_2265.jpg",
+      "category": "service",
+      "source_bytes": 854202,
+      "source_sha256": "4b295f8ff1e6c138a1f654683b23b8ae0997f2e649a39925855b234b60153e5e",
+      "stripped_bytes": 697804
+    },
+    {
+      "name": "05.jpg",
+      "source": "20260814-IMG_2006.jpg",
+      "category": "community",
+      "source_bytes": 954125,
+      "source_sha256": "43067649a629415d64b779de9f23fd0f71f417c82b2a82835809a5e6f20bc65c",
+      "stripped_bytes": 750150
+    },
+    {
+      "name": "06.jpg",
+      "source": "20260815-IMG_2077.jpg",
+      "category": "bts",
+      "source_bytes": 648577,
+      "source_sha256": "1efc0187cf1e7214e35c6dfacfc2fb09ed4b233230da64ab9edb9fbcac8e8874",
+      "stripped_bytes": 534082
+    },
+    {
+      "name": "07.jpg",
+      "source": "20260815-IMG_2086.jpg",
+      "category": "creative",
+      "source_bytes": 691902,
+      "source_sha256": "83070e72cc7d7ad96e54f5ba9480a46a9a45a21448e6b92d088937ec8266af82",
+      "stripped_bytes": 556179
+    },
+    {
+      "name": "08.jpg",
+      "source": "20260815-IMG_2187.jpg",
+      "category": "community",
+      "source_bytes": 1195621,
+      "source_sha256": "11965374e110726021978b9a3ce455d37c3882545efb3c79b337993fee0aa680",
+      "stripped_bytes": 908101
+    },
+    {
+      "name": "09.jpg",
+      "source": "20260815-IMG_2168.jpg",
+      "category": "community",
+      "source_bytes": 1280120,
+      "source_sha256": "2e24ef192b4fb0345113929fc230c9842dddaa6f38446de726fe17ffcdad4662",
+      "stripped_bytes": 978957
+    },
+    {
+      "name": "10.jpg",
+      "source": "20260814-IMG_1950.jpg",
+      "category": "service",
+      "source_bytes": 507819,
+      "source_sha256": "8180028ea5e864156d90f3a7fd503198e974dcfea868d1cdb94cf02ece5df25f",
+      "stripped_bytes": 406567
+    },
+    {
+      "name": "11.jpg",
+      "source": "20260814-IMG_1846.jpg",
+      "category": "bts",
+      "source_bytes": 529904,
+      "source_sha256": "9325d40ddcc85d6ea2ab0faafc4bee8e15b3ae92f0265acc930ecef16449ba26",
+      "stripped_bytes": 433523
+    },
+    {
+      "name": "12.jpg",
+      "source": "20260815-IMG_2293.jpg",
+      "category": "worship",
+      "source_bytes": 766302,
+      "source_sha256": "a76459524ede82fa0d53391aa5bc34cce6b201591c225832d265cbbfce945ce1",
+      "stripped_bytes": 612582
+    },
+    {
+      "name": "13.jpg",
+      "source": "20260815-IMG_2258.jpg",
+      "category": "worship",
+      "source_bytes": 753419,
+      "source_sha256": "e4af0f311ace4eb52a82fd04ebf40acb01c3cc3157de6c0344ed41f2d53dfe92",
+      "stripped_bytes": 614528
+    },
+    {
+      "name": "14.jpg",
+      "source": "20260815-IMG_2153.jpg",
+      "category": "community",
+      "source_bytes": 950751,
+      "source_sha256": "3712203871fddabfb524a08bbb44b74c3c2d3afeab5452fabf6d666419a5e7da",
+      "stripped_bytes": 746175
+    },
+    {
+      "name": "15.jpg",
+      "source": "20260815-IMG_2138.jpg",
+      "category": "community",
+      "source_bytes": 847425,
+      "source_sha256": "ddce5f99d2e5e641cb0ec4a017186365c37eb29586fbe4098fc15a69b6e57cf0",
+      "stripped_bytes": 673732
+    },
+    {
+      "name": "16.jpg",
+      "source": "20260815-IMG_2294.jpg",
+      "category": "community",
+      "source_bytes": 699506,
+      "source_sha256": "a10e9170907d75dd0ef9582cf5aaf3707fd40cdd601d25748b39ad807324c112",
+      "stripped_bytes": 559751
+    },
+    {
+      "name": "17.jpg",
+      "source": "20260814-IMG_1884.jpg",
+      "category": "community",
+      "source_bytes": 523425,
+      "source_sha256": "4f2c5c21e7faf3c28af78e21ffc47c36248c4a51b03b7e59791f6aaf2476871a",
+      "stripped_bytes": 430344
+    },
+    {
+      "name": "18.jpg",
+      "source": "20260814-IMG_1988.jpg",
+      "category": "creative",
+      "source_bytes": 591506,
+      "source_sha256": "6138e751146d2c397418fcf202aa6b19c8e3f68238bbfa0d771c70f66e2f7453",
+      "stripped_bytes": 484132
+    },
+    {
+      "name": "19.jpg",
+      "source": "20260814-IMG_1927.jpg",
+      "category": "word",
+      "source_bytes": 634032,
+      "source_sha256": "0d3afaefea3e2ea445a44ccf1ba108bd7bb2e87043acfe4ff13eaf1c4142f807",
+      "stripped_bytes": 511588
+    },
+    {
+      "name": "20.jpg",
+      "source": "20260815-IMG_2260.jpg",
+      "category": "service",
+      "source_bytes": 793826,
+      "source_sha256": "da7163ac184af5f31a90ba91d9d136cb0a9cf4cbf2691481d4b8a0451324ac49",
+      "stripped_bytes": 649404
+    },
+    {
+      "name": "21.jpg",
+      "source": "20260814-IMG_1886.jpg",
+      "category": "community",
+      "source_bytes": 531866,
+      "source_sha256": "6596ffcfa8da6f02d93974adb5e2595ef971fd5b8e2a43a37aaae9395c86ee57",
+      "stripped_bytes": 439830
+    },
+    {
+      "name": "22.jpg",
+      "source": "20260815-IMG_2117.jpg",
+      "category": "bts",
+      "source_bytes": 822675,
+      "source_sha256": "020d3a13f79b638a7dfe223720e74a9728c95d1d1fa57a86d6b9e601b1629e87",
+      "stripped_bytes": 673163
+    },
+    {
+      "name": "23.jpg",
+      "source": "20260815-IMG_2220.jpg",
+      "category": "community",
+      "source_bytes": 1080127,
+      "source_sha256": "03181f318a7980e4df4d2adc175aef9a62724217da59f6f36c3f3c09cc7baaa5",
+      "stripped_bytes": 865108
+    },
+    {
+      "name": "24.jpg",
+      "source": "20260814-IMG_1948.jpg",
+      "category": "service",
+      "source_bytes": 647025,
+      "source_sha256": "71c2d9f6ed33b000cc571d4247a1856b5c2362473433f1b11b1b3d51e7b665fa",
+      "stripped_bytes": 537977
+    },
+    {
+      "name": "25.jpg",
+      "source": "20260815-IMG_2185.jpg",
+      "category": "community",
+      "source_bytes": 1190656,
+      "source_sha256": "f9f938ae407a055ec6942d1e65b3031186c0927f4d952ba1f2cde4ec78aa885a",
+      "stripped_bytes": 901837
+    },
+    {
+      "name": "26.jpg",
+      "source": "20260815-IMG_2104.jpg",
+      "category": "creative",
+      "source_bytes": 539032,
+      "source_sha256": "fe79e10ac990fa46b71e66311c02b6e9cbe8f6e32414598b6ece4e7497e9a88f",
+      "stripped_bytes": 441210
+    },
+    {
+      "name": "27.jpg",
+      "source": "20260815-IMG_2136.jpg",
+      "category": "community",
+      "source_bytes": 887832,
+      "source_sha256": "13ba3cdcd93655e42b46f8c1593d03d241207ee0dac822d3ec793033ec421e50",
+      "stripped_bytes": 690778
+    },
+    {
+      "name": "28.jpg",
+      "source": "20260815-IMG_2264.jpg",
+      "category": "service",
+      "source_bytes": 808669,
+      "source_sha256": "de8777b7fae793673eb2b1f8f0dcf26ddbb66ea0b6432a84967f44c5784e5d3f",
+      "stripped_bytes": 666650
+    },
+    {
+      "name": "29.jpg",
+      "source": "20260814-IMG_1851.jpg",
+      "category": "worship",
+      "source_bytes": 699133,
+      "source_sha256": "18aaa16fdfc393481445e663a12f4d3a8836882cad417669d12a5b2e3a0e4da7",
+      "stripped_bytes": 574233
+    },
+    {
+      "name": "30.jpg",
+      "source": "20260815-IMG_2215.jpg",
+      "category": "community",
+      "source_bytes": 1314931,
+      "source_sha256": "0c1b61bd1daf990525e18f9166819905a9ace5b7a57302e780d93a4529dd0cfb",
+      "stripped_bytes": 1059461
+    },
+    {
+      "name": "31.jpg",
+      "source": "20260814-IMG_1864.jpg",
+      "category": "worship",
+      "source_bytes": 738250,
+      "source_sha256": "9de91b58a79039b9ff3ed312dd8c2899b11c1c484ae5b4fcea8ef6812038d811",
+      "stripped_bytes": 584395
+    },
+    {
+      "name": "32.jpg",
+      "source": "20260815-IMG_2063.jpg",
+      "category": "word",
+      "source_bytes": 537800,
+      "source_sha256": "078638df17ef6e60d91af6c5bea88fd5c76e37aba2907613fb84c21425b3f300",
+      "stripped_bytes": 443231
+    },
+    {
+      "name": "33.jpg",
+      "source": "20260815-IMG_2221.jpg",
+      "category": "community",
+      "source_bytes": 1069613,
+      "source_sha256": "1d3c7e4149394f6001c5f4f26fec696e0e6425285b60e4b398688a747b997c00",
+      "stripped_bytes": 890807
+    },
+    {
+      "name": "34.jpg",
+      "source": "20260815-IMG_2245.jpg",
+      "category": "service",
+      "source_bytes": 712786,
+      "source_sha256": "5102346df3bb59b8b489ad0ecffa77004b9b86e8d1cccf4ce572e2cd013851c3",
+      "stripped_bytes": 579218
+    },
+    {
+      "name": "35.jpg",
+      "source": "20260814-IMG_1859.jpg",
+      "category": "worship",
+      "source_bytes": 629198,
+      "source_sha256": "15ada5f9ee0911357f116e3f4a1fb6f1bb8eb17ca2e25ff03257f6af47a460bf",
+      "stripped_bytes": 515048
+    },
+    {
+      "name": "36.jpg",
+      "source": "20260815-IMG_2113.jpg",
+      "category": "bts",
+      "source_bytes": 762300,
+      "source_sha256": "d3d6f47dc25e8c171cc623d2b72332e6fe1566b5b50629c545bc3add1ed6769c",
+      "stripped_bytes": 624926
+    },
+    {
+      "name": "37.jpg",
+      "source": "20260815-IMG_2276.jpg",
+      "category": "worship",
+      "source_bytes": 716901,
+      "source_sha256": "2f784c5bc1bfc382376b681e9654b638e144ef9d121d9d6c1220addd8e56d339",
+      "stripped_bytes": 587984
+    },
+    {
+      "name": "38.jpg",
+      "source": "20260815-IMG_2274.jpg",
+      "category": "word",
+      "source_bytes": 599897,
+      "source_sha256": "d9754d42fc97abeba51102ba5c98cf611633b8297c1f6e1c943e9ebef7ef6de3",
+      "stripped_bytes": 492415
+    },
+    {
+      "name": "39.jpg",
+      "source": "20260814-IMG_1946.jpg",
+      "category": "community",
+      "source_bytes": 510669,
+      "source_sha256": "054466348690b269682ee25dda0bb5224765dc17f40a9bb5427746e1f7afa4fc",
+      "stripped_bytes": 423519
+    },
+    {
+      "name": "40.jpg",
+      "source": "20260815-IMG_2266.jpg",
+      "category": "service",
+      "source_bytes": 833962,
+      "source_sha256": "c50631e6dbedc1d18aea5316d88651e0c61192ab4c788384af94b84290a2e6d4",
+      "stripped_bytes": 700187
+    },
+    {
+      "name": "41.jpg",
+      "source": "20260815-IMG_2285.jpg",
+      "category": "creative",
+      "source_bytes": 684438,
+      "source_sha256": "ab0e904bc27c2074a0ffe92fb33b03993a34dd0b2b3e38badc50acd5835e7a80",
+      "stripped_bytes": 557491
+    },
+    {
+      "name": "42.jpg",
+      "source": "20260815-IMG_2115.jpg",
+      "category": "bts",
+      "source_bytes": 945653,
+      "source_sha256": "3e3bbd3e025e1669d8c829d79210ffa8b56da7d2baf5ea59f866f6e7986b073a",
+      "stripped_bytes": 776143
+    }
+  ]
+}
