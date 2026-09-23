@@ -1,26 +1,43 @@
 /* =========================================================================
    KIZAZI Phenomenal: add-ons on top of the BabyCare template skin.
-   No new palette: every colour derives from the template's Bootstrap
-   variables (royal violet #6D28D9 / blue #4D65F9).  This file teaches the
-   template about (1) vendored gallery photos in img/gallery/ (with the placeholder
-   SVG as CSS last-resort), (2) photo backgrounds via --kz-photo, (3) video
-   cards, (4) initials avatars, (5) the gallery filter, (6) quick search,
-   (7) the home hero crossfade, (8) the family description & portraits and
-   (9) the energy layer (one gradient token, marquee, sticker kickers,
-   card motion, counting stats, scroll progress, play pulse).
+
+   Street celebration skin (owner-approved 2026-09-23): stamp red #E63946
+   (hover #C1121F), leaf green #16A34A, sunshine yellow #FACC15 (the ONE
+   energy fill), paper #FAF7F0, ink black #0A0A0A, body grey #70747F.
+   Everything is flat paint: no gradient fills, and the hazard bands are
+   hard-stop repeating-linear-gradient stripes, which read as flat.
+
+   This file teaches the template about (1) vendored gallery photos in
+   img/gallery/ (with the placeholder SVG as CSS last-resort), (2) photo
+   backgrounds via --kz-photo, (3) video cards, (4) initials avatars,
+   (5) the gallery filter, (6) quick search, (7) the home hero crossfade,
+   (8) the family description & portraits and (9) the energy layer
+   (marquee, sticker kickers, card motion, counting stats, scroll progress,
+   play pulse).
    ========================================================================= */
 
-/* The ONE gradient token of the energy layer: violet -> light violet -> blue,
-   straight from the template's palette (no new colours). It paints the
-   buttons, the sticker kickers, the stat numerals, the marquee rules, the
-   copyright rule and the scroll progress bar. */
+/* The street celebration tokens. --kz-yellow is the one energy fill (ticker
+   band, kicker stickers, stat ticket chips, play ring, progress bar, hazard
+   rules); --kz-black is the ink for borders and hard offset shadows. */
 :root {
-    --kz-grad: linear-gradient(120deg, var(--bs-primary) 0%, var(--bs-light) 50%, var(--bs-secondary) 100%);
+    --kz-red: #E63946;
+    --kz-red-dark: #C1121F;
+    --kz-green: #16A34A;
+    --kz-yellow: #FACC15;
+    --kz-paper: #FAF7F0;
+    --kz-black: #0A0A0A;
+    --kz-border: 3px solid var(--kz-black);
+    --kz-shadow: 6px 6px 0 var(--kz-black);
+    --kz-shadow-press: 4px 4px 0 var(--kz-black);
+    --kz-shadow-sm: 4px 4px 0 var(--kz-black);
+    --kz-shadow-sm-press: 2px 2px 0 var(--kz-black);
+    /* hard-stop hazard stripes (flat): black / sunshine yellow */
+    --kz-hazard: repeating-linear-gradient(45deg, var(--kz-black) 0 12px, var(--kz-yellow) 12px 24px);
 }
 
 /* ------------------------------------------- 1. Vendored gallery photos --- */
 img.kz-cover {
-    background: var(--bs-light) url('img/brand/photo-placeholder.svg') center / cover no-repeat;
+    background: var(--kz-paper) url('img/brand/photo-placeholder.svg') center / cover no-repeat;
 }
 
 .kz-cover {
@@ -41,26 +58,30 @@ img.kz-cover {
 .footer-galary-img img {
     aspect-ratio: 1 / 1;
     object-fit: cover;
-    border-style: dotted;
-    border-color: var(--bs-primary);
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--kz-yellow);
 }
 
 /* ------------------------------- 2. Vendored photos as CSS backgrounds --- */
+/* Photo washes only: they keep the white copy readable over the photos.
+   The fills themselves are flat; no decorative gradient fill is used. */
 .hero-header,
 .page-header {
-    background-color: var(--bs-dark);
-    background-image: linear-gradient(rgba(57, 61, 114, .78), rgba(57, 61, 114, .45)),
+    background-color: var(--kz-black);
+    background-image: linear-gradient(rgba(230, 57, 70, .82), rgba(10, 10, 10, .55)),
         var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
 .video {
-    background-color: var(--bs-dark);
-    background-image: linear-gradient(rgba(57, 61, 114, .18), rgba(57, 61, 114, .42)),
+    background-color: var(--kz-black);
+    background-image: linear-gradient(rgba(10, 10, 10, .3), rgba(10, 10, 10, .6)),
         var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
 .footer {
-    background-image: linear-gradient(rgba(255, 255, 255, .93), rgba(255, 255, 255, .985)),
+    background-color: var(--kz-black);
+    background-image: linear-gradient(rgba(10, 10, 10, .93), rgba(10, 10, 10, .97)),
         var(--kz-photo, url('img/brand/photo-placeholder.svg'));
 }
 
@@ -77,8 +98,8 @@ img.kz-cover {
 /* ------------------------------------------- 3. Initials avatars etc. --- */
 .kz-initials {
     border-style: dotted;
-    border-color: var(--bs-primary);
-    color: var(--bs-primary);
+    border-color: var(--kz-black);
+    color: var(--kz-red);
     font-family: 'Fredoka', sans-serif;
     font-weight: 600;
     letter-spacing: .5px;
@@ -89,13 +110,25 @@ img.kz-cover {
 .program-rate-static { border-radius: 10% / 50%; }
 
 /* ------------------------------------------- 4. Gallery filter grid --- */
-.kz-filter-btn { opacity: .82; }
+.kz-filter-btn {
+    background-color: #fff;
+    color: var(--kz-black);
+    border: 2px solid var(--kz-black);
+    box-shadow: var(--kz-shadow-sm);
+    opacity: .92;
+    transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
 
-.kz-filter-btn:hover { opacity: 1; }
+.kz-filter-btn:hover,
+.kz-filter-btn:focus {
+    opacity: 1;
+    transform: translate(2px, 2px);
+    box-shadow: var(--kz-shadow-sm-press);
+}
 
 .kz-filter-btn.active {
-    background: var(--bs-secondary);
-    color: var(--bs-primary);
+    background-color: var(--kz-yellow);
+    color: var(--kz-black);
     opacity: 1;
 }
 
@@ -106,15 +139,17 @@ img.kz-cover {
     display: block;
     padding: .6rem .9rem;
     margin-bottom: .5rem;
-    border-left: 3px solid var(--bs-primary);
+    border: 2px solid var(--kz-black);
+    border-left: 6px solid var(--kz-red);
+    box-shadow: var(--kz-shadow-sm);
     background: #fff;
-    color: var(--bs-dark);
+    color: var(--kz-black);
     text-decoration: none;
 }
 
 .kz-search-results a:hover {
-    background: var(--bs-light);
-    color: var(--bs-primary);
+    background: var(--kz-yellow);
+    color: var(--kz-black);
 }
 
 .kz-search-results .kz-search-empty {
@@ -132,7 +167,7 @@ img.kz-cover {
 .kz-hero-slideshow {
     position: relative;
     overflow: hidden;
-    background-color: var(--bs-dark);
+    background-color: var(--kz-black);
 }
 
 .kz-hero-slides {
@@ -161,8 +196,8 @@ img.kz-cover {
     animation: kz-hero-fade 32s linear infinite;
 }
 
-/* Keep the hero copy readable over every photo (same wash the single-photo
-   hero used, now painted on top of the rotating layers). */
+/* Keep the hero copy readable over every photo (stamp-red wash over black,
+   the same readability trick the single-photo hero used). */
 .kz-hero-slides::after {
     content: "";
     position: absolute;
@@ -170,7 +205,7 @@ img.kz-cover {
     right: 0;
     bottom: 0;
     left: 0;
-    background-image: linear-gradient(rgba(57, 61, 114, .78), rgba(57, 61, 114, .45));
+    background-image: linear-gradient(rgba(230, 57, 70, .82), rgba(10, 10, 10, .55));
 }
 
 .kz-hero-slideshow > .container {
@@ -195,15 +230,15 @@ img.kz-cover {
 
 /* ------------------- 8. Family description & portraits (people) ------------ */
 .kz-family-desc {
-    border-left: 4px solid var(--bs-primary);
-    background: var(--bs-light);
+    border-left: 5px solid var(--kz-red);
+    background: var(--kz-paper);
     padding: .9rem 1.1rem;
     border-radius: 0 10px 10px 0;
     font-weight: 600;
 }
 
 .kz-family-desc em {
-    color: var(--bs-secondary);
+    color: var(--kz-green);
     font-style: italic;
 }
 
@@ -214,20 +249,21 @@ img.kz-cover {
 
 /* The four transition photos, shown whole under the home hero. */
 .kz-moment {
-    border: 3px solid var(--bs-light);
-    background: var(--bs-light);
-    transition: .4s;
+    border: var(--kz-border);
+    background: var(--kz-paper);
+    box-shadow: var(--kz-shadow);
+    transition: transform .25s ease, box-shadow .25s ease;
 }
 
 .kz-moment img {
     height: 190px;
-    transition: .4s;
+    transition: transform .4s ease;
 }
 
 .kz-moment:hover {
-    border-color: var(--bs-primary);
-    transform: translateY(-6px) rotate(-.5deg);
-    box-shadow: 0 14px 24px rgba(57, 61, 114, .15);
+    border-color: var(--kz-black);
+    transform: translate(2px, 2px) rotate(-.5deg);
+    box-shadow: var(--kz-shadow-press);
 }
 
 .kz-moment:hover img {
@@ -241,67 +277,119 @@ img.kz-cover {
 /* -------------------------------------------------------- 6. Misc --- */
 .kz-newsletter .form-control:focus { box-shadow: none; }
 
-.footer-item a.text-body:hover { color: var(--bs-secondary) !important; }
-
 /* =========================================================================
-   9. The energy layer: one gradient token, honest motion.
+   9. The energy layer: street celebration, honest motion.
    Everything below animates with transform/opacity only (no layout shift)
    and switches off in the prefers-reduced-motion block at the end of this
-   file. Colours come from --kz-grad and the template's own variables only.
+   file. Fills are flat: --kz-yellow, --kz-red, --kz-green, paper and ink,
+   plus the hard-stop hazard stripes.
    ========================================================================= */
 
-/* ------------------------------ 9.1 Buttons: the gradient, worn like a --
-   The template's own hover inversion (blue background, violet text) keeps
-   working: its `background` shorthand resets the gradient on hover. */
-.btn-primary,
-.btn-secondary {
-    background-color: var(--bs-primary);
-    background-image: var(--kz-grad);
-    border-color: transparent;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(57, 61, 114, .28);
+/* ------------------------------ 9.1 Buttons: stamped, not gradient -------
+   Stamp buttons carry a 3px ink border and a hard offset shadow; hover
+   presses the stamp into the page (translate 2px + smaller shadow) and the
+   primary keeps the owner's hover red.  The .btn.btn-* selectors match the
+   template's own weight in style.css so its old hover inversion (blue
+   background, violet text) cannot come back. */
+.btn.btn-primary,
+.btn.btn-secondary {
+    border: var(--kz-border);
+    box-shadow: var(--kz-shadow);
+    text-shadow: none;
+    transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease;
 }
 
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-primary:focus,
-.btn-secondary:focus {
-    filter: brightness(.93);
+.btn.btn-primary {
+    background-color: var(--kz-red);
+    color: #fff;
+}
+
+.btn.btn-secondary {
+    background-color: var(--kz-green);
+    color: #fff;
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:focus,
+.btn.btn-secondary:hover,
+.btn.btn-secondary:focus {
+    transform: translate(2px, 2px);
+    box-shadow: var(--kz-shadow-press);
+    color: #fff;
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:focus {
+    background-color: var(--kz-red-dark);
+}
+
+.btn.btn-secondary:hover,
+.btn.btn-secondary:focus {
+    background-color: var(--kz-green);
+}
+
+/* Small round icon chips (socials, back-to-top) at the same scale, one
+   notch smaller so they stay readable at 34 to 56 px. */
+.btn-light.btn-sm-square,
+.btn-light.btn-md-square,
+.btn-light.btn-lg-square {
+    background-color: #fff;
+    color: var(--kz-black);
+    border: 2px solid var(--kz-black);
+    box-shadow: var(--kz-shadow-sm);
+    transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.btn-light.btn-sm-square:hover,
+.btn-light.btn-md-square:hover,
+.btn-light.btn-lg-square:hover {
+    background-color: var(--kz-yellow);
+    transform: translate(2px, 2px);
+    box-shadow: var(--kz-shadow-sm-press);
 }
 
 /* --------------------------------- 9.2 Sticker kickers (h4 pills) --------
-   The template's h4.title-border-radius becomes a slightly tilted white
-   sticker pill carrying a gradient rule underneath. The violet underline the
-   bootstrap border classes drew is neutralised (transparent) so the token
-   owns the accent. */
+   The template's h4.title-border-radius becomes a sunshine-yellow sticker
+   pill: black text, 3px ink border, hard offset shadow and the stamp-red rule
+   underneath.  The bootstrap border classes the template put on the h4 are
+   neutralised so this rule owns the frame; the approved -1.5deg tilt stays. */
 h4.title-border-radius {
     position: relative;
-    background-color: #fff;
-    border-bottom: 2px solid transparent !important;
-    padding: .35rem 1.1rem !important;
+    background-color: var(--kz-yellow);
+    color: var(--kz-black) !important;
+    border: var(--kz-border) !important;
+    padding: .45rem 1.2rem .7rem !important;
     transform: rotate(-1.5deg);
+    box-shadow: 5px 5px 0 var(--kz-black);
+    transition: transform .18s ease, box-shadow .18s ease;
 }
 
 h4.title-border-radius::after {
     content: "";
     position: absolute;
-    left: 14%;
-    right: 14%;
-    bottom: 4px;
+    left: 12%;
+    right: 12%;
+    bottom: 5px;
     height: 4px;
-    border-radius: 2px;
-    background: var(--kz-grad);
+    border-radius: 0;
+    background: var(--kz-red);
+}
+
+h4.title-border-radius:hover {
+    transform: rotate(-1.5deg) translate(2px, 2px);
+    box-shadow: 3px 3px 0 var(--kz-black);
 }
 
 /* ------------------------------------------------- 9.3 Marquee ticker -----
-   Strip under the navbar on every page. The phrase set (TICKER in
+   Sunshine-yellow band with black text, framed top and bottom by hard-stop
+   black/yellow hazard stripes.  The phrase set (TICKER in
    tools/build_common.py) is repeated exactly twice in the DOM, so the -50%
-   translate below loops seamlessly. transform only: no layout shift. */
+   translate below loops seamlessly.  transform only: no layout shift. */
 .kz-ticker {
     position: relative;
     overflow: hidden;
-    background: var(--bs-light);
-    padding: .5rem 0;
+    background: var(--kz-yellow);
+    padding: .6rem 0;
 }
 
 .kz-ticker::before,
@@ -310,8 +398,8 @@ h4.title-border-radius::after {
     position: absolute;
     left: 0;
     right: 0;
-    height: 3px;
-    background: var(--kz-grad);
+    height: 8px;
+    background: var(--kz-hazard);
     z-index: 1;
 }
 
@@ -334,18 +422,18 @@ h4.title-border-radius::after {
     font-family: 'Fredoka', sans-serif;
     font-weight: 600;
     font-size: .95rem;
-    color: var(--bs-dark);
+    color: var(--kz-black);
     white-space: nowrap;
     padding: 0 1.1rem;
 }
 
 .kz-ticker-star {
-    font-size: .8rem;
-    background: var(--kz-grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
+    font-size: .85rem;
+    background: none;
+    color: var(--kz-green);
+    -webkit-text-fill-color: currentColor;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
 }
 
 @keyframes kz-ticker-scroll {
@@ -354,15 +442,20 @@ h4.title-border-radius::after {
 }
 
 /* ------------------------------------- 9.4 Lifting/tilting cards ---------
-   transform + shadow only (no layout). The template's inner hover effects
-   (icon inversion, image zoom, event overlay) keep working on top. */
+   The approved card motion stays (transform + shadow only, no layout), now
+   as a street press: 3px ink border, hard offset shadow, and hover presses
+   the card into the page with the tilt kept.  The template's inner hover
+   effects (icon inversion, image zoom, event overlay) keep working on top. */
 .service-item,
 .program-item,
 .events-item,
 .blog-item,
 .team-item,
 .kz-gallery-item > a {
-    transition: transform .35s ease, box-shadow .35s ease;
+    border: var(--kz-border) !important;
+    box-shadow: var(--kz-shadow);
+    background-color: #fff;
+    transition: transform .25s ease, box-shadow .25s ease;
 }
 
 .service-item:hover,
@@ -371,38 +464,52 @@ h4.title-border-radius::after {
 .blog-item:hover,
 .team-item:hover,
 .kz-gallery-item > a:hover {
-    transform: translateY(-8px) rotate(-.5deg);
-    box-shadow: 0 16px 30px rgba(57, 61, 114, .15);
+    border: var(--kz-border) !important;
+    transform: translate(2px, 2px) rotate(-.5deg);
+    box-shadow: var(--kz-shadow-press);
 }
 
-/* ------------------------------- 9.5 Pulsing play button (gradient ring) -
+/* ------------------------- 9.5 Pulsing play button (yellow ring) ---------
    The template's own pulse-border animation drives the ring; this only
-   re-inks it in the gradient token. */
+   re-inks it in the one energy fill and inks its edge. */
 .video .btn-play:before {
-    background: var(--kz-grad);
+    background: var(--kz-yellow);
+    box-shadow: 0 0 0 3px var(--kz-black);
+}
+
+.video .btn-play:after {
+    background: var(--kz-red);
+    box-shadow: 0 0 0 3px var(--kz-black);
 }
 
 /* ----------------------------------------- 9.6 Counting stat numerals ----
-   About-page stats: the numerals wear the gradient. The final value stays
+   About-page stats: each numeral is a tilted sunshine-yellow ticket chip
+   (black text, 3px ink border, hard offset shadow).  The final value stays
    in the markup (js/kizazi.js counts data-kz-count targets up when they
    scroll into view; no-JS and reduced-motion visitors read it as-is). */
 .kz-stat-num {
-    background: var(--kz-grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    background: var(--kz-yellow);
+    color: var(--kz-black);
+    -webkit-text-fill-color: currentColor;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    border: var(--kz-border);
+    box-shadow: 5px 5px 0 var(--kz-black);
+    padding: .05em .45em;
+    transform: rotate(-2deg);
 }
 
 /* ------------------------------------------------ 9.7 Scroll progress ----
-   A fixed gradient rule at the very top of the viewport. js/kizazi.js
-   drives it with transform: scaleX() only, so it never shifts layout. */
+   A fixed sunshine-yellow rule at the very top of the viewport, inked on its
+   lower edge so it reads on paper.  js/kizazi.js drives it with
+   transform: scaleX() only, so it never shifts layout. */
 .kz-progress {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 5px;
     z-index: 1060;
     pointer-events: none;
 }
@@ -411,13 +518,14 @@ h4.title-border-radius::after {
     display: block;
     width: 100%;
     height: 100%;
-    background: var(--kz-grad);
+    background: var(--kz-yellow);
+    box-shadow: 0 1px 0 var(--kz-black);
     transform: scaleX(0);
     transform-origin: 0 50%;
 }
 
-/* --------------------------------------------- 9.8 Copyright rule --------
-   The gradient line capping the copyright bar. */
+/* ------------------------------- 9.8 Copyright cap: hazard stripe ---------
+   The copyright bar is capped by a hard-stop black/yellow hazard stripe. */
 .copyright {
     position: relative;
 }
@@ -428,8 +536,92 @@ h4.title-border-radius::after {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: var(--kz-grad);
+    height: 8px;
+    background: var(--kz-hazard);
+}
+
+/* ----------------------- 9.9 Street surfaces: topbar black, footer black ---
+   The topbar is ink black with sunshine-yellow icons; the footer is ink black
+   with paper copy, yellow rules and yellow-framed photo thumbnails. */
+.topbar {
+    background-color: var(--kz-black) !important;
+}
+
+.topbar .top-info,
+.topbar .top-info a {
+    color: var(--kz-paper);
+}
+
+.topbar i,
+.topbar .top-info .text-secondary,
+.topbar .top-link i {
+    color: var(--kz-yellow) !important;
+}
+
+.topbar .top-link a {
+    background-color: transparent !important;
+    border: 2px solid var(--kz-yellow) !important;
+    box-shadow: none !important;
+    color: var(--kz-yellow);
+}
+
+.topbar .top-link a:hover {
+    background-color: var(--kz-red) !important;
+    border-color: var(--kz-red);
+}
+
+.topbar .top-link a:hover i {
+    color: var(--kz-paper) !important;
+}
+
+.footer {
+    color: var(--kz-paper);
+}
+
+.footer h2,
+.footer h5 {
+    color: var(--kz-paper);
+}
+
+.footer p,
+.footer .text-body,
+.footer .text-light,
+.footer .text-dark,
+.footer .text-muted {
+    color: rgba(250, 247, 240, .82) !important;
+}
+
+.footer .footer-item a.text-body:hover {
+    color: var(--kz-yellow) !important;
+}
+
+.footer .border-primary {
+    border-color: var(--kz-yellow) !important;
+}
+
+/* On the black footer the ink frame would vanish, so the stamp buttons wear
+   the yellow frame instead. */
+.footer .btn.btn-primary {
+    border-color: var(--kz-yellow);
+    box-shadow: 4px 4px 0 var(--kz-yellow);
+}
+
+.footer .btn.btn-primary:hover,
+.footer .btn.btn-primary:focus {
+    box-shadow: 2px 2px 0 var(--kz-yellow);
+}
+
+/* The newsletter box is a paper sticker on the black footer. */
+.footer .bg-light {
+    background-color: var(--kz-paper) !important;
+    border-width: 3px !important;
+}
+
+.footer .bg-light h5,
+.footer .bg-light p,
+.footer .bg-light .text-muted,
+.footer .bg-light .kz-newsletter-note {
+    color: var(--kz-black) !important;
 }
 
 /* ============================ Reduced motion: every animation off ======== */
@@ -446,7 +638,14 @@ h4.title-border-radius::after {
     .blog-item,
     .team-item,
     .kz-moment,
-    .kz-gallery-item > a {
+    .kz-gallery-item > a,
+    .kz-filter-btn,
+    .btn-primary,
+    .btn-secondary,
+    .btn-light.btn-sm-square,
+    .btn-light.btn-md-square,
+    .btn-light.btn-lg-square,
+    h4.title-border-radius {
         transition: none !important;
     }
     .service-item:hover,
@@ -455,9 +654,46 @@ h4.title-border-radius::after {
     .blog-item:hover,
     .team-item:hover,
     .kz-moment:hover,
-    .kz-gallery-item > a:hover {
+    .kz-gallery-item > a:hover,
+    .kz-filter-btn:hover,
+    .kz-filter-btn:focus,
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-secondary:hover,
+    .btn-secondary:focus,
+    .btn-light.btn-sm-square:hover,
+    .btn-light.btn-md-square:hover,
+    .btn-light.btn-lg-square:hover,
+    h4.title-border-radius:hover {
         transform: none !important;
-        box-shadow: none;
+    }
+    /* no press either: hovering leaves the resting stamp shadow in place */
+    .btn.btn-primary:hover,
+    .btn.btn-primary:focus,
+    .btn.btn-secondary:hover,
+    .btn.btn-secondary:focus,
+    .service-item:hover,
+    .program-item:hover,
+    .events-item:hover,
+    .blog-item:hover,
+    .team-item:hover,
+    .kz-moment:hover,
+    .kz-gallery-item > a:hover {
+        box-shadow: var(--kz-shadow);
+    }
+    .kz-filter-btn:hover,
+    .kz-filter-btn:focus,
+    .btn-light.btn-sm-square:hover,
+    .btn-light.btn-md-square:hover,
+    .btn-light.btn-lg-square:hover {
+        box-shadow: var(--kz-shadow-sm);
+    }
+    .footer .btn.btn-primary:hover,
+    .footer .btn.btn-primary:focus {
+        box-shadow: 4px 4px 0 var(--kz-yellow);
+    }
+    h4.title-border-radius:hover {
+        box-shadow: 5px 5px 0 var(--kz-black);
     }
     .video .btn-play:before { animation: none !important; }
 }

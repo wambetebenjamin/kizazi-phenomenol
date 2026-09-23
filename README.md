@@ -8,7 +8,9 @@
 
 Built **on the BabyCare Bootstrap template (HTML Codex) exactly as shipped**: same
 page structure, same components, same fonts and the template's palette shape,
-rebranded to royal purple (`#6D28D9` + blue `#4D65F9`). No gold anywhere.
+wearing the owner-approved **street celebration** skin (2026-09-23): stamp red
+`#E63946`, leaf green `#16A34A`, sunshine yellow `#FACC15`, paper `#FAF7F0`,
+ink black `#0A0A0A`. No gradients, no pink, no purple, no gold.
 
 ---
 
@@ -41,30 +43,45 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 | `contact.html` | Four ways in (form / Meet / socials / Linktree note), weekly schedule, FAQ — no invented email/phone/address |
 | `404.html` | Template not-found page |
 
-## Design system (the template's, unchanged)
+## Design system (the template's structure, the street celebration skin)
 
 - **Fonts** — Fredoka 600/700 (display) + Montserrat 200/400/600 (body), loaded
-  from Google Fonts exactly like the zip.
-- **Palette (royal purple rebrand, 2026-09-21)** — primary violet `#6D28D9`
-  (hover `#5B21B6`), secondary blue `#4D65F9`, light `#F3E8FF`, dark `#393D72`,
-  body grey `#70747F`. The owner rejected the template pink, so the swap was
-  applied in place to the zip's own `css/bootstrap.min.css` / `css/style.css`
-  (and `scss/bootstrap.scss`). **No pink, no gold / no orange theme.**
+  from Google Fonts exactly like the zip. Unchanged since the first port.
+- **Palette (street celebration, 2026-09-23)** — stamp red `#E63946` primary
+  (hover `#C1121F`: links, stamp buttons, page headers), leaf green `#16A34A`
+  secondary (buttons, arrows, stars), sunshine yellow `#FACC15` as the ONE
+  energy fill (`--kz-yellow`: ticker band, kicker stickers, stat ticket chips,
+  play ring, progress bar, hazard rules), paper `#FAF7F0` light washes, ink
+  black `#0A0A0A` topbar/footer/borders/hard shadows, body grey `#70747F`.
+  The swap was applied **in place** to the zip's own `css/bootstrap.min.css`
+  and `css/style.css`, with the palette's derived tints and shades
+  re-derived from the same bases (so no pink or violet shade survives in the
+  focus rings, table variants or disabled states), and `scss/bootstrap.scss`
+  carries the same four variables for anyone who recompiles.
+  **No gradient fills, no pink, no purple, no `#FFC53D`, no gold.**
+- **Street treatment** — 3px ink borders plus hard offset shadows (5 to 8px,
+  solid black) on buttons, kicker pills, cards and stat chips; hover presses
+  the stamp (translate 2px, smaller shadow). The ticker is a yellow band with
+  black text framed by hard-stop black/yellow hazard stripes, the topbar is
+  black with yellow icons, the copyright bar is capped by a hazard stripe and
+  the footer is ink black with paper copy and yellow rules.
 - **Layout & components** — topbar + navbar with Pages dropdown, full-screen
   search modal, `hero-header` / `page-header` heroes with breadcrumbs, service /
   program / events / blog / team cards, Owl testimonial carousel, 4-column footer
   with the circular photo grid, copyright bar (right slot:
   "A generation on fire for God. — 1 Timothy 4:12"),
   back-to-top button, WOW scroll animations, Lightbox, pulsing play button.
-- **KIZAZI add-ons** — `css/kizazi.css` (no new palette): teaches the
+- **KIZAZI add-ons** — `css/kizazi.css` (the street tokens
+  `--kz-yellow` / `--kz-red` / `--kz-green` / `--kz-black`): teaches the
   template about vendored gallery photos/backgrounds (placeholder SVG as
   CSS last-resort), video cards, initials avatars, the gallery filter,
   quick-search results, the home hero crossfade and the energy layer below.
 - **Energy layer** (section 9 of `css/kizazi.css` + behaviours 6-7 of
-  `js/kizazi.js`) — one gradient token, `--kz-grad` (violet → light violet → blue,
-  the template's own colours, **no gold / no orange**), worn by the buttons,
-  the sticker kicker pills, the about-page stat numerals, the marquee rules,
-  the copyright rule and the scroll progress bar. Plus the marquee ticker
+  `js/kizazi.js`) — the one energy fill `--kz-yellow` (plus the flat red and
+  green and the hard-stop hazard stripes), worn by the stamp buttons, the
+  sticker kicker pills, the about-page stat ticket chips, the ticker band,
+  the copyright cap and the scroll progress bar. The old `--kz-grad` gradient
+  token is retired: **every fill is flat.** Plus the marquee ticker
   under the navbar (phrases in `TICKER`, `tools/build_common.py`),
   lifting/tilting cards, counting stats (`data-kz-count`) and the pulsing
   play-button ring. Motion stays honest: transform/opacity only, no layout
@@ -77,19 +94,25 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 
 ## Photos
 
-All 42 "KIZAZI 2026" event photos are **vendored in the repo** at
-`img/gallery/01.jpg … 42.jpg` (same order as the `PHOTOS` list in
-`tools/build_common.py`) and served locally — no hotlinking, no Drive
-dependency at runtime. Each tag is plain:
+The 42 "KIZAZI 2026" event photos belong at `img/gallery/01.jpg … 42.jpg`
+(same order as the `PHOTOS` list in `tools/build_common.py`) and are served
+locally — no hotlinking, no Drive dependency at runtime. Each tag is plain:
 
 ```html
 <img src="img/gallery/07.jpg" class="img-fluid" alt="…" loading="lazy">
 ```
 
+> **Status (2026-09-23):** this branch ships `img/gallery/` **empty** — the
+> 42 files have not been committed here yet (the sandbox has no route to
+> Google Drive). The pages are already wired for them, so they light up the
+> moment the files land: until then every photo tag resolves to
+> `img/brand/photo-placeholder.svg` (the CSS/JS last-resort), so nothing is
+> ever a broken image. To vendor them, either run the browser-assisted fetcher
+> below, let the owner's upload land, or let the CI job commit them.
+
 Section backgrounds (page headers, the play-button panel, footer) use the same
-files through the inline `--kz-photo` CSS variable.
-`img/brand/photo-placeholder.svg` remains only as the CSS/JS last-resort if a
-file is ever missing.
+files through the inline `--kz-photo` CSS variable.  The placeholder SVG is
+only ever the CSS/JS last-resort if a file is missing.
 
 ### Home hero (the transition photos)
 
@@ -149,14 +172,25 @@ HTTP 403/404** — share the "KIZAZI 2026" folder as *"Anyone with the link
 `drive.google.com/uc`) and verifies every file is a real JPEG > 10 KB before
 writing it.
 
-**Automated:** `.github/workflows/fetch-gallery-photos.yml` (source template
-`tools/fetch-gallery-photos.workflow.yml`) runs the same script on a weekly
+**Automated:** `.github/workflows/fetch-gallery-photos.yml` (a byte-identical copy of the
+source template `tools/fetch-gallery-photos.workflow.yml`) runs the same script on a weekly
 schedule (Mondays 06:30 UTC) and on demand (`workflow_dispatch`), verifies,
 and commits `img/gallery/` **only when something changed** (the commit
 message lists the changed photo names from `--changed-out`). No secrets are
 needed: the album is public via link sharing and the job declares
 `contents: write` on the default `GITHUB_TOKEN`.
 
+> **Pushing that workflow needs a token with `workflows` write.** The copy is
+> byte-identical to `tools/fetch-gallery-photos.workflow.yml`; if the push is
+> refused by the workflow permission, commit it from a token that has it (the
+> working tree already holds the file):
+>
+> ```bash
+> git add .github/workflows/fetch-gallery-photos.yml
+> git commit -m "Add the weekly gallery photo refresh workflow"
+> git push origin main
+> ```
+>
 > No direct Google access (restricted sandbox / CI)? Run
 > `python3 tools/fetch_gallery_server.py 8123 --fetch-root` and open the
 > served page (the preview of port 8123) in a normal browser, then click
@@ -236,13 +270,22 @@ Every content assumption is logged in [NOTES.md](NOTES.md) — please review it.
 
 ## Changing colours (optional)
 
-The shipped `css/bootstrap.min.css` **is** the zip's. If you ever want a different
-palette, edit `scss/bootstrap.scss` (the template's own variable file) and compile:
+`css/bootstrap.min.css` **is** the zip's own compile with the street palette
+swapped in place, base colours and their derived tints and shades both (only
+the autoprefixer'd colours changed; the selectors, structure and every other
+rule are untouched, exactly like the earlier in-place rebrands). The four
+bases live in `scss/bootstrap.scss`, so a recompile produces the same palette:
 
 ```bash
 npx sass scss/bootstrap.scss css/bootstrap.min.css \
     --style=compressed --no-source-map --load-path=scss --quiet
 ```
+
+> Note: a fresh dart-sass build drops the vendor prefixes the zip's shipped
+> compile carried (for example `-webkit-text-decoration`), and newer dart-sass
+> prints colours as percentage `rgb()`. The committed file therefore stays the
+> in-place swap; use the recompile only if you are happy to re-run autoprefixer
+> afterwards.
 
 (`scss/bootstrap/` holds the untouched Bootstrap 5 source the zip ships with.)
 
@@ -266,7 +309,9 @@ python3 tools/check_html.py   # tag-balance validation for all 11 pages
 
 ### Credits & licence
 
-- Structure, fonts & palette: **BabyCare** daycare template by
+- Design skin: **street celebration** (stamp red, leaf green, sunshine yellow,
+  paper, ink black), approved by the owner on 2026-09-23.
+- Structure, fonts & template palette shape: **BabyCare** daycare template by
   [HTML Codex](https://htmlcodex.com) (CC BY 4.0 — `LICENSE.txt` stays in the
   repo). The template credit line is **not** shown in the site footer — see the
   credit-removal note in [NOTES.md](NOTES.md).
