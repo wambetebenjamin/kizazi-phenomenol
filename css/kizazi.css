@@ -1,463 +1,579 @@
-/* =========================================================================
-   KIZAZI Phenomenal: add-ons on top of the BabyCare template skin.
-   No new palette: every colour derives from the template's Bootstrap
-   variables (royal violet #6D28D9 / blue #4D65F9).  This file teaches the
-   template about (1) vendored gallery photos in img/gallery/ (with the placeholder
-   SVG as CSS last-resort), (2) photo backgrounds via --kz-photo, (3) video
-   cards, (4) initials avatars, (5) the gallery filter, (6) quick search,
-   (7) the home hero crossfade, (8) the family description & portraits and
-   (9) the energy layer (one gradient token, marquee, sticker kickers,
-   card motion, counting stats, scroll progress, play pulse).
-   ========================================================================= */
+/* ==========================================================================
+   KIZAZI Phenomenal — "Hilltop" skin (2026-09-24, v2)
 
-/* The ONE gradient token of the energy layer: violet -> light violet -> blue,
-   straight from the template's palette (no new colours). It paints the
-   buttons, the sticker kickers, the stat numerals, the marquee rules, the
-   copyright rule and the scroll progress bar. */
+   Theme language lifted from hilltopcc.net's own stylesheet (structure and
+   mood only; every photo is KIZAZI's own):
+
+     * deep steel blue #0A3C63 as the structural colour (banners, header,
+       footer) with a top-down blue gradient over banner photos
+     * transparent header with white UPPERCASE nav sitting over the photo,
+       turning solid blue once scrolled
+     * Poppins (light/medium) display + Open Sans body — no heavy rounded
+       display face, no loud gradients
+     * thin rectangular buttons: solid accent or 1-2px outlines
+     * small radii (3-6px), calm shadows, generous whitespace
+     * fixed-attachment photo bands, dark blue footer with a photo strip
+
+   KIZAZI's royal purple survives only as the brand accent (logo word,
+   kickers, primary CTA, links) — the way Hilltop uses its green.
+   ========================================================================== */
+
 :root {
-    --kz-grad: linear-gradient(120deg, var(--bs-primary) 0%, var(--bs-light) 50%, var(--bs-secondary) 100%);
+    --kz-blue: #0A3C63;            /* Hilltop steel blue (structure)   */
+    --kz-blue-2: #12446B;          /* hover blue                        */
+    --kz-sky: #B1D5E6;             /* light blue (dark-bg accents)      */
+    --kz-sage: #75A799;            /* Hilltop sage (micro accents)      */
+    --kz-purple: #6D28D9;          /* KIZAZI brand accent (sparingly)   */
+    --kz-ink: #1e2a36;
+    --kz-muted: #5b6b7a;
+    --kz-mist: #f4f7fa;
+    --kz-line: #dfe7ee;
+    --kz-radius: 6px;
+    --kz-shadow: 0 18px 44px rgba(10, 60, 99, .12);
+    --kz-shadow-sm: 0 6px 18px rgba(10, 60, 99, .08);
 }
 
-/* ------------------------------------------- 1. Vendored gallery photos --- */
-img.kz-cover {
-    background: var(--bs-light) url('img/brand/photo-placeholder.svg') center / cover no-repeat;
-}
+html { scroll-behavior: smooth; }
 
-.kz-cover {
-    object-fit: cover;
-}
-
-.program-img .kz-cover { height: 260px; }
-.blog-img .kz-cover { height: 260px; }
-.events-img .kz-cover { height: 240px; border-radius: 50%; }
-.team-item > img.kz-cover { height: 300px; }
-
-.kz-square { aspect-ratio: 1 / 1; display: block; }
-.kz-square img { width: 100%; height: 100%; object-fit: cover; }
-
-.kz-square-lg { aspect-ratio: 4 / 3; }
-.kz-square-lg img { width: 100%; height: 100%; object-fit: cover; }
-
-.footer-galary-img img {
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-style: dotted;
-    border-color: var(--bs-primary);
-}
-
-/* ------------------------------- 2. Vendored photos as CSS backgrounds --- */
-.hero-header,
-.page-header {
-    background-color: var(--bs-dark);
-    background-image: linear-gradient(rgba(57, 61, 114, .78), rgba(57, 61, 114, .45)),
-        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
-}
-
-.video {
-    background-color: var(--bs-dark);
-    background-image: linear-gradient(rgba(57, 61, 114, .18), rgba(57, 61, 114, .42)),
-        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
-}
-
-.footer {
-    background-image: linear-gradient(rgba(255, 255, 255, .93), rgba(255, 255, 255, .985)),
-        var(--kz-photo, url('img/brand/photo-placeholder.svg'));
-}
-
-.video.kz-video-thumb {
-    min-height: 230px;
-    border-radius: 10px 10px 0 0;
-}
-
-.video.kz-video-empty {
-    min-height: 320px;
-    border-radius: 10px;
-}
-
-/* ------------------------------------------- 3. Initials avatars etc. --- */
-.kz-initials {
-    border-style: dotted;
-    border-color: var(--bs-primary);
-    color: var(--bs-primary);
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 600;
-    letter-spacing: .5px;
-}
-
-.kz-initials-lg { font-size: 1.6rem; }
-
-.program-rate-static { border-radius: 10% / 50%; }
-
-/* ------------------------------------------- 4. Gallery filter grid --- */
-.kz-filter-btn { opacity: .82; }
-
-.kz-filter-btn:hover { opacity: 1; }
-
-.kz-filter-btn.active {
-    background: var(--bs-secondary);
-    color: var(--bs-primary);
-    opacity: 1;
-}
-
-.kz-gallery-item.kz-hidden { display: none; }
-
-/* ------------------------------------------------- 5. Quick search --- */
-.kz-search-results a {
-    display: block;
-    padding: .6rem .9rem;
-    margin-bottom: .5rem;
-    border-left: 3px solid var(--bs-primary);
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--kz-ink);
     background: #fff;
-    color: var(--bs-dark);
-    text-decoration: none;
+    font-weight: 400;
+    line-height: 1.8;
+    font-size: 1rem;
+    overflow-x: hidden;
 }
 
-.kz-search-results a:hover {
-    background: var(--bs-light);
-    color: var(--bs-primary);
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    color: var(--kz-ink);
+    font-weight: 500;
+    line-height: 1.25;
 }
 
-.kz-search-results .kz-search-empty {
-    color: var(--bs-body-color);
-    font-style: italic;
+a { text-decoration: none; color: var(--kz-blue); }
+a:hover { color: var(--kz-blue-2); }
+
+::selection { background: var(--kz-blue); color: #fff; }
+
+/* ------------------------------------------------- utility strip (top) -- */
+.ht-top {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 1029;
+    color: rgba(255, 255, 255, .85);
+    font-size: .78rem;
+    letter-spacing: .05em;
+    padding: .8rem 0;
+}
+.ht-top a { color: rgba(255, 255, 255, .85); }
+.ht-top a:hover { color: #fff; }
+.ht-top .ht-top-social a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .4); color: #fff; margin-left: .4rem;
+    transition: background .25s, border-color .25s;
+}
+.ht-top .ht-top-social a:hover { background: rgba(255, 255, 255, .15); }
+
+/* ------------------------------------------------- transparent header -- */
+.ht-header {
+    position: absolute; top: 3rem; left: 0; right: 0; z-index: 1030;
+    background: transparent;
+    transition: background .3s, box-shadow .3s;
+}
+.ht-header.fixed {
+    position: fixed; top: 0;
+    background: var(--kz-blue);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+}
+.ht-header-in {
+    display: flex; align-items: center; gap: 1.25rem;
+    padding: .9rem 0;
+}
+.ht-brand {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.35rem; font-weight: 600; letter-spacing: .02em;
+    color: #fff; white-space: nowrap; text-transform: uppercase;
+}
+.ht-brand span { color: var(--kz-sky); font-weight: 300; }
+.ht-brand small {
+    display: block; font-family: 'Open Sans', sans-serif; font-weight: 400;
+    font-size: .55rem; letter-spacing: .42em; text-transform: uppercase;
+    color: rgba(255, 255, 255, .65); margin-top: -2px;
+}
+.ht-nav { margin-left: auto; display: flex; align-items: center; gap: .1rem; }
+.ht-nav > a, .ht-nav .ht-drop > a {
+    font-family: 'Poppins', sans-serif;
+    font-size: .82rem; font-weight: 400; letter-spacing: .08em;
+    text-transform: uppercase; color: #fff;
+    padding: .55rem .8rem; position: relative;
+}
+.ht-nav > a:hover, .ht-nav .ht-drop > a:hover { color: var(--kz-sky); }
+.ht-nav > a.active { color: var(--kz-sky); }
+.ht-nav > a.active::after, .ht-nav .ht-drop > a.active::after {
+    content: ""; position: absolute; left: .8rem; right: .8rem; bottom: .2rem;
+    height: 2px; background: var(--kz-sky);
+}
+.ht-drop { position: relative; }
+.ht-drop-menu {
+    position: absolute; top: 100%; left: 0; min-width: 190px;
+    background: #fff; border-radius: var(--kz-radius); box-shadow: var(--kz-shadow);
+    padding: .5rem; display: none; z-index: 1031;
+}
+.ht-drop:hover .ht-drop-menu, .ht-drop.show .ht-drop-menu { display: block; }
+.ht-drop-menu a {
+    display: block; padding: .45rem .8rem; border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+    font-size: .8rem; font-weight: 400; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--kz-ink);
+}
+.ht-drop-menu a:hover { background: var(--kz-mist); color: var(--kz-blue); }
+.ht-drop-menu a.active { color: var(--kz-blue); background: var(--kz-mist); }
+
+/* Buttons: Hilltop-style thin rectangles */
+.btn-kz {
+    display: inline-block; border: 2px solid var(--kz-purple); cursor: pointer;
+    background: var(--kz-purple); color: #fff !important;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500; font-size: .8rem; letter-spacing: .12em;
+    text-transform: uppercase; padding: .72rem 1.7rem;
+    border-radius: 3px;
+    transition: background .2s, border-color .2s;
+}
+.btn-kz:hover { background: #5b21b6; border-color: #5b21b6; }
+.btn-kz-line {
+    display: inline-block; background: transparent;
+    border: 2px solid rgba(255, 255, 255, .7); color: #fff !important;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400; font-size: .8rem; letter-spacing: .12em;
+    text-transform: uppercase; padding: .66rem 1.6rem; border-radius: 3px;
+    transition: background .2s, border-color .2s;
+}
+.btn-kz-line:hover { background: rgba(255, 255, 255, .12); border-color: #fff; }
+.btn-kz-soft {
+    display: inline-block; background: transparent; color: var(--kz-blue) !important;
+    border: 1px solid var(--kz-blue);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase;
+    padding: .72rem 1.7rem; border-radius: 3px;
+    transition: background .2s, color .2s;
+}
+.btn-kz-soft:hover { background: var(--kz-blue); color: #fff !important; }
+
+.ht-search-btn {
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4);
+    background: transparent; color: #fff; font-size: .9rem; cursor: pointer;
+    transition: background .2s;
+}
+.ht-search-btn:hover { background: rgba(255, 255, 255, .15); }
+
+.ht-burger {
+    display: none; border: 1px solid rgba(255, 255, 255, .6); background: var(--kz-blue);
+    color: #fff; width: 40px; height: 40px; border-radius: 3px; font-size: 1rem; cursor: pointer;
 }
 
-/* ---------------------------- 7. Home hero: the transition photos --------- */
-/* One .kz-hero-slide per file in HERO_SLIDES (tools/build_common.py), each
-   staggered 8s by the inline animation-delay build.py emits, so the 4-photo
-   cycle below is 32s.  Exactly one photo is at full opacity at any moment and
-   the crossfades overlap.  With fewer/more photos, change the cycle and the
-   keyframe percentages to match (N photos x 8s, visible slot = 100 / N %). */
-.hero-header.kz-hero,
-.kz-hero-slideshow {
-    position: relative;
-    overflow: hidden;
-    background-color: var(--bs-dark);
+@media (max-width: 1099px) {
+    .ht-header { top: .6rem; }
+    .ht-nav {
+        display: none; position: absolute; top: 100%; left: 0; right: 0;
+        background: var(--kz-blue); box-shadow: var(--kz-shadow);
+        flex-direction: column; align-items: stretch; padding: 1rem 1.25rem;
+        margin: 0;
+    }
+    .ht-nav.open { display: flex; }
+    .ht-nav > a, .ht-nav .ht-drop > a { padding: .7rem .5rem; }
+    .ht-drop-menu { position: static; box-shadow: none; padding: 0 0 0 1rem; display: block; background: transparent; }
+    .ht-drop-menu a { color: rgba(255, 255, 255, .85); }
+    .ht-burger { display: inline-flex; align-items: center; justify-content: center; }
+    .ht-header-cta .btn-kz { padding: .55rem 1.1rem; }
 }
 
-.kz-hero-slides {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 0;
-    pointer-events: none;
+/* ----------------------------------------------------------------- hero -- */
+.ht-hero {
+    position: relative; min-height: 96vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; overflow: hidden; background: var(--kz-blue);
 }
-
-.kz-hero-slide {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    /* faces sit in the upper half of these wide event photos, so bias the
-       cover crop upwards when the hero is taller than the frame */
-    background-position: center 35%;
-    background-repeat: no-repeat;
-    background-size: cover;
-    opacity: 0;
-    will-change: opacity;
-    animation: kz-hero-fade 32s linear infinite;
+.ht-slide {
+    position: absolute; inset: 0;
+    background-image: var(--kz-photo); background-size: cover;
+    background-position: center; opacity: 0;
+    animation: htFade 28s linear infinite;
 }
-
-/* Keep the hero copy readable over every photo (same wash the single-photo
-   hero used, now painted on top of the rotating layers). */
-.kz-hero-slides::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-image: linear-gradient(rgba(57, 61, 114, .78), rgba(57, 61, 114, .45));
-}
-
-.kz-hero-slideshow > .container {
-    position: relative;
-    z-index: 2;
-}
-
-@keyframes kz-hero-fade {
-    0% { opacity: 0; }
-    3% { opacity: 1; }
-    25% { opacity: 1; }
-    28% { opacity: 0; }
+.ht-slide:nth-child(2) { animation-delay: 7s; }
+.ht-slide:nth-child(3) { animation-delay: 14s; }
+.ht-slide:nth-child(4) { animation-delay: 21s; }
+@keyframes htFade {
+    0%   { opacity: 0; }
+    4%   { opacity: 1; }
+    25%  { opacity: 1; }
+    30%  { opacity: 0; }
     100% { opacity: 0; }
 }
-
-/* No animation (reduced motion, or no CSS animation support): pin the first
-   transition photo, which is also the --kz-photo base layer. */
+.ht-hero-shade {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10, 60, 99, .82) 0%,
+                rgba(10, 60, 99, .30) 42%, rgba(4, 20, 36, .82) 100%);
+}
+.ht-hero-in { position: relative; z-index: 2; padding: 9rem 1rem 6rem; }
+.ht-hero-eyebrow {
+    color: var(--kz-sky); font-family: 'Poppins', sans-serif; font-size: .9rem;
+    font-weight: 300; letter-spacing: .5em; text-transform: lowercase; margin-bottom: .8rem;
+}
+.ht-hero-in h1 {
+    color: #fff; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: 1.08; margin-bottom: 1.2rem;
+}
+.ht-hero-in h1 span { color: var(--kz-sky); font-weight: 300; }
+.ht-hero-tag {
+    color: rgba(255, 255, 255, .92); font-weight: 300;
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    max-width: 660px; margin: 0 auto 2.2rem;
+}
+.ht-hero-cta { display: flex; gap: .9rem; justify-content: center; flex-wrap: wrap; }
+.ht-hero-verse {
+    margin-top: 2.6rem; color: rgba(255, 255, 255, .68);
+    font-size: .85rem; font-style: italic; letter-spacing: .03em;
+}
+.ht-hero-scroll {
+    position: absolute; left: 50%; bottom: 1.4rem; transform: translateX(-50%);
+    color: rgba(255, 255, 255, .8); z-index: 2; font-size: 1.1rem;
+    animation: htBob 2.2s ease-in-out infinite;
+}
+@keyframes htBob { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
 @media (prefers-reduced-motion: reduce) {
-    .kz-hero-slide { animation: none; }
-    .kz-hero-slide:first-child { opacity: 1; }
+    .ht-slide { animation: none; opacity: 0; }
+    .ht-slide:first-child { opacity: 1; }
+    .ht-hero-scroll { animation: none; }
 }
 
-/* ------------------- 8. Family description & portraits (people) ------------ */
-.kz-family-desc {
-    border-left: 4px solid var(--bs-primary);
-    background: var(--bs-light);
-    padding: .9rem 1.1rem;
-    border-radius: 0 10px 10px 0;
-    font-weight: 600;
+/* ------------------------------------------------------------- sections -- */
+.ht-section { padding: 6.5rem 0; }
+.ht-section-mist { background: var(--kz-mist); }
+.ht-kicker {
+    display: inline-block; font-family: 'Poppins', sans-serif;
+    font-size: .72rem; font-weight: 500;
+    letter-spacing: .38em; text-transform: uppercase; color: var(--kz-blue);
+    margin-bottom: .9rem;
+}
+.ht-h2 {
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem); font-weight: 300; line-height: 1.2;
+    margin-bottom: 1.1rem; text-transform: uppercase; letter-spacing: .04em;
+}
+.ht-h2 span { color: var(--kz-blue); font-weight: 600; }
+.ht-lead { color: var(--kz-muted); max-width: 700px; font-weight: 400; }
+.ht-center { text-align: center; }
+.ht-center .ht-lead { margin: 0 auto; }
+
+/* ------------------------------------------------------------ info card -- */
+.ht-join {
+    background: #fff; border-radius: var(--kz-radius); box-shadow: var(--kz-shadow);
+    overflow: hidden; border: 1px solid var(--kz-line);
+}
+.ht-join-photo {
+    background-image: linear-gradient(160deg, rgba(10, 60, 99, .18), rgba(10, 60, 99, .45)), var(--kz-photo);
+    background-size: cover; background-position: center; min-height: 340px;
+}
+.ht-join-body { padding: 3.2rem 2.8rem; }
+.ht-join-body h3 { font-size: 1.5rem; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+.ht-chip {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: #fff; border: 1px solid var(--kz-line); color: var(--kz-blue);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+    padding: .4rem 1rem; border-radius: 3px; margin: 0 .4rem .4rem 0;
+}
+.ht-chip i { font-size: .7rem; color: var(--kz-sage); }
+
+/* ---------------------------------------------------------------- cards -- */
+.ht-card {
+    background: #fff; border-radius: var(--kz-radius); overflow: hidden;
+    box-shadow: var(--kz-shadow-sm); border: 1px solid var(--kz-line);
+    height: 100%; display: flex; flex-direction: column;
+    transition: transform .25s, box-shadow .25s;
+}
+.ht-card:hover { transform: translateY(-5px); box-shadow: var(--kz-shadow); }
+.ht-card-img {
+    position: relative; overflow: hidden; aspect-ratio: 16 / 10;
+    background: var(--kz-blue);
+}
+.ht-card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .6s ease;
+}
+.ht-card:hover .ht-card-img img { transform: scale(1.05); }
+.ht-card-tag {
+    position: absolute; top: .9rem; left: .9rem; z-index: 2;
+    background: var(--kz-blue); color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: .64rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+    padding: .35rem .85rem; border-radius: 3px;
+}
+.ht-card-body { padding: 1.7rem 1.7rem 1.9rem; display: flex; flex-direction: column; flex: 1; }
+.ht-card-body h3 { font-size: 1.15rem; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .5rem; }
+.ht-card-body h3 a { color: var(--kz-ink); }
+.ht-card-body h3 a:hover { color: var(--kz-blue); }
+.ht-card-body p { color: var(--kz-muted); font-size: .92rem; }
+.ht-card-meta {
+    display: flex; flex-wrap: wrap; gap: .45rem; margin-top: auto; padding-top: 1rem;
+}
+.ht-card-meta span {
+    font-family: 'Poppins', sans-serif;
+    font-size: .68rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--kz-muted); background: var(--kz-mist);
+    border: 1px solid var(--kz-line);
+    padding: .28rem .8rem; border-radius: 3px;
+}
+.ht-card-link {
+    margin-top: 1.1rem; font-family: 'Poppins', sans-serif;
+    font-weight: 500; font-size: .76rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--kz-blue);
+}
+.ht-card-link i { transition: transform .2s; }
+.ht-card-link:hover i { transform: translateX(4px); }
+
+/* photo-overlay tiles ("Get Connected") */
+.ht-tile {
+    position: relative; border-radius: var(--kz-radius); overflow: hidden;
+    min-height: 360px; display: flex; align-items: flex-end;
+    box-shadow: var(--kz-shadow-sm);
+}
+.ht-tile .ht-tile-bg {
+    position: absolute; inset: 0; background-image: var(--kz-photo);
+    background-size: cover; background-position: center; transition: transform .6s;
+}
+.ht-tile:hover .ht-tile-bg { transform: scale(1.05); }
+.ht-tile::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10, 60, 99, .05) 35%, rgba(6, 26, 44, .9) 100%);
+}
+.ht-tile-in { position: relative; z-index: 2; padding: 1.7rem; color: #fff; }
+.ht-tile-in h3 { color: #fff; font-size: 1.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
+.ht-tile-in p { color: rgba(255, 255, 255, .82); font-size: .88rem; font-weight: 300; margin: 0; }
+
+/* ---------------------------------------------------------- page banner -- */
+.ht-banner {
+    position: relative; padding: 12rem 0 5.5rem; text-align: center;
+    background-color: var(--kz-blue);
+    background-image: linear-gradient(to bottom, rgba(10, 60, 99, .95), rgba(10, 60, 99, .55) 60%, rgba(10, 60, 99, .75)), var(--kz-photo);
+    background-size: cover; background-position: center;
+}
+.ht-banner .ht-kicker { color: var(--kz-sky); }
+.ht-banner h1 {
+    color: #fff; font-weight: 500; text-transform: uppercase; letter-spacing: .06em;
+    font-size: clamp(2rem, 4.6vw, 3.2rem); margin-bottom: .8rem;
+}
+.ht-banner p { color: rgba(255, 255, 255, .85); font-weight: 300; max-width: 660px; margin: 0 auto; }
+.ht-crumb {
+    margin-top: 1.6rem; font-family: 'Poppins', sans-serif;
+    font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+    color: rgba(255, 255, 255, .6);
+}
+.ht-crumb a { color: rgba(255, 255, 255, .85); }
+.ht-crumb a:hover { color: #fff; }
+.ht-crumb i { margin: 0 .5rem; font-size: .6rem; }
+
+/* ---------------------------------------------------------- photo bands -- */
+.ht-band {
+    position: relative; padding: 7rem 0; text-align: center; color: #fff;
+    background-image: linear-gradient(rgba(10, 60, 99, .85), rgba(10, 60, 99, .85)), var(--kz-photo);
+    background-size: cover; background-position: center;
+    background-attachment: fixed;
+}
+@media (max-width: 991px) { .ht-band { background-attachment: scroll; } }
+.ht-band .ht-verse {
+    font-family: 'Poppins', sans-serif; font-weight: 300;
+    font-size: clamp(1.25rem, 2.4vw, 1.9rem); line-height: 1.6;
+    max-width: 880px; margin: 0 auto 1.1rem; color: #fff;
+}
+.ht-band .ht-verse-ref {
+    letter-spacing: .32em; text-transform: uppercase; font-family: 'Poppins', sans-serif;
+    font-size: .74rem; color: var(--kz-sky); font-weight: 500;
+}
+.ht-band .ht-kicker { color: var(--kz-sky); }
+.ht-band .ht-h2 { color: #fff; }
+.ht-band .ht-h2 span { color: var(--kz-sky); }
+.ht-band p.ht-lead { color: rgba(255, 255, 255, .85); margin: 0 auto 1.8rem; font-weight: 300; }
+
+/* ---------------------------------------------------------------- stats -- */
+.ht-stat { text-align: center; padding: 1.6rem 1rem; }
+.ht-stat b {
+    display: block; font-family: 'Poppins', sans-serif; font-weight: 600;
+    font-size: 2.6rem; color: var(--kz-blue); line-height: 1.1;
+}
+.ht-stat span {
+    font-family: 'Poppins', sans-serif;
+    font-size: .7rem; letter-spacing: .24em; text-transform: uppercase;
+    color: var(--kz-muted); font-weight: 500;
 }
 
-.kz-family-desc em {
-    color: var(--bs-secondary);
-    font-style: italic;
+/* ------------------------------------------------------------- gallery -- */
+.kz-gallery-item { margin-bottom: 1.5rem; }
+.kz-gallery-item a {
+    display: block; border-radius: 4px; overflow: hidden; position: relative;
+    box-shadow: var(--kz-shadow-sm);
+}
+.kz-gallery-item img {
+    width: 100%; height: 300px; object-fit: cover; display: block;
+    transition: transform .6s;
+}
+.kz-gallery-item a::after {
+    content: "\f00e"; font-family: "Font Awesome 5 Free"; font-weight: 900;
+    position: absolute; inset: 0; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: 1.2rem;
+    background: rgba(10, 60, 99, .55); opacity: 0; transition: opacity .3s;
+}
+.kz-gallery-item a:hover img { transform: scale(1.06); }
+.kz-gallery-item a:hover::after { opacity: 1; }
+.kz-hidden { display: none !important; }
+.kz-filter-btn {
+    border: 1px solid var(--kz-line); background: #fff; color: var(--kz-ink);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase;
+    padding: .5rem 1.2rem; border-radius: 3px; margin: 0 .3rem .6rem; cursor: pointer;
+    transition: all .2s;
+}
+.kz-filter-btn:hover { border-color: var(--kz-blue); color: var(--kz-blue); }
+.kz-filter-btn.active { background: var(--kz-blue); border-color: var(--kz-blue); color: #fff; }
+
+/* ------------------------------------------------------------- events -- */
+.ht-event {
+    background: #fff; border-radius: var(--kz-radius); overflow: hidden;
+    box-shadow: var(--kz-shadow-sm); border: 1px solid var(--kz-line);
+    transition: transform .25s, box-shadow .25s;
+}
+.ht-event:hover { transform: translateY(-4px); box-shadow: var(--kz-shadow); }
+.ht-event-img { position: relative; min-height: 260px; background-size: cover; background-position: center; background-image: var(--kz-photo); }
+.ht-event-date {
+    position: absolute; top: 1rem; left: 1rem; background: #fff; color: var(--kz-blue);
+    border-radius: 4px; padding: .5rem .9rem; text-align: center; line-height: 1.15;
+    box-shadow: var(--kz-shadow-sm);
+}
+.ht-event-date b { display: block; font-family: 'Poppins', sans-serif; font-size: 1.15rem; font-weight: 600; }
+.ht-event-date span { font-family: 'Poppins', sans-serif; font-size: .6rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; }
+.ht-event-body { padding: 1.9rem; }
+.ht-event-body h3 { font-size: 1.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+.ht-event-body p { color: var(--kz-muted); font-size: .92rem; }
+
+/* ----------------------------------------------------------- team/people -- */
+.ht-team-img { aspect-ratio: 4 / 3; }
+.ht-initials {
+    width: 56px; height: 56px; border-radius: 4px; background: var(--kz-blue);
+    color: #fff; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.1rem;
+    display: inline-flex; align-items: center; justify-content: center;
 }
 
-.kz-portrait {
-    aspect-ratio: 4 / 5;
-    height: auto;
+/* ------------------------------------------------------- testimonial owl -- */
+.testimonial-carousel .owl-item { padding: .5rem; }
+.ht-quote {
+    background: #fff; border-radius: var(--kz-radius); padding: 2.3rem;
+    box-shadow: var(--kz-shadow-sm); border: 1px solid var(--kz-line); height: 100%;
 }
-
-/* The four transition photos, shown whole under the home hero. */
-.kz-moment {
-    border: 3px solid var(--bs-light);
-    background: var(--bs-light);
-    transition: .4s;
+.ht-quote i.fa-quote-left { color: var(--kz-sage); font-size: 1.4rem; margin-bottom: 1rem; }
+.ht-quote p { color: var(--kz-ink); font-size: .95rem; font-weight: 300; }
+.ht-quote b { color: var(--kz-blue); font-family: 'Poppins', sans-serif; }
+.testimonial-carousel .owl-dots { text-align: center; margin-top: 1.6rem; }
+.testimonial-carousel .owl-dot span {
+    width: 9px; height: 9px; display: inline-block; border-radius: 50%;
+    background: var(--kz-line); margin: 0 4px;
 }
+.testimonial-carousel .owl-dot.active span { background: var(--kz-blue); }
 
-.kz-moment img {
-    height: 190px;
-    transition: .4s;
+/* --------------------------------------------------------------- footer -- */
+.ht-footer {
+    background: var(--kz-blue); color: rgba(255, 255, 255, .8);
+    padding: 5.5rem 0 3rem;
 }
-
-.kz-moment:hover {
-    border-color: var(--bs-primary);
-    transform: translateY(-6px) rotate(-.5deg);
-    box-shadow: 0 14px 24px rgba(57, 61, 114, .15);
+.ht-footer h4, .ht-footer h5 { color: #fff; }
+.ht-footer .ht-fk {
+    font-family: 'Poppins', sans-serif;
+    font-size: .72rem; font-weight: 500; letter-spacing: .32em;
+    text-transform: uppercase; color: var(--kz-sky); margin-bottom: 1.3rem;
 }
-
-.kz-moment:hover img {
-    transform: scale(1.04);
+.ht-footer a { color: rgba(255, 255, 255, .8); }
+.ht-footer a:hover { color: #fff; }
+.ht-footer-links a { display: block; padding: .28rem 0; font-size: .88rem; }
+.ht-footer-links a i { color: var(--kz-sage); margin-right: .5rem; font-size: .7rem; }
+.ht-fstrip { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.ht-fstrip a { border-radius: 4px; overflow: hidden; display: block; }
+.ht-fstrip img { width: 100%; height: 74px; object-fit: cover; display: block; transition: transform .4s; }
+.ht-fstrip a:hover img { transform: scale(1.08); }
+.ht-fsocial a {
+    display: inline-flex; width: 38px; height: 38px; border-radius: 50%;
+    align-items: center; justify-content: center; margin-right: .5rem;
+    border: 1px solid rgba(255, 255, 255, .35); color: #fff; transition: background .25s, border-color .25s;
 }
-
-@media (max-width: 575.98px) {
-    .kz-moment img { height: 130px; }
+.ht-fsocial a:hover { background: rgba(255, 255, 255, .15); border-color: #fff; }
+.ht-friday-card {
+    background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: var(--kz-radius); padding: 1.7rem;
 }
-
-/* -------------------------------------------------------- 6. Misc --- */
-.kz-newsletter .form-control:focus { box-shadow: none; }
-
-.footer-item a.text-body:hover { color: var(--bs-secondary) !important; }
-
-/* =========================================================================
-   9. The energy layer: one gradient token, honest motion.
-   Everything below animates with transform/opacity only (no layout shift)
-   and switches off in the prefers-reduced-motion block at the end of this
-   file. Colours come from --kz-grad and the template's own variables only.
-   ========================================================================= */
-
-/* ------------------------------ 9.1 Buttons: the gradient, worn like a --
-   The template's own hover inversion (blue background, violet text) keeps
-   working: its `background` shorthand resets the gradient on hover. */
-.btn-primary,
-.btn-secondary {
-    background-color: var(--bs-primary);
-    background-image: var(--kz-grad);
-    border-color: transparent;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(57, 61, 114, .28);
+.ht-friday-card p { margin-bottom: .55rem; font-size: .9rem; font-weight: 300; }
+.ht-friday-card strong { color: #fff; font-weight: 600; }
+.ht-copyright {
+    background: #06233c; color: rgba(255, 255, 255, .6);
+    font-size: .8rem; padding: 1.2rem 0;
 }
+.ht-copyright a { color: rgba(255, 255, 255, .8); }
 
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-primary:focus,
-.btn-secondary:focus {
-    filter: brightness(.93);
+/* newsletter (footer) */
+.kz-newsletter { display: flex; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255,255,255,.2); border-radius: 3px; overflow: hidden; }
+.kz-newsletter input {
+    flex: 1; border: 0; background: transparent; color: #fff; padding: .7rem 1.2rem;
+    font-weight: 300;
 }
-
-/* --------------------------------- 9.2 Sticker kickers (h4 pills) --------
-   The template's h4.title-border-radius becomes a slightly tilted white
-   sticker pill carrying a gradient rule underneath. The violet underline the
-   bootstrap border classes drew is neutralised (transparent) so the token
-   owns the accent. */
-h4.title-border-radius {
-    position: relative;
-    background-color: #fff;
-    border-bottom: 2px solid transparent !important;
-    padding: .35rem 1.1rem !important;
-    transform: rotate(-1.5deg);
+.kz-newsletter input::placeholder { color: rgba(255, 255, 255, .5); }
+.kz-newsletter input:focus { outline: none; }
+.kz-newsletter button {
+    border: 0; background: var(--kz-purple); color: #fff;
+    font-family: 'Poppins', sans-serif; font-weight: 500; font-size: .72rem;
+    letter-spacing: .12em; text-transform: uppercase; padding: 0 1.4rem; cursor: pointer;
 }
+.kz-newsletter button:hover { background: #5b21b6; }
+.kz-newsletter-note { color: rgba(255, 255, 255, .5); }
 
-h4.title-border-radius::after {
-    content: "";
-    position: absolute;
-    left: 14%;
-    right: 14%;
-    bottom: 4px;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--kz-grad);
-}
-
-/* ------------------------------------------------- 9.3 Marquee ticker -----
-   Strip under the navbar on every page. The phrase set (TICKER in
-   tools/build_common.py) is repeated exactly twice in the DOM, so the -50%
-   translate below loops seamlessly. transform only: no layout shift. */
-.kz-ticker {
-    position: relative;
-    overflow: hidden;
-    background: var(--bs-light);
-    padding: .5rem 0;
-}
-
-.kz-ticker::before,
-.kz-ticker::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--kz-grad);
-    z-index: 1;
-}
-
-.kz-ticker::before { top: 0; }
-
-.kz-ticker::after { bottom: 0; }
-
-.kz-ticker-track {
-    display: flex;
-    align-items: center;
-    width: max-content;
-    animation: kz-ticker-scroll 32s linear infinite;
-}
-
-.kz-ticker:hover .kz-ticker-track {
-    animation-play-state: paused;
-}
-
-.kz-ticker-item {
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 600;
-    font-size: .95rem;
-    color: var(--bs-dark);
-    white-space: nowrap;
-    padding: 0 1.1rem;
-}
-
-.kz-ticker-star {
-    font-size: .8rem;
-    background: var(--kz-grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-}
-
-@keyframes kz-ticker-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-}
-
-/* ------------------------------------- 9.4 Lifting/tilting cards ---------
-   transform + shadow only (no layout). The template's inner hover effects
-   (icon inversion, image zoom, event overlay) keep working on top. */
-.service-item,
-.program-item,
-.events-item,
-.blog-item,
-.team-item,
-.kz-gallery-item > a {
-    transition: transform .35s ease, box-shadow .35s ease;
-}
-
-.service-item:hover,
-.program-item:hover,
-.events-item:hover,
-.blog-item:hover,
-.team-item:hover,
-.kz-gallery-item > a:hover {
-    transform: translateY(-8px) rotate(-.5deg);
-    box-shadow: 0 16px 30px rgba(57, 61, 114, .15);
-}
-
-/* ------------------------------- 9.5 Pulsing play button (gradient ring) -
-   The template's own pulse-border animation drives the ring; this only
-   re-inks it in the gradient token. */
-.video .btn-play:before {
-    background: var(--kz-grad);
-}
-
-/* ----------------------------------------- 9.6 Counting stat numerals ----
-   About-page stats: the numerals wear the gradient. The final value stays
-   in the markup (js/kizazi.js counts data-kz-count targets up when they
-   scroll into view; no-JS and reduced-motion visitors read it as-is). */
-.kz-stat-num {
-    background: var(--kz-grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-}
-
-/* ------------------------------------------------ 9.7 Scroll progress ----
-   A fixed gradient rule at the very top of the viewport. js/kizazi.js
-   drives it with transform: scaleX() only, so it never shifts layout. */
+/* ----------------------------------------------------- misc shared bits -- */
 .kz-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    z-index: 1060;
-    pointer-events: none;
+    position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 1040;
+    background: transparent; pointer-events: none;
 }
-
 .kz-progress-bar {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: var(--kz-grad);
-    transform: scaleX(0);
-    transform-origin: 0 50%;
+    display: block; height: 100%; background: var(--kz-purple);
+    transform: scaleX(0); transform-origin: left center;
 }
 
-/* --------------------------------------------- 9.8 Copyright rule --------
-   The gradient line capping the copyright bar. */
-.copyright {
-    position: relative;
+.back-to-top {
+    position: fixed; right: 1.4rem; bottom: 1.4rem; width: 44px; height: 44px;
+    border-radius: 3px; background: var(--kz-blue); color: #fff; display: none;
+    align-items: center; justify-content: center; z-index: 1035; border: 0;
+    box-shadow: var(--kz-shadow-sm); font-size: .85rem;
 }
 
-.copyright::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--kz-grad);
+/* search modal restyle */
+#searchModal .modal-content { background: var(--kz-blue); }
+#searchModal .modal-header { border-color: rgba(255, 255, 255, .15); }
+#searchModal .modal-title { color: #fff; font-family: 'Poppins', sans-serif; }
+#searchModal .btn-close { filter: invert(1); }
+#searchModal .form-control {
+    background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .25);
+    color: #fff; border-radius: 3px 0 0 3px; font-weight: 300;
 }
-
-/* ============================ Reduced motion: every animation off ======== */
-@media (prefers-reduced-motion: reduce) {
-    .wow { animation: none !important; visibility: visible !important; }
-
-    /* Energy layer, switched off (js/kizazi.js checks the same media
-       query and skips the count-up; the progress bar stays, since it
-       tracks the user's own scrolling instead of running on its own). */
-    .kz-ticker-track { animation: none !important; }
-    .service-item,
-    .program-item,
-    .events-item,
-    .blog-item,
-    .team-item,
-    .kz-moment,
-    .kz-gallery-item > a {
-        transition: none !important;
-    }
-    .service-item:hover,
-    .program-item:hover,
-    .events-item:hover,
-    .blog-item:hover,
-    .team-item:hover,
-    .kz-moment:hover,
-    .kz-gallery-item > a:hover {
-        transform: none !important;
-        box-shadow: none;
-    }
-    .video .btn-play:before { animation: none !important; }
+#searchModal .input-group-text {
+    background: transparent; border: 1px solid rgba(255, 255, 255, .25); border-left: 0;
+    color: #fff; border-radius: 0 3px 3px 0;
 }
+.kz-search-results a {
+    display: block; color: rgba(255, 255, 255, .85); padding: .55rem .2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .1); font-size: .95rem;
+}
+.kz-search-results a:hover { color: #fff; }
+.kz-search-results a i { color: var(--kz-sky); }
+.kz-search-empty { color: rgba(255, 255, 255, .65); }
+
+/* accordion (Rooted phases) */
+.ht-acc .accordion-item { border: 1px solid var(--kz-line); border-radius: 4px !important; overflow: hidden; margin-bottom: .8rem; }
+.ht-acc .accordion-button { font-family: 'Poppins', sans-serif; font-weight: 500; color: var(--kz-ink); background: #fff; }
+.ht-acc .accordion-button:not(.collapsed) { background: var(--kz-mist); color: var(--kz-blue); box-shadow: none; }
+
+/* 404 */
+.ht-404 b { font-family: 'Poppins', sans-serif; font-size: 7rem; font-weight: 300; color: var(--kz-blue); line-height: 1; }

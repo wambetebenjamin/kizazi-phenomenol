@@ -41,35 +41,48 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 | `contact.html` | Four ways in (form / Meet / socials / Linktree note), weekly schedule, FAQ — no invented email/phone/address |
 | `404.html` | Template not-found page |
 
-## Design system (the template's, unchanged)
+## Design system (Hilltop skin, 2026-09-24)
 
-- **Fonts** — Fredoka 600/700 (display) + Montserrat 200/400/600 (body), loaded
-  from Google Fonts exactly like the zip.
+The layout & theme now follow **hilltopcc.net's structure** (structure only —
+every photo is KIZAZI's own): full-bleed crossfading photo hero with a centred
+"welcome to" block, transparent white-uppercase nav over the photo (solid
+steel blue once scrolled), blue-gradient photo page banners with breadcrumbs,
+rectangular photo cards with hover lift/zoom, fixed-attachment photo bands
+(verse / follow / join-the-team), and a steel-blue footer with a photo strip.
+All of it lives in `css/kizazi.css`; `css/style.css` and
+`css/bootstrap.min.css` remain as the base layer.
+
+- **Fonts** — Poppins 300/400/500/600 (display, uppercase, light weights) +
+  Open Sans 300/400/600 (body): the same pairing hilltopcc.net loads.
+- **Palette (v2, after owner feedback)** — Hilltop's steel blue `#0A3C63` is
+  the structural colour (header, banners, footer, chips) with light-blue
+  `#B1D5E6` accents on dark and a touch of sage `#75A799`; KIZAZI's royal
+  purple `#6D28D9` survives only as the brand accent (logo word, kickers,
+  primary CTA, links). Buttons are thin rectangles (3px radius), solid or
+  1-2px outlined — no gradient pills.
 - **Palette (royal purple rebrand, 2026-09-21)** — primary violet `#6D28D9`
   (hover `#5B21B6`), secondary blue `#4D65F9`, light `#F3E8FF`, dark `#393D72`,
   body grey `#70747F`. The owner rejected the template pink, so the swap was
   applied in place to the zip's own `css/bootstrap.min.css` / `css/style.css`
   (and `scss/bootstrap.scss`). **No pink, no gold / no orange theme.**
-- **Layout & components** — topbar + navbar with Pages dropdown, full-screen
-  search modal, `hero-header` / `page-header` heroes with breadcrumbs, service /
-  program / events / blog / team cards, Owl testimonial carousel, 4-column footer
-  with the circular photo grid, copyright bar (right slot:
-  "A generation on fire for God. — 1 Timothy 4:12"),
-  back-to-top button, WOW scroll animations, Lightbox, pulsing play button.
-- **KIZAZI add-ons** — `css/kizazi.css` (no new palette): teaches the
-  template about vendored gallery photos/backgrounds (placeholder SVG as
-  CSS last-resort), video cards, initials avatars, the gallery filter,
-  quick-search results, the home hero crossfade and the energy layer below.
-- **Energy layer** (section 9 of `css/kizazi.css` + behaviours 6-7 of
-  `js/kizazi.js`) — one gradient token, `--kz-grad` (violet → light violet → blue,
-  the template's own colours, **no gold / no orange**), worn by the buttons,
-  the sticker kicker pills, the about-page stat numerals, the marquee rules,
-  the copyright rule and the scroll progress bar. Plus the marquee ticker
-  under the navbar (phrases in `TICKER`, `tools/build_common.py`),
-  lifting/tilting cards, counting stats (`data-kz-count`) and the pulsing
-  play-button ring. Motion stays honest: transform/opacity only, no layout
-  shift, and every animation is off under `prefers-reduced-motion` (the block
-  at the end of `css/kizazi.css`).
+- **Layout & components** — dark utility strip + sticky white header with
+  Pages dropdown, full-screen search modal, crossfading `ht-hero` on the home
+  page, `ht-banner` photo page headers with breadcrumbs, "join us friday"
+  split card, what's-happening event cards, "get connected" photo tiles,
+  fixed photo bands, program/ministry/blog/team cards, Owl testimonial
+  carousel, 4-column dark footer with the `ht-fstrip` photo grid, copyright
+  bar, back-to-top button, WOW scroll animations, Lightbox gallery.
+- **KIZAZI add-ons** — `css/kizazi.css` is the whole skin (no new palette):
+  it organises the vendored photos by role (hero frames, banners, bands,
+  cards, gallery, footer strip) through the inline `--kz-photo` variable,
+  with `img/brand/photo-placeholder.svg` kept only as the JS last-resort if a
+  file is ever missing.
+- **Motion** — one gradient token, `--kz-grad` (violet → blue, **no gold / no
+  orange**), worn by buttons, kicker pills, card tags and the scroll progress
+  bar. Cards lift on hover, stats count up (`data-kz-count`), the hero
+  crossfades its four frames. Motion stays honest: transform/opacity only, no
+  layout shift, and every autonomous animation is off under
+  `prefers-reduced-motion` (hero crossfade and scroll hint in `css/kizazi.css`).
 - **Behaviour** — `js/main.js` (the template's script: spinner, WOW, back-to-top,
   carousel, video modal) + `js/kizazi.js` (next-Friday dates, gallery filter,
   quick search, newsletter note, scroll progress bar, counting stats — plus
@@ -78,9 +91,15 @@ runs with no CDN. (Web fonts + icon fonts still load from their CDNs.)
 ## Photos
 
 All 42 "KIZAZI 2026" event photos are **vendored in the repo** at
-`img/gallery/01.jpg … 42.jpg` (same order as the `PHOTOS` list in
-`tools/build_common.py`) and served locally — no hotlinking, no Drive
-dependency at runtime. Each tag is plain:
+`img/gallery/01.jpg … 42.jpg` and served locally — no hotlinking, no Drive
+dependency at runtime. Since 2026-09-24 the 42 are **curated from the event
+archive zips** (`drive-download-*.zip`, 220 shots) by
+`tools/process_photos.py`: each chosen frame is upscaled (Lanczos, 1400 px
+long side), brightened slightly and **unsharp-masked in proportion to its
+measured blur score**, so full-bleed backgrounds read sharp instead of soft.
+The curation (zip entry → gallery index, plus sharpness score) is the
+`CURATED` table in that script; re-run `python3 tools/process_photos.py
+--force` after editing it. Each tag is plain:
 
 ```html
 <img src="img/gallery/07.jpg" class="img-fluid" alt="…" loading="lazy">
@@ -93,14 +112,16 @@ file is ever missing.
 
 ### Home hero (the transition photos)
 
-The top of `index.html` crossfades through the four photos vendored in
-`img/hero/` (`01.jpg` to `04.jpg`) behind the hero copy: one `.kz-hero-slide`
-layer per file, staggered 8 s each so the four-photo cycle is 32 s (section 7 of
-`css/kizazi.css`). The first file is also the still `--kz-photo` base layer, so
-no-JS and `prefers-reduced-motion` visitors still get a real photo. To swap a
-photo, replace the file keeping its name and re-run the build. To change the
-number of photos, edit `HERO_SLIDES` in `tools/build_common.py` and update the
-cycle + keyframe percentages in `css/kizazi.css` to match.
+The top of `index.html` crossfades through the four frames vendored in
+`img/hero/` (`01.jpg` to `04.jpg`) behind the hero copy: one `.ht-slide` layer
+per file, staggered 7 s each so the four-photo cycle is 28 s (`.ht-hero` block
+of `css/kizazi.css`). The frames are sharpened 1600×900 centre crops derived
+from gallery photos 01, 07, 02 and 12 (`HERO` table in
+`tools/process_photos.py`). Under `prefers-reduced-motion` the first frame is
+shown as a still. To swap a frame, edit the `HERO` table and re-run
+`process_photos.py --force`; to change the number of slides, edit
+`HERO_SLIDES` in `tools/build_common.py` and the stagger/`htFade` keyframes in
+`css/kizazi.css` to match.
 
 ### People (portraits)
 
@@ -121,10 +142,16 @@ logged in [NOTES.md](NOTES.md).
 
 ### Refreshing the photos
 
-The Drive file IDs stay registered in `PHOTOS` (`tools/build_common.py`) and
-the committed bytes in `img/gallery/manifest.json` (Drive ID, SHA-256 and
-byte size per photo, in `PHOTOS` order). Commit the JPEGs **and** the
-manifest together.
+The current 42 are the curated + sharpened set produced by
+`tools/process_photos.py`; `img/gallery/manifest.json` now records, per
+photo, the source zip, source file name, sharpness score, SHA-256 and byte
+size. Commit the JPEGs **and** the manifest together.
+
+The Drive file IDs remain registered in `PHOTOS` (`tools/build_common.py`)
+as the historical album registry. `tools/fetch_gallery_photos.py` still
+downloads that original album (in `PHOTOS` order) if you ever want it back —
+note that doing so replaces the curation and its role mapping, so re-check
+the hero/banner picks in `tools/build.py` afterwards.
 
 ```bash
 python3 tools/fetch_gallery_photos.py            # manifest-aware refresh:

@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""KIZAZI Phenomenal, shared build data & site chrome (BabyCare-template edition).
+"""KIZAZI Phenomenal, shared build data & site chrome (Hilltop-skin edition).
 
-The site is a faithful BabyCare (HTML Codex) build: same markup structure, same
-fonts (Fredoka + Montserrat), same palette shape, rebranded to royal purple
-(primary #6D28D9 / secondary blue #4D65F9, swapped in the template's own
-css/bootstrap.min.css).  This module holds everything the pages
-share:
+2026-09-24 redesign: the layout & theme now follow hilltopcc.net's structure
+(full-bleed photo hero, photo page-banners, rounded photo cards, fixed photo
+bands, dark footer with a photo strip).  Structure only — every photo is
+KIZAZI's own, curated & sharpened by tools/process_photos.py into
+img/gallery/01.jpg … 42.jpg (hero frames in img/hero/01..04.jpg).
+
+This module holds everything the pages share:
 
   * external links (registration form, Friday Meet, socials)
-  * the 42 "KIZAZI 2026" photos, vendored in img/gallery/01.jpg … 42.jpg
-    (Drive file IDs kept in PHOTOS as the refresh registry: see
-    tools/fetch_gallery_photos.py)
+  * the 42 "KIZAZI 2026" photos (registry in CURATED of process_photos.py;
+    the Drive IDs below are kept as the historical refresh registry)
   * the Drive video list (easy to fill, see VIDEOS below)
-  * shared chrome: head / spinner / topbar+navbar / search modal / page-header /
-    footer / copyright / back-to-top / scripts
+  * shared chrome: head / spinner / top-strip+header / search modal /
+    page banner / footer / copyright / back-to-top / scripts
   * content data: ministries, programs, events, blog, teams, testimonies
 
 `tools/build.py` imports this module and composes the per-page bodies.
@@ -48,10 +49,7 @@ SITE = {
     "countries": "Kenya &bull; Uganda &bull; Tanzania &bull; Rwanda",
 }
 
-# ------------------------------------------------------------- ticker phrases
-# The marquee strip that runs under the navbar on every page (chrome, see
-# ticker()). KIZAZI voice: short lines, second person, verbs first, and no
-# dashes (see NOTES.md). Edit freely; the strip loops seamlessly.
+# Marquee phrases kept as a copy bank (hero / bands borrow from here).
 TICKER = [
     "Worship that moves",
     "Prayer that covers",
@@ -80,10 +78,12 @@ PAGES = [
 DROPDOWN_KEYS = ("gallery", "blog", "team", "testimonial")
 
 # ------------------------------------------- "KIZAZI 2026" photos (vendored)
-# The photos are vendored in img/gallery/01.jpg … 42.jpg (01.jpg == PHOTOS[0]).
-# The Google Drive file IDs below are the refresh registry: re-download with
-#   python3 tools/fetch_gallery_photos.py
-# after editing this list.
+# The 42 photos are vendored in img/gallery/01.jpg … 42.jpg (01.jpg == index 0).
+# Rebuild / sharpen them from the repo's drive-download zips with:
+#   python3 tools/process_photos.py --force
+# The Google Drive file IDs below are the historical refresh registry of the
+# original album; the curation (which zip file maps to which index) now lives
+# in tools/process_photos.py (CURATED).
 PHOTOS = [
     "1w2oIGh9BBn2tXBDsNy8CvpZQywT6Qceh",   # 0
     "13BJwgGhr6XDHC9h13ByCXUag3ViLt4pK",   # 1
@@ -141,11 +141,12 @@ GALLERY_CATS = [
     ("bts", "Behind the Scenes"),
 ]
 
+# Photo roles (indices into img/gallery/01..42):
 FOOTER_GRID = [28, 29, 30, 31, 32, 33]
-HERO_PHOTO = 0            # index into PHOTOS (hero fallback; see HERO_SLIDES)
-PAGE_HEADER_PHOTO = 1     # default inner-page header background
-ABOUT_PHOTO = 2           # the "video" panel behind the play button
-FOOTER_PHOTO = 3
+HERO_PHOTO = 0            # home hero still / fallback
+PAGE_HEADER_PHOTO = 1     # default inner-page banner background
+ABOUT_PHOTO = 2           # about story photo
+FOOTER_PHOTO = 3          # unused as a wash; footer strip uses FOOTER_GRID
 
 # ------------------------------------------------------------ Drive videos ---
 # Add your films here. Each entry is a tuple:
@@ -190,7 +191,7 @@ def videos():
 
 
 def photo_file(i):
-    """Vendored file for PHOTOS[i]: img/gallery/01.jpg up to 42.jpg (w1600 quality)."""
+    """Vendored file for photo index i: img/gallery/01.jpg up to 42.jpg."""
     return "img/gallery/%02d.jpg" % (i + 1)
 
 
@@ -206,13 +207,12 @@ def img(i, alt="", cls="", w=1600, extra=""):
 
 
 def bg(i, w=1600):
-    """Inline style attr feeding a local photo to a CSS background via --kz-photo
-    (consumed as `background-image: …, var(--kz-photo)` in css/kizazi.css)."""
+    """Inline style attr feeding a local photo to a CSS background via --kz-photo."""
     return "style=\"--kz-photo: url('%s');\"" % photo_file(i)
 
 
 def bg_file(path):
-    """Same as bg() but for a photo outside the PHOTOS registry (e.g. img/hero/)."""
+    """Same as bg() but for a photo outside the registry (e.g. img/hero/)."""
     return "style=\"--kz-photo: url('%s');\"" % path
 
 
@@ -222,22 +222,17 @@ def gallery_cat(i):
 
 
 # ------------------------------------------------ home hero "transition" pics --
-# The four photos uploaded on 2026-09-21 for "the top of the first page".
-# index.html crossfades between them behind the hero copy; HERO_SLIDE_BG is the
-# still frame used when animations are off (prefers-reduced-motion) and the
-# fallback painted through --kz-photo.
+# Four sharpened 1600x900 frames curated by tools/process_photos.py from the
+# KIZAZI 2026 set; index.html crossfades between them behind the hero copy.
 HERO_SLIDES = [
-    "img/hero/01.jpg",   # the family together, outdoors
-    "img/hero/02.jpg",   # standing room, hands joined
-    "img/hero/03.jpg",   # praying over one another
-    "img/hero/04.jpg",   # the embrace
+    "img/hero/01.jpg",   # the whole family, front of stage
+    "img/hero/02.jpg",   # worship, guitar up front
+    "img/hero/03.jpg",   # praise breaking out on the lawn
+    "img/hero/04.jpg",   # seated together under the trees
 ]
 HERO_SLIDE_BG = HERO_SLIDES[0]
 
 # ------------------------------------------------------ family description ---
-# Exact copy supplied 2026-09-21. The asterisk in the brief marks emphasis, so
-# "Ministers' Kids" is italic in FAMILY_DESC_HTML while FAMILY_DESC stays the
-# plain-text form (what the bare text of a page reads).
 FAMILY_DESC = ("We are on a mission to grow stronger, connect deeper, and shine "
                "brighter as Ministers' Kids")
 FAMILY_DESC_HTML = ("We are on a mission to grow stronger, connect deeper, and shine "
@@ -245,10 +240,6 @@ FAMILY_DESC_HTML = ("We are on a mission to grow stronger, connect deeper, and s
 FAMILY_WHO = "We are Ministers' Kids."
 
 # ---------------------------------------------------------- portraits/people ---
-# Named people: the admin team and the Patron. Portraits are vendored in
-# img/team/<slug>.jpg and consent to publish is logged in NOTES.md. Roles stay
-# "Admin" or "Patron" only (no invented titles). `photo` wins over any gallery
-# index so an entry can be added the moment its JPEG lands in img/team/.
 PEOPLE = [
     # dict(name="Full Name", role="Admin", photo="img/team/full-name.jpg",
     #      line="One short line about what they carry.", team="Ministry name"),
@@ -288,7 +279,7 @@ def head(title, desc):
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="%(desc)s" name="description">
         <meta content="KIZAZI Phenomenal, Christian youth ministry, East Africa, youth fellowship, discipleship, worship, Kenya, Uganda, Tanzania, Rwanda" name="keywords">
-        <meta content="#6D28D9" name="theme-color">
+        <meta content="#0A3C63" name="theme-color">
         <meta property="og:site_name" content="KIZAZI Phenomenal">
         <meta property="og:title" content="%(title)s">
         <meta property="og:description" content="%(desc)s">
@@ -301,7 +292,7 @@ def head(title, desc):
         <!-- Google Web Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
 
         <!-- Icon Font Stylesheet -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
@@ -318,7 +309,7 @@ def head(title, desc):
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
 
-        <!-- KIZAZI add-ons (gallery photos, video cards, filter & search) -->
+        <!-- KIZAZI skin (Hilltop-style layout, photo bands, gallery) -->
         <link href="css/kizazi.css" rel="stylesheet">
     </head>
 """ % {"title": _html.escape(title), "desc": _html.escape(desc)}
@@ -337,7 +328,7 @@ def spinner():
 """
 
 
-def social_buttons(cls="btn btn-light btn-sm-square rounded-circle", icon_cls="text-secondary"):
+def social_buttons(cls="ht-top-social-link", icon_cls=""):
     items = [
         (FACEBOOK_URL, "fab fa-facebook-f", "Facebook"),
         (TIKTOK_URL, "fab fa-tiktok", "TikTok"),
@@ -347,108 +338,83 @@ def social_buttons(cls="btn btn-light btn-sm-square rounded-circle", icon_cls="t
     for url, icon, label in items:
         out.append('<a href="%s" target="_blank" rel="noopener" class="%s" aria-label="%s" title="%s"><i class="%s %s"></i></a>'
                    % (url, cls, label, label, icon, icon_cls))
-    return "\n".join("                                " + o for o in out)
-
-
-def ticker():
-    """Marquee strip under the navbar.
-
-    The phrase set (TICKER) is repeated exactly twice in the DOM so the CSS
-    -50% translate loop (section 9 of css/kizazi.css) is seamless. The strip
-    is decorative reinforcement of copy that lives on the pages, so it is
-    aria-hidden.
-    """
-    def one_set():
-        parts = []
-        for phrase in TICKER:
-            parts.append('<span class="kz-ticker-item">%s</span>' % _html.escape(phrase))
-            parts.append('<span class="kz-ticker-star">&#10022;</span>')
-        return "".join(parts)
-    set_ = one_set()
-    return """        <!-- Ticker Start -->
-        <div class="kz-ticker" aria-hidden="true">
-            <div class="kz-ticker-track">%s%s</div>
-        </div>
-        <!-- Ticker End -->
-""" % (set_, set_)
+    return out
 
 
 def scroll_progress():
-    """Fixed gradient progress rule at the very top of the viewport.
-
-    js/kizazi.js drives it with transform: scaleX() only (no layout shift).
-    """
     return """        <!-- Scroll progress Start -->
         <div class="kz-progress" aria-hidden="true"><span class="kz-progress-bar"></span></div>
         <!-- Scroll progress End -->
 """
 
 
-def topbar_navbar(active):
+def header(active):
+    """Slim dark utility strip + sticky white header (Hilltop structure)."""
     links = []
     for file_, label, key in PAGES:
-        if key in DROPDOWN_KEYS or key == "contact":
+        if key in DROPDOWN_KEYS:
             continue
         cls = " active" if key == active else ""
-        links.append('                            <a href="%s" class="nav-item nav-link%s">%s</a>'
+        links.append('                    <a href="%s" class="ht-nav-link%s">%s</a>'
                      % (file_, cls, label))
-    if active in DROPDOWN_KEYS:
-        links.append('                            <div class="nav-item dropdown">\n'
-                     '                                <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>')
-    else:
-        links.append('                            <div class="nav-item dropdown">\n'
-                     '                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>')
-    links.append('                                <div class="dropdown-menu m-0 bg-secondary rounded-0">')
+    drop_active = " active" if active in DROPDOWN_KEYS else ""
+    drop_items = []
     for file_, label, key in PAGES:
         if key not in DROPDOWN_KEYS:
             continue
-        links.append('                                    <a href="%s" class="dropdown-item">%s</a>' % (file_, label))
-    links.append('                                </div>\n                            </div>')
-    for file_, label, key in PAGES:
-        if key != "contact":
-            continue
         cls = " active" if key == active else ""
-        links.append('                            <a href="%s" class="nav-item nav-link%s">%s</a>'
-                     % (file_, cls, label))
+        drop_items.append('                        <a href="%s" class="%s">%s</a>'
+                          % (file_, cls.strip(), label))
 
-    return """        <!-- Navbar start -->
-        <div class="container-fluid border-bottom bg-light wow fadeIn" data-wow-delay="0.1s">
-            <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius: 0 40px">
-                <div class="d-flex justify-content-between">
-                    <div class="top-info ps-2">
-                        <small class="me-3"><i class="fas fa-globe-africa me-2 text-secondary"></i> <a href="about.html" class="text-white">Serving East Africa: %(countries)s</a></small>
-                        <small class="me-3"><i class="fas fa-video me-2 text-secondary"></i><a href="%(meet)s" target="_blank" rel="noopener" class="text-white">This Friday &middot; Online Catch-Up &middot; 8:00 PM EAT</a></small>
-                    </div>
-                    <div class="top-link pe-2">
-%(socials)s
-                    </div>
+    top_socials = "".join(
+        '<a href="%s" target="_blank" rel="noopener" aria-label="%s" title="%s"><i class="%s"></i></a>'
+        % (u, l, l, i) for u, i, l in
+        [(FACEBOOK_URL, "fab fa-facebook-f", "Facebook"),
+         (TIKTOK_URL, "fab fa-tiktok", "TikTok"),
+         (INSTAGRAM_URL, "fab fa-instagram", "Instagram")])
+
+    return """        <!-- Top strip Start -->
+        <div class="ht-top d-none d-lg-block">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div>
+                    <small class="me-4"><i class="fas fa-globe-africa me-2"></i><a href="about.html">Serving East Africa: %(countries)s</a></small>
+                    <small><i class="fas fa-video me-2"></i><a href="%(meet)s" target="_blank" rel="noopener">This Friday &middot; Online Catch-Up &middot; 8:00 PM EAT</a></small>
                 </div>
-            </div>
-            <div class="container px-0">
-                <nav class="navbar navbar-light navbar-expand-xl py-3">
-                    <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6">KIZAZI <span class="text-secondary">Phenomenal</span></h1></a>
-                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                        <span class="fa fa-bars text-primary"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarCollapse">
-                        <div class="navbar-nav mx-auto">
-%(links)s
-                        </div>
-                        <div class="d-flex me-4 align-items-center">
-                            <div class="d-flex flex-column pe-3 border-end border-primary">
-                                <span class="text-primary">New here?</span>
-                                <a href="%(reg)s" target="_blank" rel="noopener"><span class="text-secondary">Register free</span></a>
-                            </div>
-                        </div>
-                        <button class="btn-search btn btn-primary btn-md-square rounded-circle" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search the site"><i class="fas fa-search text-white"></i></button>
-                    </div>
-                </nav>
+                <div class="ht-top-social">%(top_socials)s</div>
             </div>
         </div>
-        <!-- Navbar End -->
+        <!-- Top strip End -->
 
-%(ticker)s
-        <!-- Modal Search Start -->
+        <!-- Header Start -->
+        <div class="ht-header">
+            <div class="container ht-header-in">
+                <a href="index.html" class="ht-brand">KIZAZI <span>Phenomenal</span><small>a generation on fire</small></a>
+                <nav class="ht-nav" id="htNav" aria-label="Main navigation">
+%(links)s
+                    <div class="ht-drop">
+                        <a href="#" class="ht-nav-link%(drop_active)s" role="button">Pages <i class="fa fa-angle-down ms-1"></i></a>
+                        <div class="ht-drop-menu">
+%(drop_items)s
+                        </div>
+                    </div>
+                </nav>
+                <div class="ht-header-cta d-flex align-items-center gap-2 ms-auto">
+                    <a class="btn-kz d-none d-md-inline-block" href="%(reg)s" target="_blank" rel="noopener">Register free</a>
+                    <button class="ht-search-btn" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search the site"><i class="fas fa-search"></i></button>
+                    <button class="ht-burger" id="htBurger" aria-label="Open menu"><i class="fa fa-bars"></i></button>
+                </div>
+            </div>
+        </div>
+        <!-- Header End -->
+
+%(search)s""" % {"countries": SITE["countries"], "meet": MEET_URL,
+                 "top_socials": top_socials, "links": "\n".join(links),
+                 "drop_active": drop_active, "drop_items": "\n".join(drop_items),
+                 "reg": REG_URL, "search": search_modal()}
+
+
+def search_modal():
+    return """        <!-- Modal Search Start -->
         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content rounded-0">
@@ -469,14 +435,13 @@ def topbar_navbar(active):
             </div>
         </div>
         <!-- Modal Search End -->
-""" % {"countries": SITE["countries"], "meet": MEET_URL, "reg": REG_URL,
-       "socials": social_buttons(), "links": "\n".join(links), "ticker": ticker()}
+"""
 
 
 def video_modal():
     return """        <!-- Modal Video -->
         <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
                         <h5 class="modal-title" id="videoModalLabel">KIZAZI on film</h5>
@@ -496,18 +461,15 @@ def video_modal():
 
 
 def page_header(title, sub, photo_i=None):
+    """Full-width photo banner with eyebrow, title and breadcrumb."""
     i = PAGE_HEADER_PHOTO if photo_i is None else photo_i
     return """        <!-- Page Header Start -->
-        <div class="container-fluid page-header py-5 wow fadeIn" data-wow-delay="0.1s" %(bg)s>
-            <div class="container text-center py-5">
-                <h1 class="display-2 text-white mb-4">%(title)s</h1>
-                <p class="text-white-50 mx-auto mb-4" style="max-width: 640px;">%(sub)s</p>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center mb-0">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item text-white" aria-current="page">%(title)s</li>
-                    </ol>
-                </nav>
+        <div class="ht-banner" %(bg)s>
+            <div class="container">
+                <span class="ht-kicker">kizazi phenomenal</span>
+                <h1>%(title)s</h1>
+                <p>%(sub)s</p>
+                <div class="ht-crumb"><a href="index.html">Home</a><i class="fa fa-chevron-right"></i><span>%(title)s</span></div>
             </div>
         </div>
         <!-- Page Header End -->
@@ -515,10 +477,10 @@ def page_header(title, sub, photo_i=None):
 
 
 def section_head(kicker, title, sub=""):
-    sub_html = ("<p class=\"text-body mt-3 mb-0\">%s</p>" % sub) if sub else ""
-    return """                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
-                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">%s</h4>
-                    <h1 class="mb-5 display-3">%s</h1>%s
+    sub_html = ("<p class=\"ht-lead\">%s</p>" % sub) if sub else ""
+    return """                <div class="ht-center wow fadeIn" data-wow-delay="0.1s">
+                    <span class="ht-kicker">%s</span>
+                    <h2 class="ht-h2">%s</h2>%s
                 </div>
 """ % (kicker, title, sub_html)
 
@@ -526,97 +488,78 @@ def section_head(kicker, title, sub=""):
 def footer():
     grid = []
     for i in FOOTER_GRID:
-        grid.append("""                                <div class="col-4">
-                                    <div class="footer-galary-img rounded-circle border border-primary">
-                                        <a href="gallery.html" title="Open the gallery">%s</a>
-                                    </div>
-                                </div>""" % img(i, "KIZAZI 2026 photo", cls="img-fluid rounded-circle p-2", w=400))
+        grid.append('                                <a href="gallery.html" title="Open the gallery">%s</a>'
+                    % img(i, "KIZAZI 2026 photo", cls="", w=400))
+    explore = "\n".join(
+        '                            <a href="%s"><i class="fa fa-angle-right"></i>%s</a>'
+        % (f_, l_) for f_, l_, _ in PAGES)
+    fsocial = "\n".join("                            " + s
+                        for s in social_buttons(cls="", icon_cls=""))
+    fsocial = fsocial.replace('class=" "', 'class=""')
     return """        <!-- Footer Start -->
-        <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.1s" %(bg)s>
-            <div class="container py-5">
+        <div class="ht-footer">
+            <div class="container">
                 <div class="row g-5">
                     <div class="col-md-6 col-lg-4 col-xl-3">
-                        <div class="footer-item">
-                            <h2 class="fw-bold mb-3"><span class="text-primary mb-0">KIZAZI</span> <span class="text-secondary">Phenomenal</span></h2>
-                            <p class="mb-4">%(tagline)s A Christian youth movement across %(countries)s: worship that moves, discipleship that sticks, a family that carries you. We are on a mission to grow stronger, connect deeper, and shine brighter as <em>Ministers' Kids</em>.</p>
-                            <p class="text-dark fst-italic mb-4">&ldquo;%(verse_short)s&hellip;&rdquo; &middot; %(verse_ref)s</p>
-                            <div class="border border-primary p-3 rounded bg-light">
-                                <h5 class="mb-3">Newsletter</h5>
-                                <form class="kz-newsletter position-relative mx-auto border border-primary rounded" style="max-width: 400px;" novalidate>
-                                    <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="email" placeholder="Your email" aria-label="Your email" required>
-                                    <button type="submit" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2 text-white">SignUp</button>
-                                </form>
-                                <p class="kz-newsletter-note mb-0 mt-2 small text-muted">Announcements only. Nothing is stored or shared.</p>
-                            </div>
+                        <p class="ht-fk">KIZAZI Phenomenal</p>
+                        <p>%(tagline)s A Christian youth movement across %(countries)s: worship that moves, discipleship that sticks, a family that carries you. %(family)s</p>
+                        <p class="fst-italic">&ldquo;%(verse_short)s&hellip;&rdquo; &middot; %(verse_ref)s</p>
+                        <form class="kz-newsletter" novalidate>
+                            <input type="email" placeholder="Your email" aria-label="Your email" required>
+                            <button type="submit">Sign up</button>
+                        </form>
+                        <p class="kz-newsletter-note small mt-2 mb-0">Announcements only. Nothing is stored or shared.</p>
+                    </div>
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <p class="ht-fk">This week</p>
+                        <div class="ht-friday-card">
+                            <p><strong>Friday:</strong> Online Catch-Up, 8:00 PM EAT</p>
+                            <p><strong>Next Friday:</strong> <span data-next-friday-long>&hellip;</span></p>
+                            <p><strong>Weekdays:</strong> cells, prayer &amp; campus visits</p>
+                            <p><strong>Join live:</strong> <a href="%(meet)s" target="_blank" rel="noopener">Google Meet</a></p>
+                            <p class="mb-0"><strong>Register:</strong> <a href="%(reg)s" target="_blank" rel="noopener">free form</a></p>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 col-xl-3">
-                        <div class="footer-item">
-                            <div class="d-flex flex-column p-4 ps-5 text-dark border border-primary"
-                            style="border-radius: 50%% 20%% / 10%% 40%%;">
-                                <p><strong>Friday:</strong> Online Catch-Up, 8:00 PM EAT</p>
-                                <p><strong>Next Friday:</strong> <span data-next-friday-long>&hellip;</span></p>
-                                <p><strong>Weekdays:</strong> cells, prayer &amp; campus visits</p>
-                                <p><strong>Join live:</strong> <a href="%(meet)s" target="_blank" rel="noopener">Google Meet</a></p>
-                                <p class="mb-0"><strong>Register:</strong> <a href="%(reg)s" target="_blank" rel="noopener">free form</a></p>
-                            </div>
+                        <p class="ht-fk">Explore</p>
+                        <div class="ht-footer-links">
+%(explore)s
                         </div>
+                        <div class="ht-fsocial mt-3">
+%(fsocial)s
+                        </div>
+                        <p class="small mt-3 mb-0"><i class="fas fa-link me-1"></i>%(linktree)s: one link for everything.</p>
                     </div>
                     <div class="col-md-6 col-lg-4 col-xl-3">
-                        <div class="footer-item">
-                            <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">EXPLORE</h4>
-                            <div class="d-flex flex-column align-items-start">
-%(links)s
-                                <div class="footer-icon d-flex mt-2">
-%(socials)s
-                                </div>
-                                <p class="small text-muted mt-3 mb-0"><i class="fas fa-link me-1"></i> %(linktree)s: one link for everything.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 col-xl-3">
-                        <div class="footer-item">
-                            <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">KIZAZI 2026 IN PICS</h4>
-                            <div class="row g-3">
+                        <p class="ht-fk">KIZAZI 2026 in pics</p>
+                        <div class="ht-fstrip">
 %(grid)s
-                            </div>
-                            <a class="btn btn-primary btn-sm px-4 py-2 mt-3 text-white btn-border-radius" href="gallery.html">Full gallery</a>
                         </div>
+                        <a class="btn-kz-soft mt-3" style="background: rgba(255,255,255,.08); color: #fff !important; border-color: rgba(255,255,255,.4);" href="gallery.html">Full gallery</a>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Footer End -->
 
-
         <!-- Copyright Start -->
-        <div class="container-fluid copyright bg-dark py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <span class="text-light"><a href="index.html" class="text-light"><i class="fas fa-copyright text-light me-2"></i>KIZAZI Phenomenal</a>, All right reserved.</span>
-                    </div>
-                    <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        %(tagline)s %(verse_ref)s
-                    </div>
-                </div>
+        <div class="ht-copyright">
+            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                <span><a href="index.html"><i class="fas fa-copyright me-2"></i>KIZAZI Phenomenal</a> &middot; All rights reserved.</span>
+                <span>%(tagline)s &middot; %(verse_ref)s</span>
             </div>
         </div>
         <!-- Copyright End -->
-""" % {"bg": bg(FOOTER_PHOTO, 1200), "tagline": SITE["tagline"],
-       "countries": SITE["countries"], "verse_short": SITE["verse"][:70],
+""" % {"tagline": SITE["tagline"], "countries": SITE["countries"],
+       "family": FAMILY_DESC, "verse_short": SITE["verse"][:70],
        "verse_ref": SITE["verse_ref"], "meet": MEET_URL, "reg": REG_URL,
-       "linktree": LINKTREE_NOTE,
-       "links": "\n".join(
-           '                                <a href="%s" class="text-body mb-3"><i class="fa fa-angle-double-right text-primary me-2"></i>%s</a>'
-           % (f_, l_) for f_, l_, _ in PAGES),
-       "socials": social_buttons(cls="btn btn-primary btn-sm-square me-3 rounded-circle text-white", icon_cls=""),
+       "linktree": LINKTREE_NOTE, "explore": explore, "fsocial": fsocial,
        "grid": "\n".join(grid)}
 
 
 def back_to_top():
     return """        <!-- Back to Top -->
-        <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top" aria-label="Back to top"><i class="fa fa-arrow-up"></i></a>
+        <a href="#" class="back-to-top" aria-label="Back to top"><i class="fa fa-arrow-up"></i></a>
 """
 
 
@@ -633,16 +576,14 @@ def scripts():
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <!-- KIZAZI: next-Friday dates, gallery filter, search, newsletter note -->
+    <!-- KIZAZI: next-Friday dates, gallery filter, search, newsletter note, menu -->
     <script src="js/kizazi.js"></script>
     </body>
 
 </html>
 """
 
-
-# -------------------------------------------------------------- content data ---
-# 8 ministries: (slug, icon, name, blurb, detail, [what to expect])
+# ------------------------------------------------ content data (kept) ---
 MINISTRIES = [
     ("worship-word", "fa-music", "Worship &amp; The Word",
      "Songs that move and messages that stick.",
@@ -763,7 +704,7 @@ BLOG = [
       "If you missed it: the next flagship is already being built. Keep your eyes on "
       "our socials. Conference 2027 dates are coming, and this time, be in it."]),
     ("Staying rooted between the Fridays: 5 habits",
-     "5 Sep 2026", "Discipleship Cells", "DC", 16, "Practical",
+     "5 Sep 2026", "Discipleship Cells", "DC", 41, "Practical",
      ["Fridays are the heartbeat, but faith lives in the four days between. Here are the "
       "five habits we keep preaching in the cells, because consistency is the culture.",
       "1) Five verses before five minutes of scrolling. 2) One prayer you can actually "

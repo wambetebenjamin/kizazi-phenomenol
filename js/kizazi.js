@@ -84,7 +84,7 @@
             seen[title + href] = 1;
             index.push({ title: title, href: href });
         }
-        $all('.navbar-nav a, .footer-item a[href$=".html"]').forEach(function (a) {
+        $all('.ht-nav a, .ht-footer-links a[href$=".html"]').forEach(function (a) {
             add(a.textContent, a.getAttribute('href'));
         });
         $all('a.h4').forEach(function (a) { add(a.textContent, a.getAttribute('href')); });
@@ -218,9 +218,59 @@
         els.forEach(function (el) { io.observe(el); });
     }
 
+    /* ------------------------------------- 8. Header solid-on-scroll ------- */
+    function initFixedHeader() {
+        var header = doc.querySelector('.ht-header');
+        if (!header) { return; }
+        function update() {
+            header.classList.toggle('fixed', (window.scrollY || doc.documentElement.scrollTop) > 60);
+        }
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+    }
+
+    /* ------------------------------------------- 9. Header menu (mobile) --- */
+    function initMenu() {
+        var burger = doc.getElementById('htBurger');
+        var nav = doc.getElementById('htNav');
+        if (burger && nav) {
+            burger.addEventListener('click', function () {
+                nav.classList.toggle('open');
+            });
+        }
+        $all('.ht-drop > a').forEach(function (a) {
+            a.addEventListener('click', function (ev) {
+                if (window.matchMedia('(max-width: 1099px)').matches) {
+                    ev.preventDefault();
+                    a.parentElement.classList.toggle('show');
+                }
+            });
+        });
+    }
+
+    /* -------------------------------------------- 9. Video modal source ---- */
+    function initVideoModal() {
+        $all('[data-video]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var frame = doc.getElementById('video');
+                if (frame) { frame.src = btn.getAttribute('data-video'); }
+            });
+        });
+        var modal = doc.getElementById('videoModal');
+        if (modal) {
+            modal.addEventListener('hidden.bs.modal', function () {
+                var frame = doc.getElementById('video');
+                if (frame) { frame.src = ''; }
+            });
+        }
+    }
+
     /* ---------------------------------------------------------------- boot -- */
     doc.addEventListener('DOMContentLoaded', function () {
         updateFridays();
+        initFixedHeader();
+        initMenu();
+        initVideoModal();
         initGalleryFilter();
         initSearch();
         initNewsletter();

@@ -22,6 +22,21 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 - Verse used throughout: **1 Timothy 4:12**.
 - No email, phone or physical address is invented anywhere — the contact page
   routes to the form, the Meet link and the socials.
+- **Design (2026-09-24 v2, after "it looks bad" feedback):** first skin pass
+  was too loud (heavy rounded display face, purple gradient pills). Re-tuned to
+  Hilltop's actual stylesheet: steel blue `#0A3C63` structure, Poppins/Open
+  Sans light weights, transparent white-uppercase nav over the photo that goes
+  solid on scroll, thin outlined rectangular buttons, small radii, sage micro
+  accents; purple kept only as a brand accent. Fonts/palette notes in README.
+- **Design (2026-09-24, per your instruction):** the layout & theme now copy
+  **hilltopcc.net's structure** (structure only — no photos or copy taken from
+  that site): full-bleed crossfading photo hero with a centred "welcome to"
+  block, photo page-banners with breadcrumbs, rounded photo cards, fixed photo
+  bands, dark footer with a photo strip. The 42 event photos are organised by
+  role (hero frames / banners / bands / cards / gallery / footer strip) so the
+  backgrounds give the flat old layout its depth back. Softer frames were
+  sharpened (unsharp scaled to a measured blur score) and upscaled so they hold
+  up full-bleed. See `tools/process_photos.py` and the README "Photos".
 - **Design (2026-09-20, per your instruction):** the site now uses the BabyCare
   zip's own structure and fonts (**Fredoka + Montserrat**). The palette was
   rebranded on 2026-09-21: the owner rejected the template pink, so it is now
@@ -80,6 +95,17 @@ Everything below that is marked ⚠️ is a **drafting assumption** — edit it 
 
 ## Photos & privacy
 
+- **2026-09-24:** the vendored 42 were **re-curated from the event archive
+  zips** committed at the repo root (`drive-download-*.zip`, 220 JPEGs / 217
+  unique), because the sandbox has no route to Google Drive and the previous
+  `img/gallery/` set was not in this checkout. Curation rules: unique frames,
+  a balance of stage/worship, crowd, outdoor and portrait shots, one photo per
+  role per page, and a sharpen pass scaled to each frame's measured blur score
+  (Laplacian std-dev at 512 px). The mapping lives in `CURATED` in
+  `tools/process_photos.py`; if you'd rather have a different 42 (e.g. the
+  exact original Drive album), edit that table or run
+  `tools/fetch_gallery_photos.py` somewhere with Drive access and re-run the
+  build.
 - **2026-09-21:** the 42 "KIZAZI 2026" photos are **vendored in the repo** at
   `img/gallery/01.jpg … 42.jpg` (downloaded at w1600, same order as `PHOTOS`),
   committed as binaries with `img/gallery/manifest.json` (Drive ID, SHA-256

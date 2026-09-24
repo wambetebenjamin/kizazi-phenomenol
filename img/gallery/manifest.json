@@ -1,0 +1,341 @@
+{
+  "album": "KIZAZI 2026",
+  "photos": [
+    {
+      "file": "01.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-007.zip",
+      "source_name": "20260815-IMG_2134.jpg",
+      "sharpness": 137,
+      "sha256": "e2f50d40cfeeabe1a389577701b17fb562728811e098f28fe58f561f4d770283",
+      "size": 636775
+    },
+    {
+      "file": "02.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-002.zip",
+      "source_name": "20260815-IMG_2168.jpg",
+      "sharpness": 164,
+      "sha256": "061da1b91bf4ca815516cc19f002d726162c0d6a8a5b79437b490eacd18cbd66",
+      "size": 950130
+    },
+    {
+      "file": "03.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-001.zip",
+      "source_name": "20260815-IMG_2223.jpg",
+      "sharpness": 177,
+      "sha256": "16b05370662acc176532e472cdbf3afddb5e65cde9bf15f94acd4d6fe248a469",
+      "size": 760966
+    },
+    {
+      "file": "04.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-004.zip",
+      "source_name": "20260815-IMG_2293.jpg",
+      "sharpness": 140,
+      "sha256": "885b06a03e849fa13bb292519eb5b3faf96e7a1077939c7fa804c698a7d05b32",
+      "size": 550833
+    },
+    {
+      "file": "05.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-002.zip",
+      "source_name": "20260814-IMG_2008.jpg",
+      "sharpness": 151,
+      "sha256": "5b1dea8cd440ecd4f960d7dadbda3ef8db9b44047e1437728a625bdda928150b",
+      "size": 713747
+    },
+    {
+      "file": "06.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-007.zip",
+      "source_name": "20260815-IMG_2292.jpg",
+      "sharpness": 130,
+      "sha256": "d5098c4402cb14dff861b025e1d616f3779035bba6fbf9f85dbad04ca44682a9",
+      "size": 539612
+    },
+    {
+      "file": "07.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-002.zip",
+      "source_name": "20260814-IMG_1990.jpg",
+      "sharpness": 131,
+      "sha256": "2fc018f95bddac311dee2a2449e1e9165deee847b71a760ad651e571c0b362c8",
+      "size": 492222
+    },
+    {
+      "file": "08.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-002.zip",
+      "source_name": "20260815-IMG_2138.jpg",
+      "sharpness": 128,
+      "sha256": "2688e2be6ee911f1fa8434c6d4aba0a2d9e461005c3a748793b70a14740890f8",
+      "size": 615190
+    },
+    {
+      "file": "09.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-007.zip",
+      "source_name": "20260815-IMG_2153.jpg",
+      "sharpness": 142,
+      "sha256": "418d79b744497b4214bc0cc747c6db8cb43286d8961aca9526e7abde8465dc40",
+      "size": 737659
+    },
+    {
+      "file": "10.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-007.zip",
+      "source_name": "20260815-IMG_2145.jpg",
+      "sharpness": 159,
+      "sha256": "8cc90a2b320ed3605a4fbc6e48291a8bddd8c8a55b390006271b466c9e502677",
+      "size": 783345
+    },
+    {
+      "file": "11.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-002.zip",
+      "source_name": "20260815-IMG_2238.jpg",
+      "sharpness": 118,
+      "sha256": "12bab991654282cf366ecaf0e91aea72d64eeff9f26481e90d10d78e659c1512",
+      "size": 646794
+    },
+    {
+      "file": "12.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-004.zip",
+      "source_name": "20260815-IMG_2126.jpg",
+      "sharpness": 171,
+      "sha256": "4e9a72513ca8bb5495ec44effc8cb019df0ffd28113f87cd6645e1cf0efdccb8",
+      "size": 780684
+    },
+    {
+      "file": "13.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-004.zip",
+      "source_name": "20260814-IMG_1850.jpg",
+      "sharpness": 121,
+      "sha256": "a6191de7f18b894a08969f093acefe30271239c06071d8b81c4944fd66139124",
+      "size": 507217
+    },
+    {
+      "file": "14.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-005.zip",
+      "source_name": "20260815-IMG_2154.jpg",
+      "sharpness": 162,
+      "sha256": "17ac043afe56837b39ab822c278821c35a3a1e414be6190f0a333bae8f92644d",
+      "size": 737099
+    },
+    {
+      "file": "15.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-004.zip",
+      "source_name": "20260815-IMG_2148.jpg",
+      "sharpness": 161,
+      "sha256": "17d5b4bc068d56c1471a0471d0f8730c17a381c9fcd969babefb479fbec5d09e",
+      "size": 808389
+    },
+    {
+      "file": "16.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-005.zip",
+      "source_name": "20260815-IMG_2130.jpg",
+      "sharpness": 159,
+      "sha256": "82baea0a01dd4fbfc23b511a65ace2b58cf42067fe8f66902c6039c342158912",
+      "size": 763355
+    },
+    {
+      "file": "17.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-001.zip",
+      "source_name": "20260815-IMG_2136.jpg",
+      "sharpness": 148,
+      "sha256": "9e06f55e38c7e30996858a5508369aeaa43e60bb985a7e4d6032c8704a9e3331",
+      "size": 670743
+    },
+    {
+      "file": "18.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-006.zip",
+      "source_name": "20260815-IMG_2294.jpg",
+      "sharpness": 138,
+      "sha256": "94aac7aa164d2c7920d4d31295b8806622a2f8ff1ec8dc96c659a15b5f3efc94",
+      "size": 503929
+    },
+    {
+      "file": "19.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-004.zip",
+      "source_name": "20260814-IMG_1862.jpg",
+      "sharpness": 136,
+      "sha256": "239841880dd5696aa74039ef2ea95be6cdb709a0035c31bed2c05a2b3fbc0797",
+      "size": 553033
+    },
+    {
+      "file": "20.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-003.zip",
+      "source_name": "20260815-IMG_2147.jpg",
+      "sharpness": 155,
+      "sha256": "f1a3e9b3396ab34bd87ac38ce194ed26ac808dee23ba4c1e3f6e7803d3a0c870",
+      "size": 718976
+    },
+    {
+      "file": "21.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-003.zip",
+      "source_name": "20260815-IMG_2119.jpg",
+      "sharpness": 152,
+      "sha256": "68bf2bc53b131282bb46b6aa3182aa3452fe9c86609049899b8abe6bf7ce5a8b",
+      "size": 713675
+    },
+    {
+      "file": "22.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-001.zip",
+      "source_name": "20260814-IMG_1864.jpg",
+      "sharpness": 126,
+      "sha256": "ccb315ccfca845f8225edb5e9034016f70320e17dc1a180f0bc092124a643c45",
+      "size": 542414
+    },
+    {
+      "file": "23.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-003.zip",
+      "source_name": "20260815-IMG_2157.jpg",
+      "sharpness": 163,
+      "sha256": "c878de5bb0eaa0d5aef68bf419ae5514f8136078ed231e8177ddb2f49be086db",
+      "size": 833351
+    },
+    {
+      "file": "24.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-003.zip",
+      "source_name": "20260815-IMG_2217.jpg",
+      "sharpness": 129,
+      "sha256": "5de65d215089decfead39940702c9ab6d41c5c0082a78b363f7a5b619c4ca73f",
+      "size": 718237
+    },
+    {
+      "file": "25.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-003.zip",
+      "source_name": "20260815-IMG_2211.jpg",
+      "sharpness": 129,
+      "sha256": "7c1ee088fa1904d1a4ccefea9aec540705a96cc29a85ee71c4de4d7b0e72c1a1",
+      "size": 649623
+    },
+    {
+      "file": "26.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-003.zip",
+      "source_name": "20260815-IMG_2164.jpg",
+      "sharpness": 165,
+      "sha256": "9c715ad116be6f31076847fc513b2b4025de45fffabf0dfd777cc7110ae9d961",
+      "size": 805372
+    },
+    {
+      "file": "27.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-003.zip",
+      "source_name": "20260815-IMG_2212.jpg",
+      "sharpness": 146,
+      "sha256": "fb2e44ba52f69cdec3e776393f051bf619524138efb98cc9101e835a29eecaaa",
+      "size": 781708
+    },
+    {
+      "file": "28.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-004.zip",
+      "source_name": "20260815-IMG_2139.jpg",
+      "sharpness": 134,
+      "sha256": "8278a96eb77ca7d12fe931e9d1dbe8ad7895f7ff1a9a9f534c78e9de20ec3ae0",
+      "size": 674953
+    },
+    {
+      "file": "29.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-005.zip",
+      "source_name": "20260815-IMG_2193.jpg",
+      "sharpness": 205,
+      "sha256": "c46482450659f7637b868601658e6739d7c03fe05aaeb041bb32c18a2356f71f",
+      "size": 970298
+    },
+    {
+      "file": "30.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-001.zip",
+      "source_name": "20260815-IMG_2200.jpg",
+      "sharpness": 198,
+      "sha256": "31ec8406ba4daeed15fab6a0ce972139e7c26fcf0951f69eb566ff0ac4fff53c",
+      "size": 1327736
+    },
+    {
+      "file": "31.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-002.zip",
+      "source_name": "20260815-IMG_2185.jpg",
+      "sharpness": 195,
+      "sha256": "e9369ea5063d37161e31e4385756a76a3816e44d67bc08730e99c0062fa39406",
+      "size": 916602
+    },
+    {
+      "file": "32.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-007.zip",
+      "source_name": "20260814-IMG_2036.jpg",
+      "sharpness": 194,
+      "sha256": "28853792caeaea09360b1452d1e51d5417ecdcf831b5b5ae14b2f09dc2b0a8ee",
+      "size": 891442
+    },
+    {
+      "file": "33.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-007.zip",
+      "source_name": "20260814-IMG_2017.jpg",
+      "sharpness": 189,
+      "sha256": "68a3b8bce33ba3057e36b5a96a8c687ad569c8793050f798bf6ed59c95b5dfac",
+      "size": 834313
+    },
+    {
+      "file": "34.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-006.zip",
+      "source_name": "20260815-IMG_2125.jpg",
+      "sharpness": 184,
+      "sha256": "8f65288d4ab69450763ce7d3d87514e07f7d7b165f18ceddc56af1c15b53a3ef",
+      "size": 849505
+    },
+    {
+      "file": "35.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-001.zip",
+      "source_name": "20260815-IMG_2291.jpg",
+      "sharpness": 161,
+      "sha256": "783f1cb09eb39d36b6440647685d145b570a84b4ab24671aec1c1bba594c1c91",
+      "size": 474927
+    },
+    {
+      "file": "36.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-002.zip",
+      "source_name": "20260815-IMG_2251.jpg",
+      "sharpness": 158,
+      "sha256": "44cf14ff2896ee8ef1211aca65e0ddabb12cc8535165b79cf530ce56d8b9d276",
+      "size": 560877
+    },
+    {
+      "file": "37.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-005.zip",
+      "source_name": "20260814-IMG_2014.jpg",
+      "sharpness": 158,
+      "sha256": "d14d50af723f7b8550249427004f7ed929491b1f50a559a1f5fb058bb059e2e9",
+      "size": 765923
+    },
+    {
+      "file": "38.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-005.zip",
+      "source_name": "20260815-IMG_2176.jpg",
+      "sharpness": 156,
+      "sha256": "1a4685e53026a07b95c5d9f63c4d557e72ac44721ef487c3bc891fd3e7fce0d6",
+      "size": 972800
+    },
+    {
+      "file": "39.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-002.zip",
+      "source_name": "20260815-IMG_2216.jpg",
+      "sharpness": 155,
+      "sha256": "5645461a902efe292a069acff8b35568ae60a14ad67e6a7825f60d15988c3a5d",
+      "size": 740130
+    },
+    {
+      "file": "40.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-001.zip",
+      "source_name": "20260814-IMG_1844.jpg",
+      "sharpness": 124,
+      "sha256": "dcdf2f20239f8b5e29a0f30bc39dae02ee86139e2c5d42c0fa65144ff632f065",
+      "size": 510832
+    },
+    {
+      "file": "41.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-006.zip",
+      "source_name": "20260815-IMG_2158.jpg",
+      "sharpness": 147,
+      "sha256": "38e9c606062b565e9fb3a4069408275b53b4eb27706b68bab88487641e9e6c46",
+      "size": 821105
+    },
+    {
+      "file": "42.jpg",
+      "source_zip": "drive-download-20260922T141329Z-1-001-part-007.zip",
+      "source_name": "20260815-IMG_2214.jpg",
+      "sharpness": 162,
+      "sha256": "d6107307569752ae09f5fb71a08c60a1c24b68116375c72cb3be1e25a1ea34d9",
+      "size": 984453
+    }
+  ]
+}
